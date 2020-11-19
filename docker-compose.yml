@@ -1,0 +1,30 @@
+version: '3.7'
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres
+    container_name: etimo-id-db
+    environment:
+      DATABASE_HOST: 127.0.0.1
+      POSTGRES_DB: root
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: etimo-id-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@etimo.se
+      PGADMIN_DEFAULT_PASSWORD: test123!
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres

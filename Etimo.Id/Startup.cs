@@ -2,6 +2,7 @@ using Etimo.Id.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +29,11 @@ namespace Etimo.Id
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "etimo-id", Version = "v1" });
             });
+
+            var connectionString = Configuration.GetConnectionString("EtimoId");
+            services.AddDbContext<EtimoIdDbContext>(options =>
+                options.UseNpgsql(connectionString)
+            );
 
             var oauthSettings = new OAuthSettings();
             Configuration.GetSection("OAuthSettings").Bind(oauthSettings);

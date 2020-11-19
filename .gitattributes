@@ -22,6 +22,8 @@
 # Don't count these files in statistics on GitHub
 package-lock.json linguist-vendored
 yarn.lock linguist-vendored
+**/Migrations/ linguist-vendored
+*ModelSnapshot.cs linguist-vendored
 
 # Merge our versions of files when merge conflicts arise
 package-lock.json merge=ours

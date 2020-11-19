@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Etimo.Id.Controllers
 {
@@ -20,12 +22,16 @@ namespace Etimo.Id.Controllers
     {
         private readonly OAuthSettings _settings;
         private readonly ILogger<OAuthController> _logger;
+        private readonly EtimoIdDbContext _context;
 
-        public OAuthController(OAuthSettings settings,
-            ILogger<OAuthController> logger)
+        public OAuthController(
+            OAuthSettings settings,
+            ILogger<OAuthController> logger,
+            EtimoIdDbContext context)
         {
             _settings = settings;
             _logger = logger;
+            _context = context;
         }
 
         [Authorize]
@@ -37,9 +43,9 @@ namespace Etimo.Id.Controllers
 
         [HttpPost]
         [Route("token")]
-        public TokenResponseDto Token(TokenRequestDto req)
+        public async Task<TokenResponseDto> TokenAsync(TokenRequestDto req)
         {
-            ValidateRequest(req);
+            await ValidateRequestAsync(req);
 
             var token = GenerateToken(req.Username);
             var response = MapTokenResponse(token);
@@ -47,9 +53,17 @@ namespace Etimo.Id.Controllers
             return response;
         }
 
-        private void ValidateRequest(TokenRequestDto req)
+        private async Task ValidateRequestAsync(TokenRequestDto req)
         {
-            if (req.Username != "bob")
+            // Grant access if no users in database -- we need someone to create those users!
+            if (!await _context.Users.AnyAsync())
+            {
+                _logger.LogWarning("Granting access to user due to no users in database.");
+                return;
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == req.Username);
+            if (user == null)
             {
                 throw new BadHttpRequestException("invalid_grant");
             }
