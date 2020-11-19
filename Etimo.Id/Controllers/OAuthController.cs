@@ -1,3 +1,4 @@
+using Etimo.Id.Constants;
 using Etimo.Id.Models;
 using Etimo.Id.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +15,7 @@ using System.Text;
 namespace Etimo.Id.Controllers
 {
     [ApiController]
-    [Route("oauth")]
+    [Route("oauth2")]
     public class OAuthController : Controller
     {
         private readonly OAuthSettings _settings;
@@ -59,7 +60,9 @@ namespace Etimo.Id.Controllers
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, clientId),
-                new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer)
+                new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer),
+                new Claim(ClaimTypes.Role, RoleNames.User),
+                new Claim(ClaimTypes.Role, RoleNames.Admin)
             };
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);

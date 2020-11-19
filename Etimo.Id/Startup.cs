@@ -51,6 +51,12 @@ namespace Etimo.Id
                     };
                 });
 
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
+                config.AddPolicy(Policies.User, Policies.UserPolicy());
+            });
+
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
         }
@@ -60,18 +66,34 @@ namespace Etimo.Id
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "etimo_id v1"));
+                ApplyDevelopmentSettings(app);
+            }
+            else
+            {
+                ApplyProductionSettings(app);
             }
 
+            ApplyCommonSettings(app);
+        }
+
+        private static void ApplyDevelopmentSettings(IApplicationBuilder app)
+        {
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "etimo_id v1"));
+        }
+
+        private static void ApplyProductionSettings(IApplicationBuilder app)
+        {
+            app.UseHsts();
+        }
+
+        private static void ApplyCommonSettings(IApplicationBuilder app)
+        {
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

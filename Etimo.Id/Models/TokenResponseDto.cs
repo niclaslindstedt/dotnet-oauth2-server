@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Models
@@ -15,5 +18,12 @@ namespace Etimo.Id.Models
 
         [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; set; }
+
+        [JsonPropertyName("scope")]
+        public string Scope {
+            get => _scope != null ? string.Join(" ", _scope) : null;
+            set => _scope = value.Split(" ").ToList();
+        }
+        private List<string> _scope;
     }
 }
