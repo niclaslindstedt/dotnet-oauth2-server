@@ -1,14 +1,13 @@
-using System;
 using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Models
 {
-    public class UserDto
+    public class CreateUserDto
     {
-        [JsonPropertyName("user_id")]
-        public Guid UserId { get; set; }
-
         [JsonPropertyName("username")]
         public string Username { get; set; }
+
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
     }
 }

@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Etimo.Id.Exceptions;
+using Etimo.Id.Security;
 
 namespace Etimo.Id.Controllers
 {
@@ -96,6 +97,11 @@ namespace Etimo.Id.Controllers
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == req.client_id);
             if (user == null)
+            {
+                throw new BadHttpRequestException("invalid_grant");
+            }
+
+            if (!req.client_secret.BCryptVerify(user.Password))
             {
                 throw new BadHttpRequestException("invalid_grant");
             }

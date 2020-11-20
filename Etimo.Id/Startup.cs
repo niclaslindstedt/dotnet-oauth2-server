@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using Etimo.Id.Security;
 
 namespace Etimo.Id
 {
@@ -34,6 +35,10 @@ namespace Etimo.Id
             services.AddDbContext<EtimoIdDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
+
+            var siteSettings = new SiteSettings();
+            Configuration.GetSection("SiteSettings").Bind(siteSettings);
+            services.AddSingleton(siteSettings);
 
             var oauthSettings = new OAuthSettings();
             Configuration.GetSection("OAuthSettings").Bind(oauthSettings);
