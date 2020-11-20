@@ -10,9 +10,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Etimo.Id.Exceptions;
 
 namespace Etimo.Id.Controllers
 {
@@ -43,17 +46,46 @@ namespace Etimo.Id.Controllers
 
         [HttpPost]
         [Route("token")]
-        public async Task<TokenResponseDto> TokenAsync(TokenRequestDto req)
+        public async Task<TokenResponseDto> TokenAsync([FromForm] TokenRequestForm req)
         {
+            if (Request.Headers.ContainsKey("Authorization"))
+            {
+                GetCredentialsFromAuthorizationHeader(req);
+            }
+
             await ValidateRequestAsync(req);
 
-            var token = GenerateToken(req.Username);
+            var token = GenerateToken(req.client_id);
             var response = MapTokenResponse(token);
 
             return response;
         }
 
-        private async Task ValidateRequestAsync(TokenRequestDto req)
+        private void GetCredentialsFromAuthorizationHeader(TokenRequestForm req)
+        {
+            try
+            {
+                // Basic authentication -- https://tools.ietf.org/html/rfc2617
+                // Authorization: Basic <base64 encoded string of "username:password">
+                var header = Request.Headers["Authorization"];
+                var parts = header.First().Split(' ');
+                var type = parts[0].ToLowerInvariant();
+                if (type != "basic") return;
+                _logger.LogDebug("Logging in with basic auth");
+                var authBytes = Convert.FromBase64String(parts[1]);
+                var authString = Encoding.UTF8.GetString(authBytes);
+                var authParts = authString.Split(':');
+                req.client_id = authParts[0];
+                req.client_secret = authParts[1];
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Invalid basic authentication headers", ex);
+                throw new BadRequestException("invalid_request");
+            }
+        }
+
+        private async Task ValidateRequestAsync(TokenRequestForm req)
         {
             // Grant access if no users in database -- we need someone to create those users!
             if (!await _context.Users.AnyAsync())
@@ -62,7 +94,7 @@ namespace Etimo.Id.Controllers
                 return;
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == req.Username);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == req.client_id);
             if (user == null)
             {
                 throw new BadHttpRequestException("invalid_grant");
