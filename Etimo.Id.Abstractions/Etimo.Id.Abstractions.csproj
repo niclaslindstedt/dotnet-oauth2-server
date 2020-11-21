@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Abstractions</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Etimo.Id.Abstractions.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
+  </ItemGroup>
+
+</Project>

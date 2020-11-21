@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Service</RootNamespace>
+    <UserSecretsId>916c361f-b2ba-421e-a89a-f86f89eb49fb</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
+    <PackageReference Include="Serilog" Version="2.10.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Data\Etimo.Id.Data.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
+  </ItemGroup>
+
+</Project>

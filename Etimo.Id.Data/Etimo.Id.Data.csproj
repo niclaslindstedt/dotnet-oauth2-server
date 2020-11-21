@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Data</RootNamespace>
+    <UserSecretsId>916c361f-b2ba-421e-a89a-f86f89eb49fb</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
+  </ItemGroup>
+
+</Project>

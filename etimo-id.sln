@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id", "Etimo.Id\Etimo.Id.csproj", "{34E43D18-90B0-4D81-B22B-CC4267617060}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Api", "Etimo.Id.Api\Etimo.Id.Api.csproj", "{34E43D18-90B0-4D81-B22B-CC4267617060}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Service", "Etimo.Id.Service\Etimo.Id.Service.csproj", "{4F5784FC-BE00-40D6-9C07-0087EFC75C31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Data", "Etimo.Id.Data\Etimo.Id.Data.csproj", "{2300CEB8-BA5B-4E18-8699-9112C449084D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Abstractions", "Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj", "{683996F2-E9C9-4571-884C-F8C45BB66274}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Entities", "Etimo.Id.Entities\Etimo.Id.Entities.csproj", "{83739A42-6818-4AE7-80C8-1E1106016A9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{34E43D18-90B0-4D81-B22B-CC4267617060}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34E43D18-90B0-4D81-B22B-CC4267617060}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34E43D18-90B0-4D81-B22B-CC4267617060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F5784FC-BE00-40D6-9C07-0087EFC75C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F5784FC-BE00-40D6-9C07-0087EFC75C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F5784FC-BE00-40D6-9C07-0087EFC75C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F5784FC-BE00-40D6-9C07-0087EFC75C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2300CEB8-BA5B-4E18-8699-9112C449084D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2300CEB8-BA5B-4E18-8699-9112C449084D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2300CEB8-BA5B-4E18-8699-9112C449084D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2300CEB8-BA5B-4E18-8699-9112C449084D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{683996F2-E9C9-4571-884C-F8C45BB66274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{683996F2-E9C9-4571-884C-F8C45BB66274}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{683996F2-E9C9-4571-884C-F8C45BB66274}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{683996F2-E9C9-4571-884C-F8C45BB66274}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83739A42-6818-4AE7-80C8-1E1106016A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83739A42-6818-4AE7-80C8-1E1106016A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83739A42-6818-4AE7-80C8-1E1106016A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83739A42-6818-4AE7-80C8-1E1106016A9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
