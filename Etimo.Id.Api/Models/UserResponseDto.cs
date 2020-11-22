@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Models
 {
-    public class UserDto
+    public class UserResponseDto
     {
         [JsonPropertyName("user_id")]
         public Guid UserId { get; set; }
@@ -12,9 +12,9 @@ namespace Etimo.Id.Api.Models
         [JsonPropertyName("username")]
         public string Username { get; set; }
 
-        public static UserDto FromUser(User user)
+        public static UserResponseDto FromUser(User user)
         {
-            return new UserDto
+            return new UserResponseDto
             {
                 UserId = user.UserId,
                 Username = user.Username

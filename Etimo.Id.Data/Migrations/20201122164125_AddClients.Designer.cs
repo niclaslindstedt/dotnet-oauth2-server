@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201122164125_AddClients")]
+    partial class AddClients
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +73,6 @@ namespace Etimo.Id.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("UserId");
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("User");
                 });

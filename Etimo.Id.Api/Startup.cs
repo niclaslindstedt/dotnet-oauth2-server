@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
+using Etimo.Id.Api.Settings;
 
 namespace Etimo.Id.Api
 {
@@ -83,10 +84,11 @@ namespace Etimo.Id.Api
 
             services.AddTransient<IPasswordHasher, BCryptPasswordHasher>();
 
+            services.AddTransient<IClientsService, ClientsService>();
+            services.AddTransient<IClientsRepository, ClientsRepository>();
+            services.AddTransient<IOAuthService, OAuthService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
-
-            services.AddTransient<IOAuthService, OAuthService>();
 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation();

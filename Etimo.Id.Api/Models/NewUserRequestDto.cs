@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Models
 {
-    public class CreateUserDto
+    public class NewUserRequestDto
     {
         [JsonPropertyName("username")]
         public string Username { get; set; }

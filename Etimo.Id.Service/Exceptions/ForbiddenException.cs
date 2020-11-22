@@ -7,7 +7,7 @@ namespace Etimo.Id.Service.Exceptions
     /// </summary>
     public class ForbiddenException : Exception
     {
-        public ForbiddenException(string message = "You are not authorized to view that.") : base(message)
+        public ForbiddenException(string message = null) : base(message)
         {
         }
     }

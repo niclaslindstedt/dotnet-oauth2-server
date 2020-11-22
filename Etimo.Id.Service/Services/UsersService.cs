@@ -1,7 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
-using Serilog;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,28 +10,25 @@ namespace Etimo.Id.Service.Services
 {
     public class UsersService : IUsersService
     {
-        private readonly IUsersRepository _userRepository;
+        private readonly IUsersRepository _usersRepository;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ILogger _logger;
 
         public UsersService(
-            IUsersRepository userRepository,
-            IPasswordHasher passwordHasher,
-            ILogger logger)
+            IUsersRepository usersRepository,
+            IPasswordHasher passwordHasher)
         {
-            _userRepository = userRepository;
+            _usersRepository = usersRepository;
             _passwordHasher = passwordHasher;
-            _logger = logger;
         }
 
-        public Task<bool> ExistsAsync(string username)
+        public Task<bool> AnyAsync()
         {
-            return _userRepository.ExistsByUsernameAsync(username);
+            return _usersRepository.AnyAsync();
         }
 
         public async Task<User> AuthenticateAsync(string username, string password)
         {
-            var user = await _userRepository.FindByUsernameAsync(username);
+            var user = await _usersRepository.FindByUsernameAsync(username);
             if (user == null)
             {
                 throw new BadRequestException("invalid_grant");
@@ -47,26 +44,43 @@ namespace Etimo.Id.Service.Services
 
         public Task<List<User>> GetAllAsync()
         {
-            return _userRepository.GetAllAsync();
+            return _usersRepository.GetAllAsync();
         }
 
         public async Task<User> AddAsync(User user)
         {
-            _userRepository.Add(user);
-            await _userRepository.SaveAsync();
+            // We assume the password is not encrypted at this point.
+            user.Password = _passwordHasher.Hash(user.Password);
+
+            try
+            {
+                _usersRepository.Add(user);
+                await _usersRepository.SaveAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new ConflictException("Username or e-mail already taken.");
+            }
+
             return user;
         }
 
-        public ValueTask<User> FindAsync(Guid userId)
+        public async ValueTask<User> FindAsync(Guid userId)
         {
-            return _userRepository.FindAsync(userId);
+            var user = await _usersRepository.FindAsync(userId);
+            if (user == null)
+            {
+                throw new BadRequestException("No user found.");
+            }
+
+            return user;
         }
 
         public async Task DeleteAsync(Guid userId)
         {
-            if (await _userRepository.DeleteAsync(userId))
+            if (await _usersRepository.DeleteAsync(userId))
             {
-                await _userRepository.SaveAsync();
+                await _usersRepository.SaveAsync();
             }
         }
     }
