@@ -1,10 +1,9 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Etimo.Id.Service.Exceptions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Etimo.Id.Service.Services
 {
@@ -68,6 +67,22 @@ namespace Etimo.Id.Service.Services
         {
             var client = await _clientsRepository.FindAsync(clientId, userId);
             await DeleteAsync(client);
+        }
+
+        public async Task<Client> AuthenticateAsync(Guid clientId, string clientSecret)
+        {
+            var client = await _clientsRepository.FindAsync(clientId);
+            if (client == null)
+            {
+                throw new BadRequestException("invalid_grant");
+            }
+
+            if (!_passwordHasher.Verify(clientSecret, client.ClientSecret))
+            {
+                throw new BadRequestException("invalid_grant");
+            }
+
+            return client;
         }
 
         private async Task DeleteAsync(Client client)

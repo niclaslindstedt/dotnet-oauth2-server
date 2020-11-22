@@ -7,6 +7,7 @@ namespace Etimo.Id.Service.Security
 {
     /// <summary>
     /// Encrypts text strings with BCrypt and finishes them up with base64 encoding.
+    /// https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
     /// </summary>
     public class BCryptPasswordHasher : IPasswordHasher
     {
