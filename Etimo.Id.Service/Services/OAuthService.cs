@@ -36,8 +36,8 @@ namespace Etimo.Id.Service.Services
             {
                 new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer),
                 new Claim(ClaimTypes.NameIdentifier, request.ClientId),
-                new Claim(ClaimTypes.Role, RoleNames.User),
-                new Claim(ClaimTypes.Role, RoleNames.Admin)
+                new Claim(ClaimTypes.Role, Roles.User),
+                //new Claim(ClaimTypes.Role, Roles.Admin)
             };
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);

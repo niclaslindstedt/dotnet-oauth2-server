@@ -5,8 +5,8 @@ namespace Etimo.Id.Security
 {
     public class Policies
     {
-        public const string Admin = RoleNames.Admin;
-        public const string User = RoleNames.User;
+        public const string Admin = Roles.Admin;
+        public const string User = Roles.User;
 
         public static AuthorizationPolicy AdminPolicy()
         {

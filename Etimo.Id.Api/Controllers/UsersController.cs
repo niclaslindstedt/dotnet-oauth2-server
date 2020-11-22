@@ -6,10 +6,12 @@ using Etimo.Id.Service.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Service.Constants;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Etimo.Id.Api.Controllers
@@ -29,10 +31,16 @@ namespace Etimo.Id.Api.Controllers
             _usersService = usersService;
         }
 
-        [Authorize(Policy = Policies.Admin)]
+        [Authorize(Policy = Policies.User)]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAsync()
         {
+            // If the user calling is not an admin, revert to the FindAsync method.
+            if (!this.UserHasRole(Roles.Admin))
+            {
+                return await FindAsync(this.GetUserId());
+            }
+
             var users = await _usersService.GetAllAsync();
             var userDtos = users.Select(UserDto.FromUser);
 
@@ -58,10 +66,14 @@ namespace Etimo.Id.Api.Controllers
         [Route("{userId:guid}")]
         public async Task<IActionResult> FindAsync(Guid userId)
         {
-            var identityId = this.GetUserId();
-            if (userId != identityId)
+            // If the user calling is not an admin, only allow the user to fetch itself.
+            if (!this.UserHasRole(Roles.Admin))
             {
-                throw new ForbiddenException();
+                var identityId = this.GetUserId();
+                if (userId != identityId)
+                {
+                    throw new ForbiddenException();
+                }
             }
 
             var user = await _usersService.FindAsync(userId);
