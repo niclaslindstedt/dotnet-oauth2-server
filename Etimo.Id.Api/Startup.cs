@@ -1,7 +1,9 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Security;
+using Etimo.Id.Service.Factories;
 using Etimo.Id.Service.Security;
 using Etimo.Id.Service.Services;
 using Etimo.Id.Service.Settings;
@@ -17,7 +19,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
-using Etimo.Id.Api.Settings;
 
 namespace Etimo.Id.Api
 {
@@ -83,6 +84,7 @@ namespace Etimo.Id.Api
             services.AddSingleton(Log.Logger);
 
             services.AddTransient<IPasswordHasher, BCryptPasswordHasher>();
+            services.AddTransient<ITokenGeneratorFactory, TokenGeneratorFactory>();
 
             services.AddTransient<IClientsService, ClientsService>();
             services.AddTransient<IClientsRepository, ClientsRepository>();
