@@ -9,10 +9,11 @@ namespace Etimo.Id.Abstractions
     {
         Task<bool> ExistsByUsernameAsync(string username);
         Task<bool> AnyAsync();
+        ValueTask<User> FindAsync(Guid userId);
         Task<User> FindByUsernameAsync(string username);
         User Add(User user);
         Task<int> SaveAsync();
         Task<List<User>> GetAllAsync();
-        Task DeleteAsync(Guid userId);
+        Task<bool> DeleteAsync(Guid userId);
     }
 }

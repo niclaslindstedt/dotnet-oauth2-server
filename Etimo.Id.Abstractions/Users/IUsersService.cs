@@ -7,11 +7,11 @@ namespace Etimo.Id.Abstractions
 {
     public interface IUsersService
     {
-        Task<bool> ExistsAsync(IUser user);
-        Task<bool> ExistsAsync(string username);
-        Task ValidateUserPassword(string username, string password);
-        Task<User> AddAsync(User user);
         Task<List<User>> GetAllAsync();
+        Task<User> AddAsync(User user);
+        ValueTask<User> FindAsync(Guid userId);
         Task DeleteAsync(Guid userId);
+        Task<bool> ExistsAsync(string username);
+        Task<User> AuthenticateAsync(string username, string password);
     }
 }

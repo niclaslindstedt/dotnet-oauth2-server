@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Etimo.Id.Api.Helpers;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Etimo.Id.Api.Controllers
 {
@@ -27,6 +30,16 @@ namespace Etimo.Id.Api.Controllers
         }
 
         [Authorize(Policy = Policies.Admin)]
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var users = await _usersService.GetAllAsync();
+            var userDtos = users.Select(UserDto.FromUser);
+
+            return Ok(userDtos);
+        }
+
+        [Authorize(Policy = Policies.Admin)]
         [HttpPost]
         public async Task<IActionResult> CreateAsync(CreateUserDto createDto)
         {
@@ -40,14 +53,20 @@ namespace Etimo.Id.Api.Controllers
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", UserDto.FromUser(user));
         }
 
-        [Authorize(Policy = Policies.Admin)]
+        [Authorize(Policy = Policies.User)]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        [Route("{userId:guid}")]
+        public async Task<IActionResult> FindAsync(Guid userId)
         {
-            var users = await _usersService.GetAllAsync();
-            var userDtos = users.Select(UserDto.FromUser);
+            var identityId = this.GetUserId();
+            if (userId != identityId)
+            {
+                throw new ForbiddenException();
+            }
 
-            return Ok(userDtos);
+            var user = await _usersService.FindAsync(userId);
+
+            return Ok(UserDto.FromUser(user));
         }
 
         [Authorize(Policy = Policies.Admin)]

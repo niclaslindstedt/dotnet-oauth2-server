@@ -28,13 +28,14 @@ namespace Etimo.Id.Service.Services
         {
             if (request.GrantType == GrantTypes.Password)
             {
-                await _usersService.ValidateUserPassword(request.ClientId, request.ClientSecret);
+                var user = await _usersService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+                request.ClientId = user.UserId.ToString();
             }
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, request.ClientId),
                 new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer),
+                new Claim(ClaimTypes.NameIdentifier, request.ClientId),
                 new Claim(ClaimTypes.Role, RoleNames.User),
                 new Claim(ClaimTypes.Role, RoleNames.Admin)
             };

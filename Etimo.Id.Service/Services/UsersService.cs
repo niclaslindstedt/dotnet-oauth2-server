@@ -24,22 +24,13 @@ namespace Etimo.Id.Service.Services
             _logger = logger;
         }
 
-        public Task<bool> ExistsAsync(IUser user) => ExistsAsync(user.Username);
-
         public Task<bool> ExistsAsync(string username)
         {
             return _userRepository.ExistsByUsernameAsync(username);
         }
 
-        public async Task ValidateUserPassword(string username, string password)
+        public async Task<User> AuthenticateAsync(string username, string password)
         {
-            // Grant access if no users in database -- we need someone to create those users!
-            if (!await _userRepository.AnyAsync())
-            {
-                _logger.Warning("Granting access to user due to no users in database.");
-                return;
-            }
-
             var user = await _userRepository.FindByUsernameAsync(username);
             if (user == null)
             {
@@ -50,6 +41,13 @@ namespace Etimo.Id.Service.Services
             {
                 throw new BadRequestException("invalid_grant");
             }
+
+            return user;
+        }
+
+        public Task<List<User>> GetAllAsync()
+        {
+            return _userRepository.GetAllAsync();
         }
 
         public async Task<User> AddAsync(User user)
@@ -59,14 +57,17 @@ namespace Etimo.Id.Service.Services
             return user;
         }
 
-        public Task<List<User>> GetAllAsync()
+        public ValueTask<User> FindAsync(Guid userId)
         {
-            return _userRepository.GetAllAsync();
+            return _userRepository.FindAsync(userId);
         }
 
-        public Task DeleteAsync(Guid userId)
+        public async Task DeleteAsync(Guid userId)
         {
-            return _userRepository.DeleteAsync(userId);
+            if (await _userRepository.DeleteAsync(userId))
+            {
+                await _userRepository.SaveAsync();
+            }
         }
     }
 }
