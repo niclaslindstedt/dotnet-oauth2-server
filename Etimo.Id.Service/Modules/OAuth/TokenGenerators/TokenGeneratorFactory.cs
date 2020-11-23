@@ -27,7 +27,7 @@ namespace Etimo.Id.Service.OAuth
             {
                 GrantTypes.ClientCredentials => new ClientCredentialsTokenGenerator(_applicationsService, _settings),
                 GrantTypes.Password => new PasswordTokenGenerator(_usersService, _settings),
-                _ => throw new BadRequestException("invalid_request")
+                _ => throw new InvalidRequestException()
             };
         }
     }

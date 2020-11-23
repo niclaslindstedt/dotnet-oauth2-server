@@ -44,7 +44,7 @@ namespace Etimo.Id.Api.Helpers
             }
             catch
             {
-                throw new BadRequestException("invalid_request");
+                throw new InvalidRequestException();
             }
         }
     }

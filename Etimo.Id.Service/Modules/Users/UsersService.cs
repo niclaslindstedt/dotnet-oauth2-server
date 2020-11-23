@@ -31,12 +31,12 @@ namespace Etimo.Id.Service.Users
             var user = await _usersRepository.FindByUsernameAsync(username);
             if (user == null)
             {
-                throw new BadRequestException("invalid_grant");
+                throw new InvalidGrantException();
             }
 
             if (!_passwordHasher.Verify(password, user.Password))
             {
-                throw new BadRequestException("invalid_grant");
+                throw new InvalidGrantException();
             }
 
             return user;
