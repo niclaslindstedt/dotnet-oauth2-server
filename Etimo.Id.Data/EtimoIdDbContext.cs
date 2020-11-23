@@ -11,12 +11,13 @@ namespace Etimo.Id.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Application>().HasIndex(user => user.ClientId).IsUnique();
             modelBuilder.Entity<User>().HasIndex(user => user.Username).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Client> Clients { get; set; }
+        public DbSet<Application> Applications { get; set; }
         public DbSet<User> RefreshTokens { get; set; }
         public DbSet<User> Users { get; set; }
     }

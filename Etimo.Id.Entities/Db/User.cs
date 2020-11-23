@@ -1,3 +1,4 @@
+using Etimo.Id.Entities.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,5 +13,6 @@ namespace Etimo.Id.Entities
         public string Password { get; set; }
 
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<Application> Applications { get; set; }
     }
 }
