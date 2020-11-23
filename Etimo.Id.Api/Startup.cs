@@ -3,6 +3,10 @@ using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Security;
+using Etimo.Id.Service.Applications;
+using Etimo.Id.Service.OAuth;
+using Etimo.Id.Service.Users;
+using Etimo.Id.Service.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,10 +19,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
-using Etimo.Id.Service.Applications;
-using Etimo.Id.Service.OAuth;
-using Etimo.Id.Service.Users;
-using Etimo.Id.Service.Utilities;
 
 namespace Etimo.Id.Api
 {
@@ -83,7 +83,7 @@ namespace Etimo.Id.Api
 
             services.AddSingleton(Log.Logger);
 
-            services.AddTransient<IPasswordGenerator, PasswordGenerator>();
+            services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
             services.AddTransient<IPasswordHasher, BCryptPasswordHasher>();
             services.AddTransient<ITokenGeneratorFactory, TokenGeneratorFactory>();
 
