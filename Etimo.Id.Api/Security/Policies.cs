@@ -1,7 +1,7 @@
 using Etimo.Id.Service.Constants;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Etimo.Id.Security
+namespace Etimo.Id.Api.Security
 {
     public class Policies
     {

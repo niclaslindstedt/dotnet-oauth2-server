@@ -2,9 +2,9 @@ using System;
 
 namespace Etimo.Id.Service.Exceptions
 {
-    public class ConflictException : Exception
+    public class ConflictException : ErrorCodeException
     {
-        public ConflictException(string message) : base(message)
+        public ConflictException(string message) : base(message, "conflict")
         {
         }
     }

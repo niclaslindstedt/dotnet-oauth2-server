@@ -2,9 +2,9 @@ using System;
 
 namespace Etimo.Id.Service.Exceptions
 {
-    public class BadRequestException : Exception
+    public class BadRequestException : ErrorCodeException
     {
-        public BadRequestException(string message) : base(message)
+        public BadRequestException(string message) : base(message, "bad_request")
         {
         }
     }

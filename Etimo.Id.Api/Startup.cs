@@ -2,7 +2,6 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
-using Etimo.Id.Security;
 using Etimo.Id.Service.Applications;
 using Etimo.Id.Service.OAuth;
 using Etimo.Id.Service.Users;
@@ -19,6 +18,9 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
+using Etimo.Id.Api.Bootstrapping;
+using Etimo.Id.Api.Security;
+using Microsoft.OpenApi.Writers;
 
 namespace Etimo.Id.Api
 {
@@ -94,12 +96,20 @@ namespace Etimo.Id.Api
             services.AddTransient<IUsersRepository, UsersRepository>();
 
             services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy =
+                        SnakeCaseNamingPolicy.Instance;
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                })
                 .AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseExceptionHandler("/error");
+
             if (env.IsDevelopment())
             {
                 ApplyDevelopmentSettings(app);
@@ -114,7 +124,6 @@ namespace Etimo.Id.Api
 
         private static void ApplyDevelopmentSettings(IApplicationBuilder app)
         {
-            app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "etimo_id v1"));
         }

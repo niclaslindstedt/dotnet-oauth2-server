@@ -1,7 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Settings;
-using Etimo.Id.Security;
 using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Etimo.Id.Api.Security;
 
 namespace Etimo.Id.Api.Users
 {
@@ -27,7 +27,7 @@ namespace Etimo.Id.Api.Users
             _usersService = usersService;
         }
 
-        [Authorize(Policy = Policies.User)]
+        [Authorize("read:users", Policy = Policies.User)]
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {

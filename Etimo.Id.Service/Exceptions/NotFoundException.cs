@@ -2,9 +2,9 @@ using System;
 
 namespace Etimo.Id.Service.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException : ErrorCodeException
     {
-        public NotFoundException(string message = null) : base(message)
+        public NotFoundException(string message = null) : base(message, "not_found")
         {
         }
     }
