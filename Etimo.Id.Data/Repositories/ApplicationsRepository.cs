@@ -37,11 +37,6 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Applications.FirstOrDefaultAsync(c => c.ClientId == clientId);
         }
 
-        public Task<Application> FindAsync(Guid clientId, Guid userId)
-        {
-            return _dbContext.Applications.FirstOrDefaultAsync(c => c.ClientId == clientId && c.UserId == userId);
-        }
-
         public Application Add(Application application)
         {
             return _dbContext.Applications.Add(application).Entity;

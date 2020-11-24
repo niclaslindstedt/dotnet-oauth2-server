@@ -68,16 +68,16 @@ namespace Etimo.Id.Service.Applications
 
         public async Task DeleteAsync(int applicationId)
         {
-            var client = await _applicationsRepository.FindAsync(applicationId);
-            await DeleteAsync(client);
+            var application = await _applicationsRepository.FindAsync(applicationId);
+            await DeleteAsync(application);
         }
 
         public async Task DeleteAsync(int applicationId, Guid userId)
         {
-            var client = await _applicationsRepository.FindAsync(applicationId);
-            if (client.UserId == userId)
+            var application = await _applicationsRepository.FindAsync(applicationId);
+            if (application.UserId == userId)
             {
-                await DeleteAsync(client);
+                await DeleteAsync(application);
             }
         }
 
@@ -92,18 +92,18 @@ namespace Etimo.Id.Service.Applications
 
         public async Task<Application> AuthenticateAsync(Guid clientId, string clientSecret)
         {
-            var client = await _applicationsRepository.FindAsync(clientId);
-            if (client == null)
+            var application = await _applicationsRepository.FindAsync(clientId);
+            if (application == null)
             {
                 throw new InvalidGrantException("Invalid credentials.");
             }
 
-            if (!_passwordHasher.Verify(clientSecret, client.ClientSecret))
+            if (!_passwordHasher.Verify(clientSecret, application.ClientSecret))
             {
                 throw new InvalidGrantException("Invalid credentials.");
             }
 
-            return client;
+            return application;
         }
 
         public async Task<Application> GenerateSecretAsync(int applicationId, Guid userId)
