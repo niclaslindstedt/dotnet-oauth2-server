@@ -21,23 +21,19 @@ namespace Etimo.Id.Api.Errors
         {
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
             var exception = context?.Error;
+            var addStackTrace = _environment.IsDevelopment();
 
             ErrorResponse response;
             if (exception is ErrorCodeException errorCodeException)
             {
-                response = new ErrorResponse(errorCodeException);
+                response = new ErrorResponse(errorCodeException, addStackTrace);
             }
             else
             {
-                response = new ErrorResponse(exception);
+                response = new ErrorResponse(exception, addStackTrace);
             }
 
             Response.StatusCode = response.GetStatusCode();
-
-            if (!_environment.IsDevelopment())
-            {
-                response.StackTrace = null;
-            }
 
             return response;
         }

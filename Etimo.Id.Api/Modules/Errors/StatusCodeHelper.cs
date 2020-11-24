@@ -1,7 +1,7 @@
-using Etimo.Id.Service.Exceptions;
 using System;
+using Etimo.Id.Service.Exceptions;
 
-namespace Etimo.Id.Api.Helpers
+namespace Etimo.Id.Api.Errors
 {
     public static class StatusCodeHelper
     {
