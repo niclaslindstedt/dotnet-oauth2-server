@@ -1,3 +1,4 @@
+using Etimo.Id.Api.Helpers;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Text.Json.Serialization;
@@ -6,26 +7,40 @@ namespace Etimo.Id.Api.Errors
 {
     public class ErrorResponse
     {
-        [JsonPropertyName("error_code")]
-        public string ErrorCode { get; set; }
+        [JsonPropertyName("error")]
+        public string Error { get; set; }
 
-        [JsonPropertyName("message")]
-        public string Message { get; set; }
+        [JsonPropertyName("error_description")]
+        public string ErrorDescription { get; set; }
+
+        [JsonPropertyName("error_uri")]
+        public Uri ErrorUri { get; set; }
 
         [JsonPropertyName("stack_trace")]
         public string StackTrace { get; set; }
 
-        public ErrorResponse(Exception ex)
+        public ErrorResponse(Exception exception)
         {
-            Message = ex.Message;
-            StackTrace = ex.ToString();
+            Error = exception.GetType().Name;
+            Initialize(exception);
         }
 
-        public ErrorResponse(ErrorCodeException ex)
+        public ErrorResponse(ErrorCodeException exception)
         {
-            ErrorCode = ex.ErrorCode;
-            Message = ex.Message;
-            StackTrace = ex.ToString();
+            Error = exception.ErrorCode;
+            Initialize(exception);
         }
+
+        private void Initialize(Exception exception)
+        {
+            _statusCode = exception.GetStatusCode();
+            ErrorDescription = exception.Message;
+            StackTrace = exception.ToString();
+            ErrorUri = _statusCode.GetStatusCodeUri();
+        }
+
+        private int _statusCode;
+
+        internal int GetStatusCode() => _statusCode;
     }
 }

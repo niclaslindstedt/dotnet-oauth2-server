@@ -44,7 +44,7 @@ namespace Etimo.Id.Api.Helpers
             }
             catch
             {
-                throw new InvalidRequestException();
+                throw new InvalidRequestException("Invalid basic authentication syntax.");
             }
         }
     }

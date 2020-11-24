@@ -23,46 +23,16 @@ namespace Etimo.Id.Api.Errors
             var exception = context?.Error;
 
             ErrorResponse response;
-            switch (exception)
+            if (exception is ErrorCodeException errorCodeException)
             {
-                case InvalidGrantException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 400;
-                    break;
-
-                case BadRequestException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 400;
-                    break;
-
-                case UnauthorizedException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 401;
-                    break;
-
-
-                case ForbiddenException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 403;
-                    break;
-
-
-                case NotFoundException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 404;
-                    break;
-
-
-                case ConflictException ex:
-                    response = new ErrorResponse(ex);
-                    Response.StatusCode = 409;
-                    break;
-
-                default:
-                    response = new ErrorResponse(exception);
-                    Response.StatusCode = 500;
-                    break;
+                response = new ErrorResponse(errorCodeException);
             }
+            else
+            {
+                response = new ErrorResponse(exception);
+            }
+
+            Response.StatusCode = response.GetStatusCode();
 
             if (!_environment.IsDevelopment())
             {

@@ -95,12 +95,12 @@ namespace Etimo.Id.Service.Applications
             var client = await _applicationsRepository.FindAsync(clientId);
             if (client == null)
             {
-                throw new InvalidGrantException();
+                throw new InvalidGrantException("Invalid credentials.");
             }
 
             if (!_passwordHasher.Verify(clientSecret, client.ClientSecret))
             {
-                throw new InvalidGrantException();
+                throw new InvalidGrantException("Invalid credentials.");
             }
 
             return client;
