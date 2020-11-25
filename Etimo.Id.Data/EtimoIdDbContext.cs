@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Etimo.Id.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +16,19 @@ namespace Etimo.Id.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Application>().HasIndex(user => user.ClientId).IsUnique();
-            modelBuilder.Entity<User>().HasIndex(user => user.Username).IsUnique();
+            var application = modelBuilder.Entity<Application>();
+            application.HasKey(a => a.ApplicationId);
+            application.HasIndex(a => a.ClientId).IsUnique();
+            application.HasOne(a => a.User).WithMany(u => u.Applications).HasForeignKey(a => a.UserId);
+
+            var refreshToken = modelBuilder.Entity<RefreshToken>();
+            refreshToken.HasKey(rt => rt.RefreshTokenId);
+            refreshToken.HasOne(u => u.User).WithMany(u => u.RefreshTokens).HasForeignKey(rt => rt.UserId);
+            refreshToken.HasOne(u => u.Application).WithMany(a => a.RefreshTokens).HasForeignKey(rt => rt.ApplicationId);
+
+            var user = modelBuilder.Entity<User>();
+            user.HasKey(u => u.UserId);
+            user.HasIndex(u => u.Username).IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

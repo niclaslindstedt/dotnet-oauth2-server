@@ -1,12 +1,10 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Etimo.Id.Entities
 {
     public class Application
     {
-        [Key]
         public int ApplicationId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -14,8 +12,9 @@ namespace Etimo.Id.Entities
         public string ClientSecret { get; set; }
         public string HomepageUri { get; set; }
         public string RedirectUri { get; set; }
-
-        [ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
+
+        public virtual User User { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }
