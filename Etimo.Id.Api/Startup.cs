@@ -1,7 +1,12 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Bootstrapping;
+using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
+using Etimo.Id.Service;
+using Etimo.Id.Service.Settings;
+using Etimo.Id.Service.TokenGenerators;
 using Etimo.Id.Service.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,12 +20,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
-using Etimo.Id.Api.Bootstrapping;
-using Etimo.Id.Api.Security;
-using Etimo.Id.Service;
-using Etimo.Id.Service.Settings;
-using Etimo.Id.Service.TokenGenerators;
-using Microsoft.OpenApi.Writers;
 
 namespace Etimo.Id.Api
 {
