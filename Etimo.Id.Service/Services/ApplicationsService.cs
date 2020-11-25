@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Etimo.Id.Service.Applications
+namespace Etimo.Id.Service
 {
     public class ApplicationsService : IApplicationsService
     {

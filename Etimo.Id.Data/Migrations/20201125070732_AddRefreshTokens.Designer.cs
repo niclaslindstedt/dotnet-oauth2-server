@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201125070732_AddRefreshTokens")]
+    partial class AddRefreshTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,6 +68,9 @@ namespace Etimo.Id.Data.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -76,8 +81,6 @@ namespace Etimo.Id.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("RefreshTokenId");
-
-                    b.HasIndex("ApplicationId");
 
                     b.HasIndex("UserId");
 
@@ -115,19 +118,11 @@ namespace Etimo.Id.Data.Migrations
 
             modelBuilder.Entity("Etimo.Id.Entities.RefreshToken", b =>
                 {
-                    b.HasOne("Etimo.Id.Entities.Application", "Application")
-                        .WithMany()
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Etimo.Id.Entities.User", null)
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Application");
                 });
 
             modelBuilder.Entity("Etimo.Id.Entities.User", b =>

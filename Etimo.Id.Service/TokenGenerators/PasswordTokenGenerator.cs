@@ -2,25 +2,27 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using System.Threading.Tasks;
 
-namespace Etimo.Id.Service.OAuth
+namespace Etimo.Id.Service.TokenGenerators
 {
-    internal class PasswordTokenGenerator : TokenGenerator
+    public class PasswordTokenGenerator : IPasswordTokenGenerator
     {
         private readonly IUsersService _usersService;
+        private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public PasswordTokenGenerator(
             IUsersService usersService,
-            OAuthSettings settings) : base(settings)
+            IJwtTokenFactory jwtTokenFactory)
         {
             _usersService = usersService;
+            _jwtTokenFactory = jwtTokenFactory;
         }
 
-        public override async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
         {
             var user = await _usersService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             request.ClientId = user.UserId.ToString();
 
-            return CreateJwtToken(request);
+            return _jwtTokenFactory.CreateJwtToken(request);
         }
     }
 }

@@ -1,27 +1,25 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Constants;
+using Etimo.Id.Service.Settings;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Etimo.Id.Service.OAuth
+namespace Etimo.Id.Service.TokenGenerators
 {
-    internal abstract class TokenGenerator : ITokenGenerator
+    public class JwtTokenFactory : IJwtTokenFactory
     {
         private readonly OAuthSettings _settings;
 
-        protected TokenGenerator(OAuthSettings settings)
+        public JwtTokenFactory(OAuthSettings settings)
         {
             _settings = settings;
         }
 
-        public abstract Task<JwtToken> GenerateTokenAsync(TokenRequest request);
-
-        protected JwtToken CreateJwtToken(TokenRequest request)
+        public JwtToken CreateJwtToken(TokenRequest request)
         {
             var claims = new[]
             {

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Etimo.Id.Service.Users
+namespace Etimo.Id.Service
 {
     public class UsersService : IUsersService
     {

@@ -1,4 +1,4 @@
-namespace Etimo.Id.Service.OAuth
+namespace Etimo.Id.Service.Settings
 {
     public class OAuthSettings
     {

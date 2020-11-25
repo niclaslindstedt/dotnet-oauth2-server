@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -32,6 +33,11 @@ namespace Etimo.Id.Api.OAuth
             if (Request.IsBasicAuthentication())
             {
                 (req.client_id, req.client_secret) = Request.GetBasicAuthenticationCredentials();
+            }
+
+            if (req.client_id == null || req.client_secret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
             }
 
             var token = await _oauthService.GenerateTokenAsync(req.ToTokenRequest());

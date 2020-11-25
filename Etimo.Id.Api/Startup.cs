@@ -2,9 +2,6 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
-using Etimo.Id.Service.Applications;
-using Etimo.Id.Service.OAuth;
-using Etimo.Id.Service.Users;
 using Etimo.Id.Service.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +17,9 @@ using System;
 using System.Text;
 using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Api.Security;
+using Etimo.Id.Service;
+using Etimo.Id.Service.Settings;
+using Etimo.Id.Service.TokenGenerators;
 using Microsoft.OpenApi.Writers;
 
 namespace Etimo.Id.Api
@@ -87,13 +87,18 @@ namespace Etimo.Id.Api
 
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
             services.AddTransient<IPasswordHasher, BCryptPasswordHasher>();
-            services.AddTransient<ITokenGeneratorFactory, TokenGeneratorFactory>();
+
+            services.AddTransient<IClientCredentialsTokenGenerator, ClientCredentialsTokenGenerator>();
+            services.AddTransient<IPasswordTokenGenerator, PasswordTokenGenerator>();
+            services.AddTransient<IRefreshTokenGenerator, RefreshTokenGenerator>();
+            services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
 
             services.AddTransient<IApplicationsService, ApplicationsService>();
             services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
             services.AddTransient<IOAuthService, OAuthService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>

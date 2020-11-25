@@ -7,10 +7,18 @@ namespace Etimo.Id.Entities
     public class RefreshToken
     {
         [Key]
-        public Guid RefreshTokenId { get; set; }
-        public string EncryptedSecret { get; set; }
+        public Guid RefreshTokenId { get; set; } = Guid.NewGuid();
+        public DateTime ExpirationDate { get; set; }
+        public string Scope { get; set; }
 
         [ForeignKey(nameof(User))]
-        public virtual Guid UserId { get; set; }
+        public Guid UserId { get; set; }
+
+        [ForeignKey(nameof(Application))]
+        public int ApplicationId { get; set; }
+
+        public virtual Application Application { get; set; }
+
+        public bool IsExpired => ExpirationDate < DateTime.UtcNow;
     }
 }

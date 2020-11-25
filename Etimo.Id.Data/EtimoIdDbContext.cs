@@ -9,6 +9,10 @@ namespace Etimo.Id.Data
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+            => optionsBuilder
+                .UseLazyLoadingProxies();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Application>().HasIndex(user => user.ClientId).IsUnique();
@@ -18,7 +22,7 @@ namespace Etimo.Id.Data
         }
 
         public DbSet<Application> Applications { get; set; }
-        public DbSet<User> RefreshTokens { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<User> Users { get; set; }
     }
 }
