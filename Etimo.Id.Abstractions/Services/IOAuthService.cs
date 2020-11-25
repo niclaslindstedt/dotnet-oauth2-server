@@ -6,5 +6,6 @@ namespace Etimo.Id.Abstractions
     public interface IOAuthService
     {
         Task<JwtToken> GenerateTokenAsync(TokenRequest request);
+        Task<AuthorizationResponse> StartAuthorizationCodeFlowAsync(AuthorizationRequest request);
     }
 }

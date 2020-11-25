@@ -10,7 +10,7 @@ namespace Etimo.Id.Entities
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public virtual ICollection<Application> Applications { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

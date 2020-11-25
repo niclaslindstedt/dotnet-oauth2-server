@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.OAuth
 {
-    public class TokenResponseDto
+    public class AccessTokenResponseDto
     {
         [JsonPropertyName("access_token")]
         public string JwtToken { get; set; }
@@ -20,9 +20,9 @@ namespace Etimo.Id.Api.OAuth
         [JsonPropertyName("scope")]
         public string Scope { get; set; }
 
-        public static TokenResponseDto FromJwtToken(JwtToken token)
+        public static AccessTokenResponseDto FromJwtToken(JwtToken token)
         {
-            return new TokenResponseDto
+            return new AccessTokenResponseDto
             {
                 JwtToken = token.TokenBase64,
                 TokenType = token.TokenType,

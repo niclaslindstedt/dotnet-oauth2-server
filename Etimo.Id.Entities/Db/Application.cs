@@ -11,6 +11,7 @@ namespace Etimo.Id.Entities
         public Guid ClientId { get; set; } = Guid.NewGuid();
         public string ClientSecret { get; set; }
         public string HomepageUri { get; set; }
+        //TODO: Add support for multiple redirect uris
         public string RedirectUri { get; set; }
         public Guid UserId { get; set; }
 

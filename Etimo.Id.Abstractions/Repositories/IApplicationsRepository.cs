@@ -11,6 +11,7 @@ namespace Etimo.Id.Abstractions
         Task<List<Application>> GetByUserIdAsync(Guid userId);
         ValueTask<Application> FindAsync(int applicationId);
         Task<Application> FindAsync(Guid clientId);
+        Task<Application> FindByClientIdAsync(Guid clientId);
         Application Add(Application application);
         Task<int> SaveAsync();
         void Delete(Application application);

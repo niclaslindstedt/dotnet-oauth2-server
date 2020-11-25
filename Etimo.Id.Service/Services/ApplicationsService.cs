@@ -118,5 +118,10 @@ namespace Etimo.Id.Service
 
             return application;
         }
+
+        public Task<Application> FindByClientIdAsync(Guid clientId)
+        {
+            return _applicationsRepository.FindByClientIdAsync(clientId);
+        }
     }
 }

@@ -16,5 +16,6 @@ namespace Etimo.Id.Abstractions
         Task DeleteAsync(int applicationId, Guid userId);
         Task<Application> AuthenticateAsync(Guid clientId, string clientSecret);
         Task<Application> GenerateSecretAsync(int applicationId, Guid userId);
+        Task<Application> FindByClientIdAsync(Guid clientId);
     }
 }

@@ -21,6 +21,7 @@ namespace Etimo.Id.Data.Repositories
         {
             return _dbContext.RefreshTokens.FindAsync(refreshTokenId);
         }
+
         public void Add(RefreshToken refreshToken)
         {
             _dbContext.RefreshTokens.Add(refreshToken);

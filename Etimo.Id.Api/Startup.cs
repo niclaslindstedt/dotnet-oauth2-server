@@ -94,16 +94,16 @@ namespace Etimo.Id.Api
 
             services.AddTransient<IApplicationsService, ApplicationsService>();
             services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
+            services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
             services.AddTransient<IOAuthService, OAuthService>();
+            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
-            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.PropertyNamingPolicy =
-                        SnakeCaseNamingPolicy.Instance;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
                     options.JsonSerializerOptions.IgnoreNullValues = true;
                 })
                 .AddRazorRuntimeCompilation();

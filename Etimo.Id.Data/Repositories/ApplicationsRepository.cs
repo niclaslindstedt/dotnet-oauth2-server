@@ -24,7 +24,7 @@ namespace Etimo.Id.Data.Repositories
 
         public Task<List<Application>> GetByUserIdAsync(Guid userId)
         {
-            return _dbContext.Applications.Where(c => c.UserId == userId).ToListAsync();
+            return _dbContext.Applications.Where(a => a.UserId == userId).ToListAsync();
         }
 
         public ValueTask<Application> FindAsync(int applicationId)
@@ -34,7 +34,12 @@ namespace Etimo.Id.Data.Repositories
 
         public Task<Application> FindAsync(Guid clientId)
         {
-            return _dbContext.Applications.FirstOrDefaultAsync(c => c.ClientId == clientId);
+            return _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
+        }
+
+        public Task<Application> FindByClientIdAsync(Guid clientId)
+        {
+            return _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
         }
 
         public Application Add(Application application)

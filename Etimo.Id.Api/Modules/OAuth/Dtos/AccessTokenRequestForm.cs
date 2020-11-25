@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Etimo.Id.Api.OAuth
 {
-    public class TokenRequestForm
+    public class AccessTokenRequestForm
     {
         public string grant_type { get; set; }
         public string client_id { get; set; }

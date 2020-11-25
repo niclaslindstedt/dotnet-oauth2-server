@@ -26,23 +26,32 @@ namespace Etimo.Id.Api.OAuth
         {
         }
 
+        [HttpGet]
+        [Route("authorize")]
+        public async Task<IActionResult> AuthorizeAsync([FromForm] AuthorizationRequestForm request)
+        {
+            var response = await _oauthService.StartAuthorizationCodeFlowAsync(request.ToAuthorizeRequest());
+
+            return View("Authorize", response);
+        }
+
         [HttpPost]
         [Route("token")]
-        public async Task<TokenResponseDto> TokenAsync([FromForm] TokenRequestForm req)
+        public async Task<AccessTokenResponseDto> TokenAsync([FromForm] AccessTokenRequestForm request)
         {
             if (Request.IsBasicAuthentication())
             {
-                (req.client_id, req.client_secret) = Request.GetBasicAuthenticationCredentials();
+                (request.client_id, request.client_secret) = Request.GetBasicAuthenticationCredentials();
             }
 
-            if (req.client_id == null || req.client_secret == null)
+            if (request.client_id == null || request.client_secret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }
 
-            var token = await _oauthService.GenerateTokenAsync(req.ToTokenRequest());
+            var token = await _oauthService.GenerateTokenAsync(request.ToTokenRequest());
 
-            return TokenResponseDto.FromJwtToken(token);
+            return AccessTokenResponseDto.FromJwtToken(token);
         }
     }
 }
