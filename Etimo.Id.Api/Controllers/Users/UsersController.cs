@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Etimo.Id.Api.Security;
 
 namespace Etimo.Id.Api.Users
 {
@@ -27,7 +27,7 @@ namespace Etimo.Id.Api.Users
             _usersService = usersService;
         }
 
-        [Authorize("read:users", Policy = Policies.User)]
+        [Authorize(Policy = Policies.User)]
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
@@ -44,7 +44,7 @@ namespace Etimo.Id.Api.Users
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(NewUserRequestDto createDto)
+        public async Task<IActionResult> CreateAsync([FromBody] NewUserRequestDto createDto)
         {
             // The Super Admin Key can be used to create the first user with administrator privileges.
             // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
@@ -74,7 +74,7 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = Policies.User)]
         [HttpGet]
         [Route("{userId:guid}")]
-        public async Task<IActionResult> FindAsync(Guid userId)
+        public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
         {
             // If the caller is not an admin, only allow the user to fetch itself.
             if (!this.UserHasRole(Roles.Admin))
@@ -94,9 +94,11 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = Policies.Admin)]
         [HttpDelete]
         [Route("{userId:guid}")]
-        public Task DeleteAsync(Guid userId)
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
         {
-            return _usersService.DeleteAsync(userId);
+            await _usersService.DeleteAsync(userId);
+
+            return NoContent();
         }
     }
 }

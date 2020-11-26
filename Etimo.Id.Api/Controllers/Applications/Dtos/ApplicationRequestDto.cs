@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Applications
 {
-    public class NewApplicationRequestDto
+    public class ApplicationRequestDto
     {
         [Required]
         [JsonPropertyName("name")]
@@ -20,10 +20,11 @@ namespace Etimo.Id.Api.Applications
         [JsonPropertyName("redirect_uri")]
         public string RedirectUri { get; set; }
 
-        public Application ToApplication()
+        public Application ToApplication(int? applicationId = null)
         {
             return new Application
             {
+                ApplicationId = applicationId ?? default,
                 Name = Name,
                 Description = Description,
                 HomepageUri = HomepageUri,

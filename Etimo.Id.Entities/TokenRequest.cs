@@ -8,8 +8,10 @@ namespace Etimo.Id.Entities
         public string GrantType { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
+        public string RedirectUri { get; set; }
         public Guid? RefreshToken { get; set; }
         public List<string> Scope { get; set; }
+        public string Code { get; set; }
         public Guid? UserId { get; set; }
     }
 }

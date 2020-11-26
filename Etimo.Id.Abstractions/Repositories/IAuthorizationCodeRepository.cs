@@ -8,8 +8,9 @@ namespace Etimo.Id.Abstractions
     public interface IAuthorizationCodeRepository
     {
         void Add(AuthorizationCode code);
-        Task<int> SaveAsync();
         ValueTask<AuthorizationCode> FindAsync(Guid codeId);
+        Task<AuthorizationCode> FindByCodeAsync(string code);
         void RemoveRange(List<AuthorizationCode> codes);
+        Task<int> SaveAsync();
     }
 }

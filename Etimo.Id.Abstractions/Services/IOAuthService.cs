@@ -8,6 +8,6 @@ namespace Etimo.Id.Abstractions
     {
         Task<JwtToken> GenerateTokenAsync(TokenRequest request);
         Task<AuthorizationResponse> StartAuthorizationCodeFlowAsync(AuthorizationRequest request);
-        Task<Uri> FinishAuthorizationCodeAsync(AuthorizationRequest request);
+        Task<string> FinishAuthorizationCodeAsync(AuthorizationRequest request);
     }
 }

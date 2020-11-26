@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,19 +21,24 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.AuthorizationCodes.FindAsync(codeId);
         }
 
+        public Task<AuthorizationCode> FindByCodeAsync(string code)
+        {
+            return _dbContext.AuthorizationCodes.FirstOrDefaultAsync(ac => ac.Code == code);
+        }
+
         public void Add(AuthorizationCode code)
         {
             _dbContext.AuthorizationCodes.Add(code);
         }
 
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
         public void RemoveRange(List<AuthorizationCode> codes)
         {
             _dbContext.AuthorizationCodes.RemoveRange(codes);
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

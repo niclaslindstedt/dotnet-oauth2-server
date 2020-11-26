@@ -13,6 +13,6 @@ namespace Etimo.Id.Abstractions
         User Add(User user);
         Task<int> SaveAsync();
         Task<List<User>> GetAllAsync();
-        Task<bool> DeleteAsync(Guid userId);
+        void Delete(User user);
     }
 }

@@ -43,8 +43,26 @@ namespace Etimo.Id.Api.Applications
         }
 
         [Authorize(Policy = Policies.User)]
+        [HttpGet]
+        [Route("{applicationId:int}")]
+        public async Task<IActionResult> FindAsync([FromRoute] int applicationId)
+        {
+            Application app;
+            if (this.UserHasRole(Roles.Admin))
+            {
+                app = await _applicationsService.FindAsync(applicationId);
+            }
+            else
+            {
+                app = await _applicationsService.FindAsync(applicationId, this.GetUserId());
+            }
+
+            return Ok(ApplicationResponseDto.FromApplication(app));
+        }
+
+        [Authorize(Policy = Policies.User)]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(NewApplicationRequestDto dto)
+        public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
             var app = await _applicationsService.AddAsync(dto.ToApplication(), this.GetUserId());
             var created = ApplicationSecretResponseDto.FromApplication(app);
@@ -63,34 +81,29 @@ namespace Etimo.Id.Api.Applications
         }
 
         [Authorize(Policy = Policies.User)]
-        [HttpGet]
+        [HttpPut]
         [Route("{applicationId:int}")]
-        public async Task<IActionResult> FindAsync(int applicationId)
+        public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
-            Application app;
-            if (this.UserHasRole(Roles.Admin))
-            {
-                app = await _applicationsService.FindAsync(applicationId);
-            }
-            else
-            {
-                app = await _applicationsService.FindAsync(applicationId, this.GetUserId());
-            }
+            var app = await _applicationsService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+            var created = ApplicationSecretResponseDto.FromApplication(app);
 
-            return Ok(ApplicationResponseDto.FromApplication(app));
+            return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
         }
 
         [Authorize(Policy = Policies.User)]
         [HttpDelete]
         [Route("{applicationId:int}")]
-        public Task DeleteAsync(int applicationId)
+        public async Task<IActionResult> DeleteAsync([FromRoute] int applicationId)
         {
             if (this.UserHasRole(Roles.Admin))
             {
-                return _applicationsService.DeleteAsync(applicationId);
+                await _applicationsService.DeleteAsync(applicationId);
             }
 
-            return _applicationsService.DeleteAsync(applicationId, this.GetUserId());
+            await _applicationsService.DeleteAsync(applicationId, this.GetUserId());
+
+            return NoContent();
         }
     }
 }

@@ -78,8 +78,10 @@ namespace Etimo.Id.Service
 
         public async Task DeleteAsync(Guid userId)
         {
-            if (await _usersRepository.DeleteAsync(userId))
+            var user = await _usersRepository.FindAsync(userId);
+            if (user != null)
             {
+                _usersRepository.Delete(user);
                 await _usersRepository.SaveAsync();
             }
         }

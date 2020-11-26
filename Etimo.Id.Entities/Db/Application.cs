@@ -17,5 +17,17 @@ namespace Etimo.Id.Entities
 
         public virtual User User { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+
+        /// <summary>
+        /// Updates the current application with values from otherApplication.
+        /// </summary>
+        /// <param name="otherApplication">The application to fetch values from.</param>
+        public void MergeWith(Application otherApplication)
+        {
+            Name = otherApplication.Name;
+            Description = otherApplication.Description;
+            HomepageUri = otherApplication.HomepageUri;
+            RedirectUri = otherApplication.RedirectUri;
+        }
     }
 }

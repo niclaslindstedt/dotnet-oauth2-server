@@ -46,16 +46,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Users.ToListAsync();
         }
 
-        public async Task<bool> DeleteAsync(Guid userId)
+        public void Delete(User user)
         {
-            var user = await _dbContext.Users.FindAsync(userId);
-            if (user != null)
-            {
-                _dbContext.Users.Remove(user);
-                return true;
-            }
-
-            return true;
+            _dbContext.Users.Remove(user);
         }
     }
 }

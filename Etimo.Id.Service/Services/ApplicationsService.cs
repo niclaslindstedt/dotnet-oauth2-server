@@ -23,23 +23,14 @@ namespace Etimo.Id.Service
             _passwordHasher = passwordHasher;
         }
 
-        public Task<List<Application>> GetByUserIdAsync(Guid userId)
-        {
-            return _applicationsRepository.GetByUserIdAsync(userId);
-        }
-
         public Task<List<Application>> GetAllAsync()
         {
             return _applicationsRepository.GetAllAsync();
         }
 
-        public async Task<Application> AddAsync(Application application, Guid userId)
+        public Task<List<Application>> GetByUserIdAsync(Guid userId)
         {
-            application.UserId = userId;
-            _applicationsRepository.Add(application);
-            await _applicationsRepository.SaveAsync();
-
-            return application;
+            return _applicationsRepository.GetByUserIdAsync(userId);
         }
 
         public async ValueTask<Application> FindAsync(int applicationId)
@@ -66,6 +57,30 @@ namespace Etimo.Id.Service
             return app;
         }
 
+        public Task<Application> FindByClientIdAsync(Guid clientId)
+        {
+            return _applicationsRepository.FindByClientIdAsync(clientId);
+        }
+
+        public async Task<Application> AddAsync(Application application, Guid userId)
+        {
+            application.UserId = userId;
+            _applicationsRepository.Add(application);
+            await _applicationsRepository.SaveAsync();
+
+            return application;
+        }
+
+        public async Task<Application> UpdateAsync(Application updatedApp, Guid userId)
+        {
+            var application = await FindAsync(updatedApp.ApplicationId, userId);
+
+            application.MergeWith(updatedApp);
+            await _applicationsRepository.SaveAsync();
+
+            return application;
+        }
+
         public async Task DeleteAsync(int applicationId)
         {
             var application = await _applicationsRepository.FindAsync(applicationId);
@@ -75,7 +90,7 @@ namespace Etimo.Id.Service
         public async Task DeleteAsync(int applicationId, Guid userId)
         {
             var application = await _applicationsRepository.FindAsync(applicationId);
-            if (application.UserId == userId)
+            if (application?.UserId == userId)
             {
                 await DeleteAsync(application);
             }
@@ -117,11 +132,6 @@ namespace Etimo.Id.Service
             application.ClientSecret = secret;
 
             return application;
-        }
-
-        public Task<Application> FindByClientIdAsync(Guid clientId)
-        {
-            return _applicationsRepository.FindByClientIdAsync(clientId);
         }
     }
 }
