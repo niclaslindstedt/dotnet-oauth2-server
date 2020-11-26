@@ -24,7 +24,7 @@ namespace Etimo.Id.Api.OAuth
         {
             return new AccessTokenResponseDto
             {
-                JwtToken = token.TokenBase64,
+                JwtToken = token.AccessToken,
                 TokenType = token.TokenType,
                 ExpiresIn = token.ExpiresIn,
                 RefreshToken = token.RefreshToken,

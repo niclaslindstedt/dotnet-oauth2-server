@@ -8,13 +8,19 @@ namespace Etimo.Id.Entities
     /// </summary>
     public class AuthorizationResponse
     {
-        public string Code { get; set; }
+        public string ResponseType { get; set; }
+        public Guid ClientId { get; set; }
         public string State { get; set; }
         public string RedirectUri { get; set; }
+        public Guid AuthorizationCodeId { get; set; }
 
-        public Uri ToUri()
+        public string ToQueryParameters()
         {
-            return new Uri($"{RedirectUri}?code={Code}&state={State}");
+            return $"response_type={ResponseType}" +
+                   $"&client_id={ClientId}" +
+                   $"&redirect_uri={RedirectUri}" +
+                   $"&state={State}" +
+                   $"&code_id={AuthorizationCodeId}";
         }
     }
 }

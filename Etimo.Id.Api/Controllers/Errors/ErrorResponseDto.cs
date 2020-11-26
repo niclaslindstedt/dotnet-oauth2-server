@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Errors
 {
-    public class ErrorResponse
+    public class ErrorResponseDto
     {
         [JsonPropertyName("error")]
         public string Error { get; set; }
@@ -18,13 +18,13 @@ namespace Etimo.Id.Api.Errors
         [JsonPropertyName("stack_trace")]
         public string StackTrace { get; set; }
 
-        public ErrorResponse(Exception exception, bool addStackTrace = false)
+        public ErrorResponseDto(Exception exception, bool addStackTrace = false)
         {
             Error = exception.GetType().Name;
             Initialize(exception, addStackTrace);
         }
 
-        public ErrorResponse(ErrorCodeException exception, bool addStackTrace = false)
+        public ErrorResponseDto(ErrorCodeException exception, bool addStackTrace = false)
         {
             Error = exception.ErrorCode;
             Initialize(exception, addStackTrace);

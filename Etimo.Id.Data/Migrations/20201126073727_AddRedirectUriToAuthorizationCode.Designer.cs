@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201126073727_AddRedirectUriToAuthorizationCode")]
+    partial class AddRedirectUriToAuthorizationCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,9 +68,6 @@ namespace Etimo.Id.Data.Migrations
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -76,8 +75,6 @@ namespace Etimo.Id.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("AuthorizationCodeId");
-
-                    b.HasIndex("Code");
 
                     b.ToTable("AuthorizationCodes");
                 });

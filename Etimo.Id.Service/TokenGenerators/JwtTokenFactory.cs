@@ -44,7 +44,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             return new JwtToken
             {
-                TokenBase64 = tokenJson,
+                AccessToken = tokenJson,
                 TokenType = TokenTypes.Bearer,
                 ExpiresIn = (int)(token.ValidTo - DateTime.UtcNow).TotalSeconds
             };

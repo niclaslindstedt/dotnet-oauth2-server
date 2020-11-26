@@ -17,20 +17,20 @@ namespace Etimo.Id.Api.Errors
         }
 
         [Route("error")]
-        public ErrorResponse Error()
+        public ErrorResponseDto Error()
         {
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
             var exception = context?.Error;
 
-            ErrorResponse response;
+            ErrorResponseDto response;
             if (exception is ErrorCodeException errorCodeException)
             {
-                response = new ErrorResponse(errorCodeException);
+                response = new ErrorResponseDto(errorCodeException);
             }
             else
             {
                 var addStackTrace = _environment.IsDevelopment();
-                response = new ErrorResponse(exception, addStackTrace);
+                response = new ErrorResponseDto(exception, addStackTrace);
             }
 
             Response.StatusCode = response.GetStatusCode();

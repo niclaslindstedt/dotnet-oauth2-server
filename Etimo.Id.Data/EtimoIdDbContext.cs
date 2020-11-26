@@ -27,6 +27,7 @@ namespace Etimo.Id.Data
 
             var authorizationCode = modelBuilder.Entity<AuthorizationCode>();
             authorizationCode.HasKey(a => a.AuthorizationCodeId);
+            authorizationCode.HasIndex(a => a.Code);
 
             var refreshToken = modelBuilder.Entity<RefreshToken>();
             refreshToken.HasKey(rt => rt.RefreshTokenId);

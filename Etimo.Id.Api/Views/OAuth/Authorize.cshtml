@@ -1,8 +1,8 @@
-﻿@model Etimo.Id.Entities.AuthorizationResponse
+﻿@model string
 
 @{
     <span>Please login:</span>
-    <form action="@Model.ToUri()" method="post">
+    <form action="@Model" method="post">
         <input type="text" name="username" />
         <input type="password" name="password" />
         <input type="submit" value="Login" />

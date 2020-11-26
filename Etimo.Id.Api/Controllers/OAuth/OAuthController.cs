@@ -1,10 +1,10 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -28,11 +28,27 @@ namespace Etimo.Id.Api.OAuth
 
         [HttpGet]
         [Route("authorize")]
-        public async Task<IActionResult> AuthorizeAsync([FromForm] AuthorizationRequestForm request)
+        public async Task<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCodeQuery query)
         {
-            var response = await _oauthService.StartAuthorizationCodeFlowAsync(request.ToAuthorizeRequest());
+            var request = query.ToAuthorizeRequest();
+            var response = await _oauthService.StartAuthorizationCodeFlowAsync(request);
 
-            return View("Authorize", response);
+            return View("Authorize", $"/oauth2/authorize?{response.ToQueryParameters()}");
+        }
+
+        [HttpPost]
+        [Route("authorize")]
+        public async Task<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCodeQuery query, [FromForm] AuthorizationCodeForm form)
+        {
+            if (Request.IsBasicAuthentication())
+            {
+                (form.username, form.password) = Request.GetBasicAuthenticationCredentials();
+            }
+
+            var request = query.ToAuthorizeRequest(form.username, form.password);
+            var response = await _oauthService.FinishAuthorizationCodeAsync(request);
+
+            return Redirect(response.ToString());
         }
 
         [HttpPost]
