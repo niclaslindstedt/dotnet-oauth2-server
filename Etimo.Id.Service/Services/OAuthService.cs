@@ -116,6 +116,9 @@ namespace Etimo.Id.Service
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
+            code.Authorized = true;
+            await _authorizationCodeRepository.SaveAsync();
+
             return new Uri($"{code.RedirectUri}?code={code.Code}&state={request.State}");
         }
     }
