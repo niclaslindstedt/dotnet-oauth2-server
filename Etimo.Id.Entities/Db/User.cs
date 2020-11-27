@@ -9,6 +9,8 @@ namespace Etimo.Id.Entities
         public Guid UserId { get; set; } = Guid.NewGuid();
         public string Username { get; set; }
         public string Password { get; set; }
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<Application> Applications { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }

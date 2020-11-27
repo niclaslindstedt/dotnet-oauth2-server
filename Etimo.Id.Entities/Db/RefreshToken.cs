@@ -10,6 +10,7 @@ namespace Etimo.Id.Entities
         public string RedirectUri { get; set; }
         public Guid UserId { get; set; }
         public int ApplicationId { get; set; }
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual User User { get; set; }
         public virtual Application Application { get; set; }

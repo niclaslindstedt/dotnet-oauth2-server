@@ -11,6 +11,7 @@ namespace Etimo.Id.Entities
         public string RedirectUri { get; set; }
         public Guid ClientId { get; set; }
         public Guid? UserId { get; set; }
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public bool IsExpired => ExpirationDate < DateTime.UtcNow;
     }

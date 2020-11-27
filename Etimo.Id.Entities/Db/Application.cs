@@ -14,6 +14,8 @@ namespace Etimo.Id.Entities
         //TODO: Add support for multiple redirect uris
         public string RedirectUri { get; set; }
         public Guid UserId { get; set; }
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
+        public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual User User { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
