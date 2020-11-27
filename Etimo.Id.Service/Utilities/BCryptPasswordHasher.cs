@@ -14,6 +14,13 @@ namespace Etimo.Id.Service.Utilities
     {
         private readonly int _workFactor;
 
+        public BCryptPasswordHasher()
+        {
+            _workFactor = 14;
+        }
+
+        // When initializing this class using Dependency Injection, make sure it's used as a singleton
+        // otherwise the work factor calculator will run needlessly every time it is instantiated.
         public BCryptPasswordHasher(int minimumHashingMilliseconds = 500)
         {
             _workFactor = CalculateIdealWorkFactor(minimumHashingMilliseconds);
@@ -56,6 +63,7 @@ namespace Etimo.Id.Service.Utilities
             var hashTime = sw.Elapsed.TotalMilliseconds;
             while (hashTime < minimumHashingMilliseconds)
             {
+                // +1 work factor means 2^(n+1) increased hashing time
                 wf += 1;
                 hashTime *= 2;
             }
