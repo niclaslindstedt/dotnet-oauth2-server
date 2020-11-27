@@ -1,38 +1,40 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Etimo.Id.Entities.Abstractions;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
-    public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
+    public class ResourceOwnerCredentialsTokenGenerator : IResourceOwnerCredentialsTokenGenerator
     {
+        private readonly IUsersService _usersService;
         private readonly IApplicationsService _applicationsService;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
-        public ClientCredentialsTokenGenerator(
+        public ResourceOwnerCredentialsTokenGenerator(
+            IUsersService usersService,
             IApplicationsService applicationsService,
             IJwtTokenFactory jwtTokenFactory)
         {
+            _usersService = usersService;
             _applicationsService = applicationsService;
             _jwtTokenFactory = jwtTokenFactory;
         }
 
-        public async Task<JwtToken> GenerateTokenAsync(IClientCredentialsRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerCredentialsRequest request)
         {
+            var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
             var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
 
             var jwtRequest = new JwtTokenRequest
             {
                 Audience = new List<string> { application.HomepageUri },
-                Subject = application.ClientId.ToString()
+                Subject = user.UserId.ToString()
             };
 
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-
-            return jwtToken;
+            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
         }
     }
 }

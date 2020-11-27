@@ -1,6 +1,10 @@
+using Etimo.Id.Entities;
+using System.Threading.Tasks;
+
 namespace Etimo.Id.Abstractions
 {
-    public interface IRefreshTokenGenerator : ITokenGenerator
+    public interface IRefreshTokenGenerator
     {
+        Task<JwtToken> GenerateTokenAsync(TokenRequest request);
     }
 }

@@ -1,6 +1,6 @@
 namespace Etimo.Id.Service.Exceptions
 {
-    public class InvalidClientException : BadRequestException
+    public class InvalidClientException : UnauthorizedException
     {
         /// <summary>
         /// Client authentication failed (e.g., unknown client, no

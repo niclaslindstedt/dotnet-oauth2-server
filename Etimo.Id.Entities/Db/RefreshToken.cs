@@ -7,6 +7,7 @@ namespace Etimo.Id.Entities
         public Guid RefreshTokenId { get; set; } = Guid.NewGuid();
         public DateTime ExpirationDate { get; set; }
         public string Scope { get; set; }
+        public string RedirectUri { get; set; }
         public Guid UserId { get; set; }
         public int ApplicationId { get; set; }
 

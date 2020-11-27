@@ -65,7 +65,7 @@ namespace Etimo.Id.Api
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = oauthSettings.Issuer,
-                        ValidAudience = oauthSettings.Audience,
+                        ValidAudience = oauthSettings.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(oauthSettings.Secret)),
                         ClockSkew = TimeSpan.Zero
                     };
@@ -89,7 +89,7 @@ namespace Etimo.Id.Api
 
             services.AddTransient<IAuthorizationCodeTokenGenerator, AuthorizationCodeTokenGenerator>();
             services.AddTransient<IClientCredentialsTokenGenerator, ClientCredentialsTokenGenerator>();
-            services.AddTransient<IPasswordTokenGenerator, PasswordTokenGenerator>();
+            services.AddTransient<IResourceOwnerCredentialsTokenGenerator, ResourceOwnerCredentialsTokenGenerator>();
             services.AddTransient<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
 

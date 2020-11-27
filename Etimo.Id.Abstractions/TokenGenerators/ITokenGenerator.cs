@@ -5,6 +5,6 @@ namespace Etimo.Id.Abstractions
 {
     public interface ITokenGenerator
     {
-        Task<JwtToken> GenerateTokenAsync(TokenRequest request);
+        Task<JwtToken> GenerateTokenAsync(JwtTokenRequest request);
     }
 }

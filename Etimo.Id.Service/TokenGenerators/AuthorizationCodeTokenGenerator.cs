@@ -1,8 +1,11 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using System;
-using System.Threading.Tasks;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Etimo.Id.Service.Utilities;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -25,7 +28,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _jwtTokenFactory = jwtTokenFactory;
         }
 
-        public async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeRequest request)
         {
             var code = await _authorizationCodeRepository.FindByCodeAsync(request.Code);
             if (code == null || code.IsExpired || !code.Authorized || code.UserId == null)
@@ -34,7 +37,8 @@ namespace Etimo.Id.Service.TokenGenerators
             }
 
             var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
-            if (request.RedirectUri != null && application.RedirectUri != request.RedirectUri)
+            var redirectUri = request.RedirectUri ?? application.RedirectUri;
+            if (redirectUri != application.RedirectUri)
             {
                 throw new InvalidClientException("The provided redirect URI does not match the one on record.");
             }
@@ -43,14 +47,20 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 ApplicationId = application.ApplicationId,
                 ExpirationDate = DateTime.UtcNow.AddDays(30),
+                RedirectUri = redirectUri,
                 UserId = code.UserId.Value
             };
             var oldRefreshTokens = await _refreshTokensRepository.GetByUserIdAsync(application.UserId);
             _refreshTokensRepository.RemoveRange(oldRefreshTokens);
             _refreshTokensRepository.Add(refreshToken);
 
-            request.ClientId = refreshToken.UserId.ToString();
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(request);
+            var jwtRequest = new JwtTokenRequest
+            {
+                Subject = code.UserId?.ToString(),
+                Audience = new List<string> { application.HomepageUri, redirectUri }
+            };
+
+            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
             jwtToken.RefreshToken = refreshToken.RefreshTokenId.ToString();
 
             await _refreshTokensRepository.SaveAsync();

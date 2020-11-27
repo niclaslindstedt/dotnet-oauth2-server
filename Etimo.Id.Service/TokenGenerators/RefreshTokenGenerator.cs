@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Service.TokenGenerators
@@ -26,6 +27,16 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
+            if (request.ClientId == null || request.ClientSecret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
+
+            if (request.RefreshToken == null)
+            {
+                throw new InvalidGrantException("Invalid refresh token.");
+            }
+
             var clientId = new Guid(request.ClientId);
             var refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken.Value);
             if (refreshToken == null || refreshToken.IsExpired || refreshToken.Application.ClientId != clientId)
@@ -35,9 +46,13 @@ namespace Etimo.Id.Service.TokenGenerators
 
             await _applicationsService.AuthenticateAsync(clientId, request.ClientSecret);
 
-            request.UserId = refreshToken.UserId;
+            var jwtRequest = new JwtTokenRequest
+            {
+                Audience = new List<string> { refreshToken.Application.HomepageUri, refreshToken.RedirectUri },
+                Subject = refreshToken.UserId.ToString()
+            };
 
-            return _jwtTokenFactory.CreateJwtToken(request);
+            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
         }
 
         private static void ValidateRequest(TokenRequest request)
