@@ -76,7 +76,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             if (request.Code == null)
             {
-                throw new InvalidClientException("Invalid client credentials.");
+                throw new InvalidGrantException("Invalid authorization code.");
             }
         }
     }
