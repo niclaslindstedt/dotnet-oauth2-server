@@ -1,6 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Helpers;
-using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -58,11 +57,6 @@ namespace Etimo.Id.Api.OAuth
             if (Request.IsBasicAuthentication())
             {
                 (form.client_id, form.client_secret) = Request.GetBasicAuthenticationCredentials();
-            }
-
-            if (form.client_id == null || form.client_secret == null)
-            {
-                throw new InvalidClientException("Invalid client credentials.");
             }
 
             var request = form.ToTokenRequest();

@@ -5,7 +5,6 @@ using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Etimo.Id.Service.Utilities;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -30,6 +29,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeRequest request)
         {
+            ValidateRequest(request);
+
             var code = await _authorizationCodeRepository.FindByCodeAsync(request.Code);
             if (code == null || code.IsExpired || !code.Authorized || code.UserId == null)
             {
@@ -66,6 +67,19 @@ namespace Etimo.Id.Service.TokenGenerators
             await _refreshTokensRepository.SaveAsync();
 
             return jwtToken;
+        }
+
+        private static void ValidateRequest(IAuthorizationCodeRequest request)
+        {
+            if (request.ClientId == null || request.ClientSecret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
+
+            if (request.Code == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
         }
     }
 }

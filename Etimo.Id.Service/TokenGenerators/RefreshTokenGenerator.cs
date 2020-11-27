@@ -27,16 +27,6 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
-            if (request.ClientId == null || request.ClientSecret == null)
-            {
-                throw new InvalidClientException("Invalid client credentials.");
-            }
-
-            if (request.RefreshToken == null)
-            {
-                throw new InvalidGrantException("Invalid refresh token.");
-            }
-
             var clientId = new Guid(request.ClientId);
             var refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken.Value);
             if (refreshToken == null || refreshToken.IsExpired || refreshToken.Application.ClientId != clientId)
@@ -57,7 +47,12 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(TokenRequest request)
         {
-            if (request.RefreshToken == null || request.ClientId == null || request.ClientSecret == null)
+            if (request.ClientId == null || request.ClientSecret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
+
+            if (request.RefreshToken == null)
             {
                 throw new InvalidGrantException("Refresh token could not be found");
             }

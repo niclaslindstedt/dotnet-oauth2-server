@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -22,6 +23,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IClientCredentialsRequest request)
         {
+            ValidateRequest(request);
+
             var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
 
             var jwtRequest = new JwtTokenRequest
@@ -33,6 +36,14 @@ namespace Etimo.Id.Service.TokenGenerators
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
 
             return jwtToken;
+        }
+
+        private static void ValidateRequest(IClientCredentialsRequest request)
+        {
+            if (request.ClientId == null || request.ClientSecret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
         }
     }
 }

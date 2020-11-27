@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,6 +26,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerCredentialsRequest request)
         {
+            ValidateRequest(request);
+
             var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
             var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
 
@@ -35,6 +38,19 @@ namespace Etimo.Id.Service.TokenGenerators
             };
 
             return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+        }
+
+        private static void ValidateRequest(IResourceOwnerCredentialsRequest request)
+        {
+            if (request.ClientId == null || request.ClientSecret == null)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
+
+            if (request.Username == null || request.Password == null)
+            {
+                throw new InvalidGrantException("Invalid resource owner credentials.");
+            }
         }
     }
 }
