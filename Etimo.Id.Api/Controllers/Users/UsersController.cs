@@ -44,27 +44,9 @@ namespace Etimo.Id.Api.Users
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] NewUserRequestDto createDto)
+        public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
-            // The Super Admin Key can be used to create the first user with administrator privileges.
-            // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
-            if (this.SuperAdminKeyHeader() != _siteSettings.SuperAdminKey)
-            {
-                if (this.UserIsAuthenticated())
-                {
-                    throw new ForbiddenException();
-                }
-
-                if (!this.UserHasRole(Roles.Admin))
-                {
-                    throw new UnauthorizedException();
-                }
-
-                if (await _usersService.AnyAsync())
-                {
-                    throw new BadRequestException("The SA key is only valid when database is empty.");
-                }
-            }
+            await CheckPresenceOfSuperAdminKeyAsync();
 
             var user = await _usersService.AddAsync(createDto.ToUser());
 
@@ -99,6 +81,29 @@ namespace Etimo.Id.Api.Users
             await _usersService.DeleteAsync(userId);
 
             return NoContent();
+        }
+
+        private async Task CheckPresenceOfSuperAdminKeyAsync()
+        {
+            // The Super Admin Key can be used to create the first user with administrator privileges.
+            // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
+            if (this.SuperAdminKeyHeader() != _siteSettings.SuperAdminKey)
+            {
+                if (this.UserIsAuthenticated())
+                {
+                    throw new ForbiddenException();
+                }
+
+                if (!this.UserHasRole(Roles.Admin))
+                {
+                    throw new UnauthorizedException();
+                }
+
+                if (await _usersService.AnyAsync())
+                {
+                    throw new BadRequestException("The SA key is only valid when database is empty.");
+                }
+            }
         }
     }
 }
