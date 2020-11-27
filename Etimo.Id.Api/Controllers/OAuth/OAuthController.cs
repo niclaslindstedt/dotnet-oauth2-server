@@ -21,8 +21,9 @@ namespace Etimo.Id.Api.OAuth
         [Authorize]
         [HttpGet]
         [Route("validate")]
-        public void Validate()
+        public IActionResult Validate()
         {
+            return Ok();
         }
 
         [HttpGet]

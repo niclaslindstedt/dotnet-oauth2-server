@@ -35,7 +35,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 new Claim(JwtRegisteredClaimNames.Sub, request.Subject),
                 new Claim(JwtRegisteredClaimNames.Aud, audiences, JsonClaimValueTypes.JsonArray),
                 new Claim(JwtRegisteredClaimNames.Exp, GetUnixTime(expiresAt).ToString(), ClaimValueTypes.Integer32),
-                new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
+                new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 // https://tools.ietf.org/html/rfc7519#section-4.2
