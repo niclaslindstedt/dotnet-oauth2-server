@@ -36,13 +36,46 @@ namespace Etimo.Id.Service.TokenGenerators
 
             await _applicationsService.AuthenticateAsync(clientId, request.ClientSecret);
 
+            await RecycleRefreshTokensAsync(refreshToken);
+            refreshToken = GenerateRefreshToken(refreshToken.ApplicationId, refreshToken.RedirectUri, refreshToken.UserId);
+
             var jwtRequest = new JwtTokenRequest
             {
                 Audience = new List<string> { refreshToken.Application.HomepageUri, refreshToken.RedirectUri },
                 Subject = refreshToken.UserId.ToString()
             };
 
-            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            var response = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            response.RefreshToken = refreshToken.RefreshTokenId.ToString();
+
+            await _refreshTokensRepository.SaveAsync();
+
+            return response;
+        }
+
+        public RefreshToken GenerateRefreshToken(int applicationId, string redirectUri, Guid userId)
+        {
+            var refreshToken = new RefreshToken
+            {
+                ApplicationId = applicationId,
+                ExpirationDate = DateTime.UtcNow.AddDays(30),
+                RedirectUri = redirectUri,
+                UserId = userId
+            };
+
+            _refreshTokensRepository.Add(refreshToken);
+
+            return refreshToken;
+        }
+
+        public async Task RecycleRefreshTokensAsync(RefreshToken refreshToken)
+        {
+            var oldRefreshTokens = await _refreshTokensRepository.GetByUserIdAsync(refreshToken.UserId);
+
+            // Add this refresh token to the list of old refresh tokens.
+            oldRefreshTokens.Add(refreshToken);
+
+            _refreshTokensRepository.RemoveRange(oldRefreshTokens);
         }
 
         private static void ValidateRequest(TokenRequest request)

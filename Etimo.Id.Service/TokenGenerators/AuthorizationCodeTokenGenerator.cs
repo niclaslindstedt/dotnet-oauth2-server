@@ -11,17 +11,20 @@ namespace Etimo.Id.Service.TokenGenerators
     public class AuthorizationCodeTokenGenerator : IAuthorizationCodeTokenGenerator
     {
         private readonly IApplicationsService _applicationsService;
+        private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public AuthorizationCodeTokenGenerator(
             IApplicationsService applicationsService,
+            IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IRefreshTokensRepository refreshTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
             _applicationsService = applicationsService;
+            _refreshTokenGenerator = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
             _refreshTokensRepository = refreshTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
@@ -44,16 +47,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidClientException("The provided redirect URI does not match the one on record.");
             }
 
-            var refreshToken = new RefreshToken
-            {
-                ApplicationId = application.ApplicationId,
-                ExpirationDate = DateTime.UtcNow.AddDays(30),
-                RedirectUri = redirectUri,
-                UserId = code.UserId.Value
-            };
-            var oldRefreshTokens = await _refreshTokensRepository.GetByUserIdAsync(application.UserId);
-            _refreshTokensRepository.RemoveRange(oldRefreshTokens);
-            _refreshTokensRepository.Add(refreshToken);
+            var refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
+                application.ApplicationId, redirectUri, code.UserId.GetValueOrDefault());
 
             var jwtRequest = new JwtTokenRequest
             {
@@ -64,6 +59,9 @@ namespace Etimo.Id.Service.TokenGenerators
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
             jwtToken.RefreshToken = refreshToken.RefreshTokenId.ToString();
 
+            _authorizationCodeRepository.Remove(code);
+
+            await _authorizationCodeRepository.SaveAsync();
             await _refreshTokensRepository.SaveAsync();
 
             return jwtToken;

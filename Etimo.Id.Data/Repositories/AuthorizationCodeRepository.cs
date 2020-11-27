@@ -2,7 +2,6 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
@@ -31,9 +30,9 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.AuthorizationCodes.Add(code);
         }
 
-        public void RemoveRange(List<AuthorizationCode> codes)
+        public void Remove(AuthorizationCode code)
         {
-            _dbContext.AuthorizationCodes.RemoveRange(codes);
+            _dbContext.AuthorizationCodes.Remove(code);
         }
 
         public Task<int> SaveAsync()

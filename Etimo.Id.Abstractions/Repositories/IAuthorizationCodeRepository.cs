@@ -1,6 +1,5 @@
 using Etimo.Id.Entities;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
@@ -10,7 +9,7 @@ namespace Etimo.Id.Abstractions
         void Add(AuthorizationCode code);
         ValueTask<AuthorizationCode> FindAsync(Guid codeId);
         Task<AuthorizationCode> FindByCodeAsync(string code);
-        void RemoveRange(List<AuthorizationCode> codes);
+        void Remove(AuthorizationCode code);
         Task<int> SaveAsync();
     }
 }

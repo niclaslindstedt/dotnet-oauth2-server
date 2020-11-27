@@ -105,13 +105,13 @@ namespace Etimo.Id.Service
                 throw new InvalidGrantException("Invalid user credentials.");
             }
 
-            var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
-
             var code = await _authorizationCodeRepository.FindAsync(request.AuthorizationCodeId.Value);
-            if (code.IsExpired)
+            if (code == null || code.IsExpired)
             {
                 throw new InvalidGrantException("Invalid authorization code.");
             }
+
+            var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
 
             code.Authorized = true;
             code.UserId = user.UserId;
