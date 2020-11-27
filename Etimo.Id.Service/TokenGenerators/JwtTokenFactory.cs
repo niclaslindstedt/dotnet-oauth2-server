@@ -6,11 +6,11 @@ using Etimo.Id.Service.Settings;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -26,18 +26,17 @@ namespace Etimo.Id.Service.TokenGenerators
         public JwtToken CreateJwtToken(IJwtTokenRequest request)
         {
             var audiences = CompileAudiences(request.Audience);
-            var expiresIn = GetSecondsUntil(DateTime.UtcNow.AddMinutes(_settings.TokenExpirationMinutes));
-            var nowUnixTime = GetUnixTime(DateTime.UtcNow);
+            var expiresAt = DateTime.UtcNow.AddMinutes(_settings.TokenExpirationMinutes);
 
             var claims = new[]
             {
                 // https://tools.ietf.org/html/rfc7519#section-4.1
                 new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer),
                 new Claim(JwtRegisteredClaimNames.Sub, request.Subject),
-                new Claim(JwtRegisteredClaimNames.Aud, audiences),
-                new Claim(JwtRegisteredClaimNames.Exp, expiresIn.ToString()),
-                new Claim(JwtRegisteredClaimNames.Nbf, nowUnixTime.ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, nowUnixTime.ToString()),
+                new Claim(JwtRegisteredClaimNames.Aud, audiences, JsonClaimValueTypes.JsonArray),
+                new Claim(JwtRegisteredClaimNames.Exp, GetUnixTime(expiresAt).ToString(), ClaimValueTypes.Integer32),
+                new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
+                new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 // https://tools.ietf.org/html/rfc7519#section-4.2
                 new Claim(ClaimTypes.Role, Roles.User),
@@ -47,7 +46,9 @@ namespace Etimo.Id.Service.TokenGenerators
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
             var key = new SymmetricSecurityKey(secretBytes);
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
+            var token = new JwtSecurityToken(
+                claims: claims,
+                signingCredentials: signingCredentials);
 
             var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -55,7 +56,7 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 AccessToken = tokenJson,
                 TokenType = TokenTypes.Bearer,
-                ExpiresIn = (int)expiresIn
+                ExpiresIn = GetSecondsUntil(expiresAt)
             };
         }
 
@@ -68,22 +69,23 @@ namespace Etimo.Id.Service.TokenGenerators
             }
 
             var nonEmptyAudiences = audiences.Where(a => !string.IsNullOrWhiteSpace(a));
-            return string.Join(' ', nonEmptyAudiences.Select(a => a.Trim()));
+            var trimmedAudiences = nonEmptyAudiences.Select(a => a.Trim());
+            return JsonSerializer.Serialize(trimmedAudiences);
         }
 
-        private static long GetSecondsUntil(DateTime dateTime)
+        private static int GetSecondsUntil(DateTime dateTime)
         {
             return GetSecondsBetween(DateTime.UtcNow, dateTime);
         }
 
-        private static long GetUnixTime(DateTime dateTime)
+        private static int GetUnixTime(DateTime dateTime)
         {
-            return GetSecondsBetween(DateTime.MinValue, dateTime);
+            return GetSecondsBetween(new DateTime(1970, 1, 1), dateTime);
         }
 
-        private static long GetSecondsBetween(DateTime from, DateTime until)
+        private static int GetSecondsBetween(DateTime from, DateTime until)
         {
-            return Math.Abs((long)Math.Ceiling((until - from).TotalSeconds));
+            return Math.Abs((int)Math.Ceiling((until - from).TotalSeconds));
         }
     }
 }
