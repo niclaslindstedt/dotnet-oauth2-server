@@ -12,12 +12,20 @@ namespace Etimo.Id.Api.Users
         [JsonPropertyName("username")]
         public string Username { get; set; }
 
+        [JsonPropertyName("created_date")]
+        public DateTime CreatedDateTime { get; set; }
+
+        [JsonPropertyName("modified_date")]
+        public DateTime ModifiedDateTime { get; set; }
+
         public static UserResponseDto FromUser(User user)
         {
             return new UserResponseDto
             {
                 UserId = user.UserId,
-                Username = user.Username
+                Username = user.Username,
+                CreatedDateTime = user.CreatedDateTime,
+                ModifiedDateTime = user.ModifiedDateTime
             };
         }
     }

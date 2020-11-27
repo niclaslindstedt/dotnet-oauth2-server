@@ -27,6 +27,12 @@ namespace Etimo.Id.Api.Applications
         [JsonPropertyName("user_id")]
         public Guid UserId { get; set; }
 
+        [JsonPropertyName("created_date")]
+        public DateTime CreatedDateTime { get; set; }
+
+        [JsonPropertyName("modified_date")]
+        public DateTime ModifiedDateTime { get; set; }
+
         public static ApplicationResponseDto FromApplication(Application application)
         {
             return new ApplicationResponseDto
@@ -37,7 +43,9 @@ namespace Etimo.Id.Api.Applications
                 HomepageUri = application.HomepageUri,
                 RedirectUri = application.RedirectUri,
                 ClientId = application.ClientId,
-                UserId = application.UserId
+                UserId = application.UserId,
+                CreatedDateTime = application.CreatedDateTime,
+                ModifiedDateTime = application.ModifiedDateTime
             };
         }
     }
