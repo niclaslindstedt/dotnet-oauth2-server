@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using System;
+using System.Diagnostics;
 using System.Text;
 using BCryptNet = BCrypt.Net.BCrypt;
 
@@ -11,10 +12,16 @@ namespace Etimo.Id.Service.Utilities
     /// </summary>
     public class BCryptPasswordHasher : IPasswordHasher
     {
+        private readonly int _workFactor;
+
+        public BCryptPasswordHasher(int minimumHashingMilliseconds = 500)
+        {
+            _workFactor = CalculateIdealWorkFactor(minimumHashingMilliseconds);
+        }
+
         public string Hash(string text)
         {
-            var salt = BCryptNet.GenerateSalt();
-            var hash = BCryptNet.HashPassword(text, salt);
+            var hash = BCryptNet.HashPassword(text, _workFactor);
             var base64Hash = SerializeBase64(hash);
             return base64Hash;
         }
@@ -35,6 +42,25 @@ namespace Etimo.Id.Service.Utilities
         {
             var bytes = Convert.FromBase64String(base64String);
             return Encoding.UTF8.GetString(bytes);
+        }
+
+        private static int CalculateIdealWorkFactor(int minimumHashingMilliseconds)
+        {
+            var wf = 10;
+            var sw = new Stopwatch();
+            sw.Start();
+            BCryptNet.HashPassword("hashing_benchmark", wf);
+            sw.Stop();
+
+            // https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#work-factors
+            var hashTime = sw.Elapsed.TotalMilliseconds;
+            while (hashTime < minimumHashingMilliseconds)
+            {
+                wf += 1;
+                hashTime *= 2;
+            }
+
+            return wf;
         }
     }
 }

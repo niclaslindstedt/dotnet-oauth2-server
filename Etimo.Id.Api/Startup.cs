@@ -84,8 +84,9 @@ namespace Etimo.Id.Api
 
             services.AddSingleton(Log.Logger);
 
+            var passwordHasher = new BCryptPasswordHasher();
+            services.AddSingleton<IPasswordHasher>(passwordHasher);
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
-            services.AddTransient<IPasswordHasher, BCryptPasswordHasher>();
 
             services.AddTransient<IAuthorizationCodeTokenGenerator, AuthorizationCodeTokenGenerator>();
             services.AddTransient<IClientCredentialsTokenGenerator, ClientCredentialsTokenGenerator>();
