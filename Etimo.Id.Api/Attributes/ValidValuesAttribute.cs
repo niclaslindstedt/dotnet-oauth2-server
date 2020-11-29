@@ -14,7 +14,7 @@ namespace Etimo.Id.Api.Attributes
             _validValues = validValues;
         }
 
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             // Null values shouldn't be validated by this attribute.
             if (value == null)
