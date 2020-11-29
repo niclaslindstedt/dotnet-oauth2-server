@@ -1,4 +1,5 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
@@ -13,7 +14,6 @@ using System.Threading.Tasks;
 namespace Etimo.Id.Api.Users
 {
     [ApiController]
-    [Route("users")]
     public class UsersController : Controller
     {
         private readonly SiteSettings _siteSettings;
@@ -27,8 +27,9 @@ namespace Etimo.Id.Api.Users
             _usersService = usersService;
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpGet]
+        [Route("/users")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> GetAsync()
         {
             // If the caller is not an admin, revert to the FindAsync method.
@@ -44,6 +45,9 @@ namespace Etimo.Id.Api.Users
         }
 
         [HttpPost]
+        [Route("/users")]
+        [ValidateModel]
+        [Authorize(Policy = Policies.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
             await CheckPresenceOfSuperAdminKeyAsync();
@@ -53,9 +57,9 @@ namespace Etimo.Id.Api.Users
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", UserResponseDto.FromUser(user));
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpGet]
-        [Route("{userId:guid}")]
+        [Route("/users/{userId:guid}")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
         {
             // If the caller is not an admin, only allow the user to fetch itself.
@@ -73,9 +77,9 @@ namespace Etimo.Id.Api.Users
             return Ok(UserResponseDto.FromUser(user));
         }
 
-        [Authorize(Policy = Policies.Admin)]
         [HttpDelete]
-        [Route("{userId:guid}")]
+        [Route("/users/{userId:guid}")]
+        [Authorize(Policy = Policies.Admin)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
         {
             await _usersService.DeleteAsync(userId);

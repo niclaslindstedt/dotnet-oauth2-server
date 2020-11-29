@@ -1,10 +1,10 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Etimo.Id.Entities.Abstractions;
-using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -25,7 +25,7 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
-            var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
+            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             var jwtRequest = new JwtTokenRequest
             {
@@ -40,7 +40,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(IClientCredentialsRequest request)
         {
-            if (request.ClientId == null || request.ClientSecret == null)
+            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }

@@ -16,15 +16,9 @@ namespace Etimo.Id.Entities
             Scope = scope;
         }
 
-        public AuthorizationRequest(string responseType, Guid clientId, Guid codeId, string state, string scope = null, string redirectUri = null)
-            : this(responseType, clientId, state, scope, redirectUri)
-        {
-            AuthorizationCodeId = codeId;
-        }
-
         public string ResponseType { get; set; }
-        public Guid? ClientId { get; set; }
-        public Guid? AuthorizationCodeId { get; set; }
+        public Guid ClientId { get; set; }
+        public string Code { get; set; }
         public string RedirectUri { get; set; }
         public string Scope { get; set; }
         public string State { get; set; }

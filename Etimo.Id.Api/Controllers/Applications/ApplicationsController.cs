@@ -1,4 +1,5 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
@@ -12,7 +13,6 @@ using System.Threading.Tasks;
 namespace Etimo.Id.Api.Applications
 {
     [ApiController]
-    [Route("applications")]
     public class ApplicationsController : Controller
     {
         private readonly SiteSettings _siteSettings;
@@ -26,8 +26,9 @@ namespace Etimo.Id.Api.Applications
             _applicationsService = applicationsService;
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpGet]
+        [Route("/applications")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> GetAsync()
         {
             // If the user calling is not an admin, revert to the GetByUserId method.
@@ -42,9 +43,9 @@ namespace Etimo.Id.Api.Applications
             return Ok(allApps.Select(ApplicationResponseDto.FromApplication));
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpGet]
-        [Route("{applicationId:int}")]
+        [Route("/applications/{applicationId:int}")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> FindAsync([FromRoute] int applicationId)
         {
             Application app;
@@ -60,8 +61,10 @@ namespace Etimo.Id.Api.Applications
             return Ok(ApplicationResponseDto.FromApplication(app));
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpPost]
+        [Route("/applications/")]
+        [ValidateModel]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
             var app = await _applicationsService.AddAsync(dto.ToApplication(), this.GetUserId());
@@ -70,9 +73,9 @@ namespace Etimo.Id.Api.Applications
             return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpPost]
-        [Route("{applicationId:int}/secret")]
+        [Route("/applications/{applicationId:int}/secret")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> GenerateSecretAsync(int applicationId)
         {
             var application = await _applicationsService.GenerateSecretAsync(applicationId, this.GetUserId());
@@ -80,20 +83,21 @@ namespace Etimo.Id.Api.Applications
             return Ok(ApplicationSecretResponseDto.FromApplication(application));
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpPut]
-        [Route("{applicationId:int}")]
+        [Route("/applications/{applicationId:int}")]
+        [ValidateModel]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
             var app = await _applicationsService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
             var created = ApplicationSecretResponseDto.FromApplication(app);
 
-            return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
+            return Ok(created);
         }
 
-        [Authorize(Policy = Policies.User)]
         [HttpDelete]
-        [Route("{applicationId:int}")]
+        [Route("/applications/{applicationId:int}")]
+        [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> DeleteAsync([FromRoute] int applicationId)
         {
             if (this.UserHasRole(Roles.Admin))

@@ -1,5 +1,5 @@
-using System;
 using Etimo.Id.Service.Exceptions;
+using System;
 
 namespace Etimo.Id.Api.Errors
 {

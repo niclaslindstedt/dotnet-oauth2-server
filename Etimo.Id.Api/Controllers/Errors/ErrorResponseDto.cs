@@ -1,41 +1,35 @@
+// ReSharper disable InconsistentNaming
+
 using Etimo.Id.Service.Exceptions;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Errors
 {
     public class ErrorResponseDto
     {
-        [JsonPropertyName("error")]
-        public string Error { get; set; }
-
-        [JsonPropertyName("error_description")]
-        public string ErrorDescription { get; set; }
-
-        [JsonPropertyName("error_uri")]
-        public Uri ErrorUri { get; set; }
-
-        [JsonPropertyName("stack_trace")]
-        public string StackTrace { get; set; }
+        public string error { get; set; }
+        public string error_description { get; set; }
+        public Uri error_uri { get; set; }
+        public string stack_trace { get; set; }
 
         public ErrorResponseDto(Exception exception, bool addStackTrace = false)
         {
-            Error = exception.GetType().Name;
+            error = exception.GetType().Name;
             Initialize(exception, addStackTrace);
         }
 
         public ErrorResponseDto(ErrorCodeException exception, bool addStackTrace = false)
         {
-            Error = exception.ErrorCode;
+            error = exception.ErrorCode;
             Initialize(exception, addStackTrace);
         }
 
         private void Initialize(Exception exception, bool addStackTrace)
         {
             _statusCode = exception.GetStatusCode();
-            ErrorDescription = exception.Message;
-            ErrorUri = _statusCode.GetStatusCodeUri();
-            StackTrace = addStackTrace ? exception.ToString() : null;
+            error_description = exception.Message;
+            error_uri = _statusCode.GetStatusCodeUri();
+            stack_trace = addStackTrace ? exception.ToString() : null;
         }
 
         private int _statusCode;

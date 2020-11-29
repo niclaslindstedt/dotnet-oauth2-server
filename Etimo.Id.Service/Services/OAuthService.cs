@@ -50,83 +50,37 @@ namespace Etimo.Id.Service
             };
         }
 
-        public async Task<AuthorizationResponse> StartAuthorizationCodeFlowAsync(AuthorizationRequest request)
+        public async Task<string> AuthorizeAsync(AuthorizationRequest request)
         {
-            if (request.ResponseType != "code")
+            var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
+            if (application == null)
             {
-                if (request.ResponseType == "token")
-                {
-                    throw new UnsupportedResponseTypeException("The implicit grant type should no longer be used. Read more: https://tools.ietf.org/html/draft-ietf-oauth-security-topics-16#section-2.1.2");
-                }
-
-                throw new UnsupportedResponseTypeException("Invalid response type");
+                throw new InvalidClientException("Invalid client.");
             }
 
-            if (request.ClientId == null)
-            {
-                throw new InvalidClientException("Client ID is missing from request.");
-            }
-
-            var clientId = request.ClientId.Value;
-            var application = await _applicationsService.FindByClientIdAsync(clientId);
-
+            // Make sure the provided redirect uri is identical to the registered redirect uri.
             var redirectUri = request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)
             {
-                throw new InvalidClientException("The provided redirect URI does not match the one on record.");
-            }
-
-            var code = await GenerateAuthorizationCodeAsync(clientId, redirectUri);
-
-            return new AuthorizationResponse
-            {
-                ResponseType = "code",
-                ClientId = clientId,
-                State = request.State,
-                RedirectUri = code.RedirectUri,
-                AuthorizationCodeId = code.AuthorizationCodeId
-            };
-        }
-
-        public async Task<string> FinishAuthorizationCodeAsync(AuthorizationRequest request)
-        {
-            if (request.ClientId == null)
-            {
-                throw new InvalidClientException("Client ID is missing from request.");
-            }
-
-            if (request.AuthorizationCodeId == null)
-            {
-                throw new InvalidGrantException("Invalid authorization code ID.");
-            }
-
-            if (request.Username == null || request.Password == null)
-            {
-                throw new InvalidGrantException("Invalid user credentials.");
-            }
-
-            var code = await _authorizationCodeRepository.FindAsync(request.AuthorizationCodeId.Value);
-            if (code == null || code.IsExpired)
-            {
-                throw new InvalidGrantException("Invalid authorization code.");
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
 
             var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
+            var code = await GenerateAuthorizationCodeAsync(user.UserId, request.ClientId, request.RedirectUri);
 
-            code.Authorized = true;
-            code.UserId = user.UserId;
-            await _authorizationCodeRepository.SaveAsync();
+            var delimiter = code.RedirectUri.Contains("?") ? "&" : "?";
 
-            return $"{code.RedirectUri}?code={code.Code}&state={request.State}";
+            return $"{code.RedirectUri}{delimiter}code={code.Code}&state={request.State}";
         }
 
-        private async Task<AuthorizationCode> GenerateAuthorizationCodeAsync(Guid clientId, string redirectUri)
+        private async Task<AuthorizationCode> GenerateAuthorizationCodeAsync(Guid userId, Guid clientId, string redirectUri)
         {
             var code = new AuthorizationCode
             {
                 Code = _passwordGenerator.Generate(32),
                 ExpirationDate = DateTime.UtcNow.AddMinutes(10),
                 ClientId = clientId,
+                UserId = userId,
                 RedirectUri = redirectUri
             };
             _authorizationCodeRepository.Add(code);

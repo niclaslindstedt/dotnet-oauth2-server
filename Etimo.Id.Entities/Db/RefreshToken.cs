@@ -4,7 +4,7 @@ namespace Etimo.Id.Entities
 {
     public class RefreshToken
     {
-        public Guid RefreshTokenId { get; set; } = Guid.NewGuid();
+        public string RefreshTokenId { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string Scope { get; set; }
         public string RedirectUri { get; set; }

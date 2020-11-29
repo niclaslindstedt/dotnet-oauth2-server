@@ -1,7 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
@@ -15,14 +13,9 @@ namespace Etimo.Id.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public ValueTask<AuthorizationCode> FindAsync(Guid codeId)
+        public ValueTask<AuthorizationCode> FindAsync(string code)
         {
-            return _dbContext.AuthorizationCodes.FindAsync(codeId);
-        }
-
-        public Task<AuthorizationCode> FindByCodeAsync(string code)
-        {
-            return _dbContext.AuthorizationCodes.FirstOrDefaultAsync(ac => ac.Code == code);
+            return _dbContext.AuthorizationCodes.FindAsync(code);
         }
 
         public void Add(AuthorizationCode code)

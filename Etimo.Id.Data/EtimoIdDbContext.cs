@@ -26,8 +26,7 @@ namespace Etimo.Id.Data
             application.HasOne(a => a.User).WithMany(u => u.Applications).HasForeignKey(a => a.UserId);
 
             var authorizationCode = modelBuilder.Entity<AuthorizationCode>();
-            authorizationCode.HasKey(a => a.AuthorizationCodeId);
-            authorizationCode.HasIndex(a => a.Code);
+            authorizationCode.HasKey(a => a.Code);
 
             var refreshToken = modelBuilder.Entity<RefreshToken>();
             refreshToken.HasKey(rt => rt.RefreshTokenId);

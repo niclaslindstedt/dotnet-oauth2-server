@@ -29,7 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
             ValidateRequest(request);
 
             var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
-            var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
+            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             var jwtRequest = new JwtTokenRequest
             {
@@ -42,7 +42,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(IResourceOwnerCredentialsRequest request)
         {
-            if (request.ClientId == null || request.ClientSecret == null)
+            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }

@@ -12,29 +12,31 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IApplicationsService _applicationsService;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
+        private readonly IPasswordGenerator _passwordGenerator;
 
         public RefreshTokenGenerator(
             IApplicationsService applicationsService,
             IRefreshTokensRepository refreshTokensRepository,
-            IJwtTokenFactory jwtTokenFactory)
+            IJwtTokenFactory jwtTokenFactory,
+            IPasswordGenerator passwordGenerator)
         {
             _applicationsService = applicationsService;
             _refreshTokensRepository = refreshTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
+            _passwordGenerator = passwordGenerator;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
         {
             ValidateRequest(request);
 
-            var clientId = new Guid(request.ClientId);
-            var refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken.Value);
-            if (refreshToken == null || refreshToken.IsExpired || refreshToken.Application.ClientId != clientId)
+            var refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken);
+            if (refreshToken == null || refreshToken.IsExpired || refreshToken.Application.ClientId != request.ClientId)
             {
                 throw new InvalidGrantException("Refresh token could not be found.");
             }
 
-            await _applicationsService.AuthenticateAsync(clientId, request.ClientSecret);
+            await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             await RecycleRefreshTokensAsync(refreshToken);
             refreshToken = GenerateRefreshToken(refreshToken.ApplicationId, refreshToken.RedirectUri, refreshToken.UserId);
@@ -57,6 +59,7 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             var refreshToken = new RefreshToken
             {
+                RefreshTokenId = _passwordGenerator.Generate(32),
                 ApplicationId = applicationId,
                 ExpirationDate = DateTime.UtcNow.AddDays(30),
                 RedirectUri = redirectUri,
@@ -80,7 +83,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(TokenRequest request)
         {
-            if (request.ClientId == null || request.ClientSecret == null)
+            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }

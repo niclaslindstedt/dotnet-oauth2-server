@@ -34,17 +34,17 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
-            var code = await _authorizationCodeRepository.FindByCodeAsync(request.Code);
-            if (code == null || code.IsExpired || !code.Authorized || code.UserId == null)
+            var code = await _authorizationCodeRepository.FindAsync(request.Code);
+            if (code?.UserId == null || code.IsExpired || code.Used)
             {
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
-            var application = await _applicationsService.AuthenticateAsync(new Guid(request.ClientId), request.ClientSecret);
+            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             var redirectUri = request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)
             {
-                throw new InvalidClientException("The provided redirect URI does not match the one on record.");
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
 
             var refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
@@ -57,9 +57,9 @@ namespace Etimo.Id.Service.TokenGenerators
             };
 
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-            jwtToken.RefreshToken = refreshToken.RefreshTokenId.ToString();
+            jwtToken.RefreshToken = refreshToken.RefreshTokenId;
 
-            _authorizationCodeRepository.Remove(code);
+            code.Used = true;
 
             await _authorizationCodeRepository.SaveAsync();
             await _refreshTokensRepository.SaveAsync();
@@ -69,7 +69,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(IAuthorizationCodeRequest request)
         {
-            if (request.ClientId == null || request.ClientSecret == null)
+            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }

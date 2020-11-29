@@ -1,8 +1,10 @@
+using System;
+
 namespace Etimo.Id.Entities.Abstractions
 {
     public interface IClientCredentialsRequest
     {
-        string ClientId { get; }
+        Guid ClientId { get; }
         string ClientSecret { get; }
     }
 }

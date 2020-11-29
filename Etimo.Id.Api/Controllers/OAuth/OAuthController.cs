@@ -1,14 +1,15 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Api.OAuth
 {
     [ApiController]
-    [Route("oauth2")]
     public class OAuthController : Controller
     {
         private readonly IOAuthService _oauthService;
@@ -18,49 +19,55 @@ namespace Etimo.Id.Api.OAuth
             _oauthService = oauthService;
         }
 
-        [Authorize]
         [HttpGet]
-        [Route("validate")]
+        [Route("/oauth2/validate")]
+        [Authorize]
         public IActionResult Validate()
         {
-            return Ok();
+            return NoContent();
         }
 
         [HttpGet]
-        [Route("authorize")]
-        public async Task<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCodeQuery query)
+        [Route("/oauth2/authorize")]
+        [ValidateModel]
+        public IActionResult AuthenticateResourceOwner([FromQuery] AuthorizationRequestQuery query)
         {
-            var request = query.ToAuthorizeRequest();
-            var response = await _oauthService.StartAuthorizationCodeFlowAsync(request);
+            var sb = new StringBuilder();
+            sb.Append($"response_type={query.response_type}&");
+            sb.Append($"client_id={query.client_id}&");
+            if (query.redirect_uri != null) { sb.Append($"redirect_uri={query.redirect_uri}&"); }
+            if (query.scope != null) { sb.Append($"scope={query.scope}&"); }
+            if (query.state != null) { sb.Append($"state={query.state}&"); }
 
-            return View("Authorize", $"/oauth2/authorize?{response.ToQueryParameters()}");
+            return View("Authorize", $"/oauth2/authorize?{sb.ToString().Trim('&')}");
         }
 
         [HttpPost]
-        [Route("authorize")]
-        public async Task<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCodeQuery query, [FromForm] AuthorizationCodeForm form)
+        [Route("/oauth2/authorize")]
+        [ValidateModel]
+        public async Task<IActionResult> AuthorizeAsync([FromQuery] AuthorizationCodeRequestQuery query, [FromForm] AuthorizationCodeRequestForm form)
         {
             if (Request.IsBasicAuthentication())
             {
-                (form.username, form.password) = Request.GetBasicAuthenticationCredentials();
+                (form.username, form.password) = Request.GetCredentialsFromAuthorizationHeader();
             }
 
             var request = query.ToAuthorizeRequest(form.username, form.password);
-            var redirectUri = await _oauthService.FinishAuthorizationCodeAsync(request);
+            var redirectUri = await _oauthService.AuthorizeAsync(request);
 
             return Redirect(redirectUri);
         }
 
         [HttpPost]
-        [Route("token")]
+        [Route("/oauth2/token")]
+        [ValidateModel]
         public async Task<AccessTokenResponseDto> TokenAsync([FromForm] AccessTokenRequestForm form)
         {
-            if (Request.IsBasicAuthentication())
-            {
-                (form.client_id, form.client_secret) = Request.GetBasicAuthenticationCredentials();
-            }
-
             var request = form.ToTokenRequest();
+            var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
+            request.ClientId = new Guid(clientId);
+            request.ClientSecret = clientSecret;
+
             var token = await _oauthService.GenerateTokenAsync(request);
 
             return AccessTokenResponseDto.FromJwtToken(token);

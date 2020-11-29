@@ -1,34 +1,26 @@
+// ReSharper disable InconsistentNaming
+
 using Etimo.Id.Entities;
-using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.OAuth
 {
     public class AccessTokenResponseDto
     {
-        [JsonPropertyName("access_token")]
-        public string JwtToken { get; set; }
-
-        [JsonPropertyName("token_type")]
-        public string TokenType { get; set; }
-
-        [JsonPropertyName("expires_in")]
-        public int ExpiresIn { get; set; }
-
-        [JsonPropertyName("refresh_token")]
-        public string RefreshToken { get; set; }
-
-        [JsonPropertyName("scope")]
-        public string Scope { get; set; }
+        public string access_token { get; set; }
+        public string token_type { get; set; }
+        public int expires_in { get; set; }
+        public string refresh_token { get; set; }
+        public string scope { get; set; }
 
         public static AccessTokenResponseDto FromJwtToken(JwtToken token)
         {
             return new AccessTokenResponseDto
             {
-                JwtToken = token.AccessToken,
-                TokenType = token.TokenType,
-                ExpiresIn = token.ExpiresIn,
-                RefreshToken = token.RefreshToken,
-                Scope = token.Scopes != null ? string.Join(" ", token.Scopes) : null,
+                access_token = token.AccessToken,
+                token_type = token.TokenType,
+                expires_in = token.ExpiresIn,
+                refresh_token = token.RefreshToken,
+                scope = token.Scopes != null ? string.Join(" ", token.Scopes) : null,
             };
         }
     }

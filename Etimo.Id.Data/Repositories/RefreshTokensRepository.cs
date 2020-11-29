@@ -17,9 +17,9 @@ namespace Etimo.Id.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public ValueTask<RefreshToken> FindAsync(Guid refreshTokenId)
+        public ValueTask<RefreshToken> FindAsync(string refreshToken)
         {
-            return _dbContext.RefreshTokens.FindAsync(refreshTokenId);
+            return _dbContext.RefreshTokens.FindAsync(refreshToken);
         }
 
         public void Add(RefreshToken refreshToken)
@@ -39,7 +39,7 @@ namespace Etimo.Id.Data.Repositories
 
         public void RemoveRange(List<RefreshToken> refreshTokens)
         {
-            _dbContext.RefreshTokens.RemoveRange(refreshTokens);
+           _dbContext.RefreshTokens.RemoveRange(refreshTokens);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Etimo.Id.Api.Errors
             _environment = environment;
         }
 
-        [Route("error")]
+        [Route("/error")]
         public ErrorResponseDto Error()
         {
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();

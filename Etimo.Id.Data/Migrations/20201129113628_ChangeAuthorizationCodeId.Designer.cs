@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201129113628_ChangeAuthorizationCodeId")]
+    partial class ChangeAuthorizationCodeId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,11 +67,19 @@ namespace Etimo.Id.Data.Migrations
 
             modelBuilder.Entity("Etimo.Id.Entities.AuthorizationCode", b =>
                 {
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
+                    b.Property<int>("AuthorizationCodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<bool>("Authorized")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("timestamp without time zone");
@@ -80,21 +90,21 @@ namespace Etimo.Id.Data.Migrations
                     b.Property<string>("RedirectUri")
                         .HasColumnType("text");
 
-                    b.Property<bool>("Used")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Code");
+                    b.HasKey("AuthorizationCodeId");
+
+                    b.HasIndex("Code");
 
                     b.ToTable("AuthorizationCodes");
                 });
 
             modelBuilder.Entity("Etimo.Id.Entities.RefreshToken", b =>
                 {
-                    b.Property<string>("RefreshTokenId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("RefreshTokenId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ApplicationId")
                         .HasColumnType("integer");

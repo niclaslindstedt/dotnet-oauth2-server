@@ -7,7 +7,7 @@ namespace Etimo.Id.Abstractions
 {
     public interface IRefreshTokensRepository
     {
-        ValueTask<RefreshToken> FindAsync(Guid refreshTokenId);
+        ValueTask<RefreshToken> FindAsync(string refreshToken);
         void Add(RefreshToken refreshToken);
         Task<int> SaveAsync();
         Task<List<RefreshToken>> GetByUserIdAsync(Guid userId);

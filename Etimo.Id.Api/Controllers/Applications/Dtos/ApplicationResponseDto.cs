@@ -1,51 +1,35 @@
+// ReSharper disable InconsistentNaming
+
 using Etimo.Id.Entities;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.Applications
 {
     public class ApplicationResponseDto
     {
-        [JsonPropertyName("application_id")]
-        public int ApplicationId { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
-
-        [JsonPropertyName("homepage_uri")]
-        public string HomepageUri { get; set; }
-
-        [JsonPropertyName("redirect_uri")]
-        public string RedirectUri { get; set; }
-
-        [JsonPropertyName("client_id")]
-        public Guid ClientId { get; set; }
-
-        [JsonPropertyName("user_id")]
-        public Guid UserId { get; set; }
-
-        [JsonPropertyName("created_date")]
-        public DateTime CreatedDateTime { get; set; }
-
-        [JsonPropertyName("modified_date")]
-        public DateTime ModifiedDateTime { get; set; }
+        public int application_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public string homepage_uri { get; set; }
+        public string redirect_uri { get; set; }
+        public Guid client_id { get; set; }
+        public Guid user_id { get; set; }
+        public DateTime created_date { get; set; }
+        public DateTime modified_date { get; set; }
 
         public static ApplicationResponseDto FromApplication(Application application)
         {
             return new ApplicationResponseDto
             {
-                ApplicationId = application.ApplicationId,
-                Name = application.Name,
-                Description = application.Description,
-                HomepageUri = application.HomepageUri,
-                RedirectUri = application.RedirectUri,
-                ClientId = application.ClientId,
-                UserId = application.UserId,
-                CreatedDateTime = application.CreatedDateTime,
-                ModifiedDateTime = application.ModifiedDateTime
+                application_id = application.ApplicationId,
+                name = application.Name,
+                description = application.Description,
+                homepage_uri = application.HomepageUri,
+                redirect_uri = application.RedirectUri,
+                client_id = application.ClientId,
+                user_id = application.UserId,
+                created_date = application.CreatedDateTime,
+                modified_date = application.ModifiedDateTime
             };
         }
     }

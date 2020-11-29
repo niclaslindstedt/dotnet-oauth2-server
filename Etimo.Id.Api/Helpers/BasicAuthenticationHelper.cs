@@ -27,11 +27,11 @@ namespace Etimo.Id.Api.Helpers
         }
 
         /// <summary>
-        ///
+        /// Returns basic authentication credentials from Authorization header.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public static Tuple<string, string> GetBasicAuthenticationCredentials(this HttpRequest request)
+        public static Tuple<string, string> GetCredentialsFromAuthorizationHeader(this HttpRequest request)
         {
             try
             {
