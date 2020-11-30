@@ -1,7 +1,6 @@
 // ReSharper disable InconsistentNaming
 
 using Etimo.Id.Api.Attributes;
-using Etimo.Id.Api.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using System;
@@ -16,24 +15,27 @@ namespace Etimo.Id.Api.OAuth
         [ValidValues("password", "client_credentials", "authorization_code", "refresh_token")]
         public string grant_type { get; set; }
 
-        public Guid client_id { get; set; }
+        public Guid? client_id { get; set; }
 
         [JsonIgnore]
         public string client_secret { get; set; }
 
-        [Regex("^https://", "The redirect_uri must use TLS encryption (https). Read more: https://tools.ietf.org/html/rfc6749#section-3.1.2.1")]
-        [Regex("^[^#]+$", "The redirect_uri cannot use fragments. Read more: https://tools.ietf.org/html/rfc6749#section-3.1.2")]
+        [ValidUri]
         public string redirect_uri { get; set; }
 
+        [VsChar]
         public string refresh_token { get; set; }
 
+        [Unicode]
         public string username { get; set; }
 
+        [Unicode]
         public string password { get; set; }
 
+        [VsChar]
         public string code { get; set; }
 
-        [Regex(CharacterSetPatterns.NQCHAR, "The scope field can only contain NQCHAR characters (%x21 / %x23-5B / %x5D-7E).")]
+        [NqChar]
         public string scope { get; set; }
 
         public TokenRequest ToTokenRequest()
@@ -47,7 +49,7 @@ namespace Etimo.Id.Api.OAuth
                     return new TokenRequest(grant_type, scope);
 
                 case "authorization_code":
-                    return new TokenRequest(grant_type, code, redirect_uri, client_id);
+                    return new TokenRequest(grant_type, code, redirect_uri, client_id ?? Guid.Empty);
 
                 case "refresh_token":
                     return new TokenRequest(grant_type, refresh_token, scope);

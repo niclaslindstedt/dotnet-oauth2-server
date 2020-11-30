@@ -10,18 +10,19 @@ namespace Etimo.Id.Api.Applications
     {
         [Required]
         [MinLength(2), MaxLength(32)]
+        [NqsChar]
         public string name { get; set; }
 
         [MaxLength(128)]
+        [NqsChar]
         public string description { get; set; }
 
         [Required]
-        [Regex("^https?://", "The homepage_uri must have a specified protocol (http or https).")]
+        [ValidUri(allowFragment: true)]
         public string homepage_uri { get; set; }
 
         [Required]
-        [Regex("^https://", "The redirect_uri must use TLS encryption (https). Read more: https://tools.ietf.org/html/rfc6749#section-3.1.2.1")]
-        [Regex("^[^#]+$", "The redirect_uri cannot use fragments. Read more: https://tools.ietf.org/html/rfc6749#section-3.1.2")]
+        [ValidUri]
         public string redirect_uri { get; set; }
 
         public Application ToApplication(int? applicationId = null)

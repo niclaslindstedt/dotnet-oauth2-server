@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Etimo.Id.Api.Constants;
+using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -68,6 +71,11 @@ namespace Etimo.Id.Api.OAuth
         {
             var request = form.ToTokenRequest();
             var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
+            if (!Regex.IsMatch(clientSecret, CharacterSetPatterns.UNICODECHARNOCRLF))
+            {
+                throw new UnauthorizedException("Invalid client_secret.");
+            }
+
             request.ClientId = new Guid(clientId);
             request.ClientSecret = clientSecret;
 
