@@ -40,6 +40,11 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
+            if (code.ClientId != request.ClientId)
+            {
+                throw new InvalidGrantException("Invalid client id.");
+            }
+
             var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             var redirectUri = request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)

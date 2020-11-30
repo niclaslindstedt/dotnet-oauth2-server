@@ -55,7 +55,7 @@ namespace Etimo.Id.Service
             var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
             if (application == null)
             {
-                throw new InvalidClientException("Invalid client.");
+                throw new InvalidClientException("Invalid client id.");
             }
 
             // Make sure the provided redirect uri is identical to the registered redirect uri.
