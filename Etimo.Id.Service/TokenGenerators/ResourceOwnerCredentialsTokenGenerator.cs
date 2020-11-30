@@ -33,7 +33,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             var jwtRequest = new JwtTokenRequest
             {
-                Audience = new List<string> { application.HomepageUri },
+                Audience = new List<string> { application.ClientId.ToString() },
                 Subject = user.UserId.ToString()
             };
 

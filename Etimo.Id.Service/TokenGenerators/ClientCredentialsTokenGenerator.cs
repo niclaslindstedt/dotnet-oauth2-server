@@ -29,8 +29,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
             var jwtRequest = new JwtTokenRequest
             {
-                Audience = new List<string> { application.HomepageUri },
-                Subject = application.ClientId.ToString()
+                Audience = new List<string> { application.ClientId.ToString() },
+                Subject = application.UserId.ToString()
             };
 
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);

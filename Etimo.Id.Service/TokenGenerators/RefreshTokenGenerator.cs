@@ -43,7 +43,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             var jwtRequest = new JwtTokenRequest
             {
-                Audience = new List<string> { refreshToken.Application.HomepageUri, refreshToken.RedirectUri },
+                Audience = new List<string> { refreshToken.Application.ClientId.ToString() },
                 Subject = refreshToken.UserId.ToString()
             };
 
