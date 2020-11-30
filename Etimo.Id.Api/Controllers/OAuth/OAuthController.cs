@@ -39,6 +39,9 @@ namespace Etimo.Id.Api.OAuth
             if (query.scope != null) { sb.Append($"scope={query.scope}&"); }
             if (query.state != null) { sb.Append($"state={query.state}&"); }
 
+            // Prevent clickjacking. Read more: https://tools.ietf.org/html/rfc6749#section-10.13
+            Response.Headers.Add("X-Frame-Options", "deny");
+
             return View("Authorize", $"/oauth2/authorize?{sb.ToString().Trim('&')}");
         }
 
