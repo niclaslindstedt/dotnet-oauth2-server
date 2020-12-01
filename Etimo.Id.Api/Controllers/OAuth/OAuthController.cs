@@ -1,14 +1,14 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
+using Etimo.Id.Api.Constants;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Etimo.Id.Api.Constants;
-using Etimo.Id.Service.Exceptions;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -42,8 +42,7 @@ namespace Etimo.Id.Api.OAuth
             if (query.scope != null) { sb.Append($"scope={query.scope}&"); }
             if (query.state != null) { sb.Append($"state={query.state}&"); }
 
-            // Prevent clickjacking. Read more: https://tools.ietf.org/html/rfc6749#section-10.13
-            Response.Headers.Add("X-Frame-Options", "deny");
+            Response.PreventClickjacking();
 
             return View("Authorize", $"/oauth2/authorize?{sb.ToString().Trim('&')}");
         }
