@@ -67,7 +67,8 @@ namespace Etimo.Id.Api.OAuth
         [HttpPost]
         [Route("/oauth2/token")]
         [ValidateModel]
-        public async Task<AccessTokenResponseDto> TokenAsync([FromForm] AccessTokenRequestForm form)
+        [NoCache]
+        public async Task<IActionResult> TokenAsync([FromForm] AccessTokenRequestForm form)
         {
             var request = form.ToTokenRequest();
             var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
@@ -81,7 +82,7 @@ namespace Etimo.Id.Api.OAuth
 
             var token = await _oauthService.GenerateTokenAsync(request);
 
-            return AccessTokenResponseDto.FromJwtToken(token);
+            return Ok(AccessTokenResponseDto.FromJwtToken(token));
         }
     }
 }

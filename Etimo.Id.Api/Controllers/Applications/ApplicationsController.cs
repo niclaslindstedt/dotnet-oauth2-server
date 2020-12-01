@@ -76,6 +76,7 @@ namespace Etimo.Id.Api.Applications
         [HttpPost]
         [Route("/applications/{applicationId:int}/secret")]
         [Authorize(Policy = Policies.User)]
+        [NoCache]
         public async Task<IActionResult> GenerateSecretAsync(int applicationId)
         {
             var application = await _applicationsService.GenerateSecretAsync(applicationId, this.GetUserId());
