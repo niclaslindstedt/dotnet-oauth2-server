@@ -56,6 +56,13 @@ namespace Etimo.Id.Api
             }
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+
         private static SslProtocols GetProtocols(SiteSettings settings)
         {
             var tlsVersions = SslProtocols.None;

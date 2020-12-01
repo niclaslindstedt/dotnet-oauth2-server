@@ -18,6 +18,10 @@ namespace Etimo.Id.Api.Applications
         public string description { get; set; }
 
         [Required]
+        [ValidValues("public", "confidential")]
+        public string type { get; set; }
+
+        [Required]
         [ValidUri(allowFragment: true)]
         public string homepage_uri { get; set; }
 
@@ -32,6 +36,7 @@ namespace Etimo.Id.Api.Applications
                 ApplicationId = applicationId ?? default,
                 Name = name,
                 Description = description,
+                Type = type,
                 HomepageUri = homepage_uri,
                 RedirectUri = redirect_uri
             };

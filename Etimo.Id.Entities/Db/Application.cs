@@ -8,6 +8,7 @@ namespace Etimo.Id.Entities
         public int ApplicationId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Type { get; set; }
         public Guid ClientId { get; set; } = Guid.NewGuid();
         public string ClientSecret { get; set; }
         public string HomepageUri { get; set; }
@@ -28,6 +29,7 @@ namespace Etimo.Id.Entities
         {
             Name = otherApplication.Name;
             Description = otherApplication.Description;
+            Type = otherApplication.Type;
             HomepageUri = otherApplication.HomepageUri;
             RedirectUri = otherApplication.RedirectUri;
         }
