@@ -11,17 +11,20 @@ namespace Etimo.Id.Service.TokenGenerators
     {
         private readonly IApplicationsService _applicationsService;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
+        private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
         private readonly IPasswordGenerator _passwordGenerator;
 
         public RefreshTokenGenerator(
             IApplicationsService applicationsService,
             IRefreshTokensRepository refreshTokensRepository,
+            IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory,
             IPasswordGenerator passwordGenerator)
         {
             _applicationsService = applicationsService;
             _refreshTokensRepository = refreshTokensRepository;
+            _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
             _passwordGenerator = passwordGenerator;
         }
@@ -36,6 +39,18 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Refresh token could not be found.");
             }
 
+            // If someone tries to use the same refresh token twice, disable the access token.
+            if (refreshToken.Used)
+            {
+                if (refreshToken.AccessToken != null)
+                {
+                    refreshToken.AccessToken.Disabled = true;
+                    await _accessTokensRepository.SaveAsync();
+                }
+
+                throw new InvalidGrantException("Refresh token could not be found.");
+            }
+
             await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             await RecycleRefreshTokensAsync(refreshToken);
@@ -47,12 +62,20 @@ namespace Etimo.Id.Service.TokenGenerators
                 Subject = refreshToken.UserId.ToString()
             };
 
-            var response = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-            response.RefreshToken = refreshToken.RefreshTokenId.ToString();
+            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            jwtToken.RefreshToken = refreshToken.RefreshTokenId;
+            refreshToken.AccessTokenId = jwtToken.TokenId;
+
+            var accessToken = new AccessToken
+            {
+                AccessTokenId = jwtToken.TokenId
+            };
+            _accessTokensRepository.Add(accessToken);
 
             await _refreshTokensRepository.SaveAsync();
+            await _accessTokensRepository.SaveAsync();
 
-            return response;
+            return jwtToken;
         }
 
         public RefreshToken GenerateRefreshToken(int applicationId, string redirectUri, Guid userId)

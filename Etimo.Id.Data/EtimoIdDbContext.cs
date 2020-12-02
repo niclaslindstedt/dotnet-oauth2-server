@@ -9,6 +9,7 @@ namespace Etimo.Id.Data
         {
         }
 
+        public DbSet<AccessToken> AccessTokens { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<AuthorizationCode> AuthorizationCodes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
@@ -25,11 +26,16 @@ namespace Etimo.Id.Data
             application.HasIndex(a => a.ClientId).IsUnique();
             application.HasOne(a => a.User).WithMany(u => u.Applications).HasForeignKey(a => a.UserId);
 
+            var accessToken = modelBuilder.Entity<AccessToken>();
+            accessToken.HasKey(at => at.AccessTokenId);
+
             var authorizationCode = modelBuilder.Entity<AuthorizationCode>();
-            authorizationCode.HasKey(a => a.Code);
+            authorizationCode.HasKey(ac => ac.Code);
+            authorizationCode.HasOne(ac => ac.AccessToken);
 
             var refreshToken = modelBuilder.Entity<RefreshToken>();
             refreshToken.HasKey(rt => rt.RefreshTokenId);
+            refreshToken.HasOne(u => u.AccessToken);
             refreshToken.HasOne(u => u.User).WithMany(u => u.RefreshTokens).HasForeignKey(rt => rt.UserId);
             refreshToken.HasOne(u => u.Application).WithMany(a => a.RefreshTokens).HasForeignKey(rt => rt.ApplicationId);
 

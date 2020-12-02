@@ -12,15 +12,18 @@ namespace Etimo.Id.Service.TokenGenerators
     {
         private readonly IUsersService _usersService;
         private readonly IApplicationsService _applicationsService;
+        private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public ResourceOwnerCredentialsTokenGenerator(
             IUsersService usersService,
             IApplicationsService applicationsService,
+            IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
             _usersService = usersService;
             _applicationsService = applicationsService;
+            _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
 
@@ -37,7 +40,16 @@ namespace Etimo.Id.Service.TokenGenerators
                 Subject = user.UserId.ToString()
             };
 
-            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+
+            var accessToken = new AccessToken
+            {
+                AccessTokenId = jwtToken.TokenId
+            };
+            _accessTokensRepository.Add(accessToken);
+            await _accessTokensRepository.SaveAsync();
+
+            return jwtToken;
         }
 
         private static void ValidateRequest(IResourceOwnerCredentialsRequest request)

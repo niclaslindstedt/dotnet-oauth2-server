@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Etimo.Id.Api.Helpers
 {
@@ -49,6 +50,20 @@ namespace Etimo.Id.Api.Helpers
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Returns the "jti" claim (AccessTokenId).
+        /// </summary>
+        public static Guid GetAccessTokenId(this Controller controller)
+        {
+            var jitClaim = controller.GetUserClaim(JwtRegisteredClaimNames.Jti);
+            if (jitClaim == null || !Guid.TryParse(jitClaim, out var accessTokenId))
+            {
+                throw new UnauthorizedAccessException("The access token lacks the 'jit' claim.");
+            }
+
+            return accessTokenId;
         }
     }
 }

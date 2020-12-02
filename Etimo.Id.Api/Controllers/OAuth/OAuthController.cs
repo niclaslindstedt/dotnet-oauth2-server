@@ -7,7 +7,6 @@ using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -26,8 +25,10 @@ namespace Etimo.Id.Api.OAuth
         [HttpGet]
         [Route("/oauth2/validate")]
         [Authorize]
-        public IActionResult Validate()
+        public async Task<IActionResult> Validate()
         {
+            await _oauthService.ValidateAsync(this.GetAccessTokenId());
+
             return NoContent();
         }
 

@@ -14,6 +14,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IApplicationsService _applicationsService;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
+        private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
@@ -21,12 +22,14 @@ namespace Etimo.Id.Service.TokenGenerators
             IApplicationsService applicationsService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
+            IAccessTokensRepository accessTokensRepository,
             IRefreshTokensRepository refreshTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
             _applicationsService = applicationsService;
             _refreshTokenGenerator = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
+            _accessTokensRepository = accessTokensRepository;
             _refreshTokensRepository = refreshTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
@@ -36,8 +39,20 @@ namespace Etimo.Id.Service.TokenGenerators
             ValidateRequest(request);
 
             var code = await _authorizationCodeRepository.FindAsync(request.Code);
-            if (code?.UserId == null || code.IsExpired || code.Used)
+            if (code?.UserId == null || code.IsExpired)
             {
+                throw new InvalidGrantException("Invalid authorization code.");
+            }
+
+            // If someone tries to use the same authorization code twice, disable the access token.
+            if (code.Used)
+            {
+                if (code.AccessToken != null)
+                {
+                    code.AccessToken.Disabled = true;
+                    await _accessTokensRepository.SaveAsync();
+                }
+
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
@@ -71,9 +86,17 @@ namespace Etimo.Id.Service.TokenGenerators
             jwtToken.RefreshToken = refreshToken.RefreshTokenId;
 
             code.Used = true;
+            code.AccessTokenId = jwtToken.TokenId;
+
+            var accessToken = new AccessToken
+            {
+                AccessTokenId = jwtToken.TokenId
+            };
+            _accessTokensRepository.Add(accessToken);
 
             await _authorizationCodeRepository.SaveAsync();
             await _refreshTokensRepository.SaveAsync();
+            await _accessTokensRepository.SaveAsync();
 
             return jwtToken;
         }

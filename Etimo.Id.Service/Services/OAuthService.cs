@@ -12,6 +12,7 @@ namespace Etimo.Id.Service
         private readonly IApplicationsService _applicationsService;
         private readonly IUsersService _usersService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
+        private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IAuthorizationCodeTokenGenerator _authorizationCodeTokenGenerator;
         private readonly IClientCredentialsTokenGenerator _clientCredentialsTokenGenerator;
         private readonly IResourceOwnerCredentialsTokenGenerator _resourceOwnerCredentialsTokenGenerator;
@@ -22,6 +23,7 @@ namespace Etimo.Id.Service
             IApplicationsService applicationsService,
             IUsersService usersService,
             IAuthorizationCodeRepository authorizationCodeRepository,
+            IAccessTokensRepository accessTokensRepository,
             IAuthorizationCodeTokenGenerator authorizationCodeTokenGenerator,
             IClientCredentialsTokenGenerator clientCredentialsTokenGenerator,
             IResourceOwnerCredentialsTokenGenerator resourceOwnerCredentialsTokenGenerator,
@@ -31,6 +33,7 @@ namespace Etimo.Id.Service
             _applicationsService = applicationsService;
             _usersService = usersService;
             _authorizationCodeRepository = authorizationCodeRepository;
+            _accessTokensRepository = accessTokensRepository;
             _authorizationCodeTokenGenerator = authorizationCodeTokenGenerator;
             _clientCredentialsTokenGenerator = clientCredentialsTokenGenerator;
             _resourceOwnerCredentialsTokenGenerator = resourceOwnerCredentialsTokenGenerator;
@@ -71,6 +74,15 @@ namespace Etimo.Id.Service
             var delimiter = code.RedirectUri.Contains("?") ? "&" : "?";
 
             return $"{code.RedirectUri}{delimiter}code={code.Code}&state={request.State}";
+        }
+
+        public async Task ValidateAsync(Guid accessTokenId)
+        {
+            var accessToken = await _accessTokensRepository.FindAsync(accessTokenId);
+            if (accessToken == null || accessToken.Disabled)
+            {
+                throw new UnauthorizedException("Access token has been disabled.");
+            }
         }
 
         private async Task<AuthorizationCode> GenerateAuthorizationCodeAsync(Guid userId, Guid clientId, string redirectUri)

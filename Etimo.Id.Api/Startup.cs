@@ -96,6 +96,7 @@ namespace Etimo.Id.Api
 
             services.AddTransient<IApplicationsService, ApplicationsService>();
             services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
+            services.AddTransient<IAccessTokensRepository, AccessTokensRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
             services.AddTransient<IOAuthService, OAuthService>();
             services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();

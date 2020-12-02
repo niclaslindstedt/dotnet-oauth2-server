@@ -27,6 +27,7 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             var audiences = CompileAudiences(request.Audience);
             var expiresAt = DateTime.UtcNow.AddMinutes(_settings.TokenExpirationMinutes);
+            var tokenId = Guid.NewGuid();
 
             var claims = new[]
             {
@@ -37,7 +38,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 new Claim(JwtRegisteredClaimNames.Exp, GetUnixTime(expiresAt).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
                 // https://tools.ietf.org/html/rfc7519#section-4.2
                 new Claim(ClaimTypes.Role, Roles.User),
                 new Claim(ClaimTypes.Role, Roles.Admin)
@@ -54,6 +55,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             return new JwtToken
             {
+                TokenId = tokenId,
                 AccessToken = tokenJson,
                 TokenType = TokenTypes.Bearer,
                 ExpiresIn = GetSecondsUntil(expiresAt)
