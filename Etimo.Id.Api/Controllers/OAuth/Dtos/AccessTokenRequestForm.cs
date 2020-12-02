@@ -5,7 +5,6 @@ using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -16,9 +15,6 @@ namespace Etimo.Id.Api.OAuth
         public string grant_type { get; set; }
 
         public Guid? client_id { get; set; }
-
-        [JsonIgnore]
-        public string client_secret { get; set; }
 
         [ValidUri]
         public string redirect_uri { get; set; }

@@ -76,7 +76,12 @@ namespace Etimo.Id.Api.OAuth
                 throw new UnauthorizedException("Invalid client_secret.");
             }
 
-            request.ClientId = new Guid(clientId);
+            if (!Guid.TryParse(clientId, out var clientGuid))
+            {
+                throw new UnauthorizedException("Invalid client_id format; should be of type guid.");
+            }
+
+            request.ClientId = clientGuid;
             request.ClientSecret = clientSecret;
 
             var token = await _oauthService.GenerateTokenAsync(request);
