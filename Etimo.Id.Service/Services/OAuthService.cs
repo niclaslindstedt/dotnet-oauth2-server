@@ -55,6 +55,11 @@ namespace Etimo.Id.Service
 
         public async Task<string> AuthorizeAsync(AuthorizationRequest request)
         {
+            if (request.ResponseType != "code")
+            {
+                throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
+            }
+
             var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
             if (application == null)
             {
