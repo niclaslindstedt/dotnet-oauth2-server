@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,12 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid client id.");
             }
 
-            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
+            if (application.Type == ClientTypes.Confidential)
+            {
+                await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            }
+
             var redirectUri = request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)
             {
