@@ -36,16 +36,11 @@ namespace Etimo.Id.Api.OAuth
         [ValidateModel]
         public IActionResult AuthenticateResourceOwner([FromQuery] AuthorizationRequestQuery query)
         {
-            var sb = new StringBuilder();
-            sb.Append($"response_type={query.response_type}&");
-            sb.Append($"client_id={query.client_id}&");
-            if (query.redirect_uri != null) { sb.Append($"redirect_uri={query.redirect_uri}&"); }
-            if (query.scope != null) { sb.Append($"scope={query.scope}&"); }
-            if (query.state != null) { sb.Append($"state={query.state}&"); }
-
             Response.PreventClickjacking();
 
-            return View("Authorize", $"/oauth2/authorize?{sb.ToString().Trim('&')}");
+            var queryParams = query.ToQueryParameters();
+
+            return View("Authorize", $"/oauth2/authorize?{queryParams}");
         }
 
         [HttpPost]

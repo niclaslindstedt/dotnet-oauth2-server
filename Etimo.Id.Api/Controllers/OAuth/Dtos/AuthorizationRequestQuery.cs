@@ -3,6 +3,7 @@
 using Etimo.Id.Api.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace Etimo.Id.Api.OAuth
 {
@@ -25,5 +26,17 @@ namespace Etimo.Id.Api.OAuth
         [NqChar]
         public string scope { get; set; }
         public string state { get; set; }
+
+        public string ToQueryParameters()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"response_type={response_type}&");
+            sb.Append($"client_id={client_id}&");
+            if (redirect_uri != null) { sb.Append($"redirect_uri={redirect_uri}&"); }
+            if (scope != null) { sb.Append($"scope={scope}&"); }
+            if (state != null) { sb.Append($"state={state}&"); }
+
+            return sb.ToString().Trim('&');
+        }
     }
 }
