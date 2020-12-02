@@ -25,6 +25,11 @@ namespace Etimo.Id.Api.Errors
             ErrorResponseDto response;
             if (exception is ErrorCodeException errorCodeException)
             {
+                foreach (var (key, value) in errorCodeException.Headers)
+                {
+                    Response.Headers.Add(key, value);
+                }
+
                 response = new ErrorResponseDto(errorCodeException);
             }
             else

@@ -9,6 +9,8 @@ namespace Etimo.Id.Service.Exceptions
         /// </summary>
         public InvalidClientException(string message) : base(message, "invalid_client")
         {
+            // https://tools.ietf.org/html/rfc6749#section-5.2
+            Headers.Add("WWW-Authenticate", $"Bearer error=\"invalid_client\" error_description=\"{message}\"");
         }
     }
 }

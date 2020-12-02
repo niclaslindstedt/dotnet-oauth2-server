@@ -79,7 +79,7 @@ namespace Etimo.Id.Api.OAuth
                 var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
                 if (!Regex.IsMatch(clientSecret, CharacterSetPatterns.UNICODECHARNOCRLF))
                 {
-                    throw new UnauthorizedException("Invalid client_secret.");
+                    throw new InvalidClientException("client_secret contains illegal characters.");
                 }
 
                 request.ClientId = ParseClientId(clientId);
@@ -95,7 +95,7 @@ namespace Etimo.Id.Api.OAuth
         {
             if (!Guid.TryParse(clientId, out var clientGuid) || clientGuid == Guid.Empty)
             {
-                throw new UnauthorizedException("Invalid client_id format; should be of type guid.");
+                throw new InvalidClientException("client_id should be of type guid.");
             }
 
             return clientGuid;
