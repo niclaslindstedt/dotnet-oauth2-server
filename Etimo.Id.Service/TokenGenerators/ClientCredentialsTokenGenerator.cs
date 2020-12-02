@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,10 @@ namespace Etimo.Id.Service.TokenGenerators
             ValidateRequest(request);
 
             var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            if (application.Type == ClientTypes.Public)
+            {
+                throw new InvalidGrantException("Public clients cannot use the client credentials grant.");
+            }
 
             var jwtRequest = new JwtTokenRequest
             {
