@@ -91,7 +91,7 @@ namespace Etimo.Id.Api.Applications
         public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
             var app = await _applicationsService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
-            var created = ApplicationSecretResponseDto.FromApplication(app);
+            var created = ApplicationResponseDto.FromApplication(app);
 
             return Ok(created);
         }
