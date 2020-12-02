@@ -80,7 +80,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private static void ValidateRequest(IAuthorizationCodeRequest request)
         {
-            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
+            if (request.ClientId == Guid.Empty)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }

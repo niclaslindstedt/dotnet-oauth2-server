@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Constants;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -70,23 +71,38 @@ namespace Etimo.Id.Api.OAuth
         public async Task<IActionResult> TokenAsync([FromForm] AccessTokenRequestForm form)
         {
             var request = form.ToTokenRequest();
-            var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
-            if (!Regex.IsMatch(clientSecret, CharacterSetPatterns.UNICODECHARNOCRLF))
-            {
-                throw new UnauthorizedException("Invalid client_secret.");
-            }
 
-            if (!Guid.TryParse(clientId, out var clientGuid))
+            // This is likely a public client trying to create a token through the authorization code flow
+            if (request.GrantType == GrantTypes.AuthorizationCode && !Request.IsBasicAuthentication())
             {
-                throw new UnauthorizedException("Invalid client_id format; should be of type guid.");
+                var clientIdString = form.client_id != null ? form.client_id.ToString() : string.Empty;
+                request.ClientId = ParseClientId(clientIdString);
             }
+            else
+            {
+                var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
+                if (!Regex.IsMatch(clientSecret, CharacterSetPatterns.UNICODECHARNOCRLF))
+                {
+                    throw new UnauthorizedException("Invalid client_secret.");
+                }
 
-            request.ClientId = clientGuid;
-            request.ClientSecret = clientSecret;
+                request.ClientId = ParseClientId(clientId);
+                request.ClientSecret = clientSecret;
+            }
 
             var token = await _oauthService.GenerateTokenAsync(request);
 
             return Ok(AccessTokenResponseDto.FromJwtToken(token));
+        }
+
+        private static Guid ParseClientId(string clientId)
+        {
+            if (!Guid.TryParse(clientId, out var clientGuid) || clientGuid == Guid.Empty)
+            {
+                throw new UnauthorizedException("Invalid client_id format; should be of type guid.");
+            }
+
+            return clientGuid;
         }
     }
 }
