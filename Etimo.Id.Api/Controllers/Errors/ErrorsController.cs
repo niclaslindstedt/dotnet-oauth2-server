@@ -35,7 +35,8 @@ namespace Etimo.Id.Api.Errors
             else
             {
                 var addStackTrace = _environment.IsDevelopment();
-                response = new ErrorResponseDto(exception, addStackTrace);
+                var serverErrorException = new ServerErrorException(exception?.Message, exception);
+                response = new ErrorResponseDto(serverErrorException, addStackTrace);
             }
 
             Response.StatusCode = response.GetStatusCode();

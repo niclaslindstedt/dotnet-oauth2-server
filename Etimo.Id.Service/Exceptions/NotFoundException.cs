@@ -5,7 +5,8 @@ namespace Etimo.Id.Service.Exceptions
         /// <summary>
         /// The requested resource could not be found.
         /// </summary>
-        public NotFoundException(string message = null) : base(message, "not_found")
+        public NotFoundException(string message = null)
+            : base(message, "not_found")
         {
         }
     }

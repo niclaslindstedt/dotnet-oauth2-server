@@ -5,7 +5,8 @@ namespace Etimo.Id.Service.Exceptions
         /// <summary>
         /// The user is trying to add something that already exists.
         /// </summary>
-        public ConflictException(string message) : base(message, "conflict")
+        public ConflictException(string message)
+            : base(message, "conflict")
         {
         }
     }

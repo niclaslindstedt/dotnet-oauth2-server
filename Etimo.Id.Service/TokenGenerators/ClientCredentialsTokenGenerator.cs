@@ -32,7 +32,7 @@ namespace Etimo.Id.Service.TokenGenerators
             var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             if (application.Type == ClientTypes.Public)
             {
-                throw new InvalidGrantException("Public clients cannot use the client credentials grant.");
+                throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
             }
 
             var jwtRequest = new JwtTokenRequest
