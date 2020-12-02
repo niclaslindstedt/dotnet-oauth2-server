@@ -53,7 +53,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
-            await RecycleRefreshTokensAsync(refreshToken);
+            refreshToken.Used = true;
             refreshToken = GenerateRefreshToken(refreshToken.ApplicationId, refreshToken.RedirectUri, refreshToken.UserId);
 
             var jwtRequest = new JwtTokenRequest
@@ -92,16 +92,6 @@ namespace Etimo.Id.Service.TokenGenerators
             _refreshTokensRepository.Add(refreshToken);
 
             return refreshToken;
-        }
-
-        public async Task RecycleRefreshTokensAsync(RefreshToken refreshToken)
-        {
-            var oldRefreshTokens = await _refreshTokensRepository.GetByUserIdAsync(refreshToken.UserId);
-
-            // Add this refresh token to the list of old refresh tokens.
-            oldRefreshTokens.Add(refreshToken);
-
-            _refreshTokensRepository.RemoveRange(oldRefreshTokens);
         }
 
         private static void ValidateRequest(TokenRequest request)
