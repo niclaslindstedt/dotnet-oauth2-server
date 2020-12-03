@@ -43,11 +43,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
 
-            var accessToken = new AccessToken
-            {
-                AccessTokenId = jwtToken.TokenId
-            };
-            _accessTokensRepository.Add(accessToken);
+            _accessTokensRepository.Add(jwtToken.ToAccessToken());
             await _accessTokensRepository.SaveAsync();
 
             return jwtToken;

@@ -88,11 +88,7 @@ namespace Etimo.Id.Service.TokenGenerators
             code.Used = true;
             code.AccessTokenId = jwtToken.TokenId;
 
-            var accessToken = new AccessToken
-            {
-                AccessTokenId = jwtToken.TokenId
-            };
-            _accessTokensRepository.Add(accessToken);
+            _accessTokensRepository.Add(jwtToken.ToAccessToken());
 
             await _authorizationCodeRepository.SaveAsync();
             await _refreshTokensRepository.SaveAsync();

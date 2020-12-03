@@ -42,7 +42,7 @@ namespace Etimo.Id.Service.TokenGenerators
             // If someone tries to use the same refresh token twice, disable the access token.
             if (refreshToken.Used)
             {
-                if (refreshToken.AccessToken != null)
+                if (refreshToken.AccessToken != null && !refreshToken.AccessToken.IsExpired)
                 {
                     refreshToken.AccessToken.Disabled = true;
                     await _accessTokensRepository.SaveAsync();
@@ -66,11 +66,7 @@ namespace Etimo.Id.Service.TokenGenerators
             jwtToken.RefreshToken = refreshToken.RefreshTokenId;
             refreshToken.AccessTokenId = jwtToken.TokenId;
 
-            var accessToken = new AccessToken
-            {
-                AccessTokenId = jwtToken.TokenId
-            };
-            _accessTokensRepository.Add(accessToken);
+            _accessTokensRepository.Add(jwtToken.ToAccessToken());
 
             await _refreshTokensRepository.SaveAsync();
             await _accessTokensRepository.SaveAsync();

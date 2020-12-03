@@ -58,7 +58,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 TokenId = tokenId,
                 AccessToken = tokenJson,
                 TokenType = TokenTypes.Bearer,
-                ExpiresIn = GetSecondsUntil(expiresAt)
+                ExpiresIn = GetSecondsUntil(expiresAt),
+                ExpiresAt = expiresAt
             };
         }
 
