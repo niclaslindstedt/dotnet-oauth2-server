@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,12 @@ namespace Etimo.Id.Service
         public async Task<Application> UpdateAsync(Application updatedApp, Guid userId)
         {
             var application = await FindAsync(updatedApp.ApplicationId, userId);
+
+            // If the application is going public, we don't want a secret laying around.
+            if (updatedApp.Type == ClientTypes.Confidential && updatedApp.Type == ClientTypes.Public)
+            {
+                application.ClientSecret = null;
+            }
 
             application.MergeWith(updatedApp);
             await _applicationsRepository.SaveAsync();
