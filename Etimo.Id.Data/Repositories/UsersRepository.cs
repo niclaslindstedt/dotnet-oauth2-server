@@ -9,9 +9,9 @@ namespace Etimo.Id.Data.Repositories
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly EtimoIdDbContext _dbContext;
+        private readonly IEtimoIdDbContext _dbContext;
 
-        public UsersRepository(EtimoIdDbContext dbContext)
+        public UsersRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -21,9 +21,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Users.AnyAsync();
         }
 
-        public ValueTask<User> FindAsync(Guid userId)
+        public Task<User> FindAsync(Guid userId)
         {
-            return _dbContext.Users.FindAsync(userId);
+            return _dbContext.Users.FindAsync(userId).AsTask();
         }
 
         public Task<User> FindByUsernameAsync(string username)

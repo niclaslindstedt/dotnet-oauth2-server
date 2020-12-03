@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Etimo.Id.Data
 {
-    public class EtimoIdDbContext : DbContext
+    public class EtimoIdDbContext : DbContext, IEtimoIdDbContext
     {
         public EtimoIdDbContext(DbContextOptions<EtimoIdDbContext> options) : base(options)
         {
@@ -35,9 +35,8 @@ namespace Etimo.Id.Data
 
             var refreshToken = modelBuilder.Entity<RefreshToken>();
             refreshToken.HasKey(rt => rt.RefreshTokenId);
-            refreshToken.HasOne(u => u.AccessToken);
-            refreshToken.HasOne(u => u.User).WithMany(u => u.RefreshTokens).HasForeignKey(rt => rt.UserId);
-            refreshToken.HasOne(u => u.Application).WithMany(a => a.RefreshTokens).HasForeignKey(rt => rt.ApplicationId);
+            refreshToken.HasOne(rt => rt.AccessToken);
+            refreshToken.HasOne(rt => rt.Application);
 
             var user = modelBuilder.Entity<User>();
             user.HasKey(u => u.UserId);

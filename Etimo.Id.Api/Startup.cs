@@ -41,7 +41,7 @@ namespace Etimo.Id.Api
             });
 
             var connectionString = Configuration.GetConnectionString("EtimoId");
-            services.AddDbContext<EtimoIdDbContext>(options =>
+            services.AddDbContext<IEtimoIdDbContext, EtimoIdDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
 

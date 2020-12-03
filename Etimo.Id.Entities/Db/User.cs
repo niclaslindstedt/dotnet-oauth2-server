@@ -13,6 +13,5 @@ namespace Etimo.Id.Entities
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual ICollection<Application> Applications { get; set; }
-        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

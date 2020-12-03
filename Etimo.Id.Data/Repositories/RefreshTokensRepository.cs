@@ -10,16 +10,16 @@ namespace Etimo.Id.Data.Repositories
 {
     public class RefreshTokensRepository : IRefreshTokensRepository
     {
-        private readonly EtimoIdDbContext _dbContext;
+        private readonly IEtimoIdDbContext _dbContext;
 
-        public RefreshTokensRepository(EtimoIdDbContext dbContext)
+        public RefreshTokensRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public ValueTask<RefreshToken> FindAsync(string refreshToken)
+        public Task<RefreshToken> FindAsync(string refreshToken)
         {
-            return _dbContext.RefreshTokens.FindAsync(refreshToken);
+            return _dbContext.RefreshTokens.FindAsync(refreshToken).AsTask();
         }
 
         public void Add(RefreshToken refreshToken)

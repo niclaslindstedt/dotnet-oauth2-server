@@ -10,9 +10,9 @@ namespace Etimo.Id.Data.Repositories
 {
     public class ApplicationsRepository : IApplicationsRepository
     {
-        private readonly EtimoIdDbContext _dbContext;
+        private readonly IEtimoIdDbContext _dbContext;
 
-        public ApplicationsRepository(EtimoIdDbContext dbContext)
+        public ApplicationsRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -27,9 +27,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Applications.Where(a => a.UserId == userId).ToListAsync();
         }
 
-        public ValueTask<Application> FindAsync(int applicationId)
+        public Task<Application> FindAsync(int applicationId)
         {
-            return _dbContext.Applications.FindAsync(applicationId);
+            return _dbContext.Applications.FindAsync(applicationId).AsTask();
         }
 
         public Task<Application> FindAsync(Guid clientId)

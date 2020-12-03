@@ -8,7 +8,7 @@ namespace Etimo.Id.Abstractions
     public interface IUsersRepository
     {
         Task<bool> AnyAsync();
-        ValueTask<User> FindAsync(Guid userId);
+        Task<User> FindAsync(Guid userId);
         Task<User> FindByUsernameAsync(string username);
         User Add(User user);
         Task<int> SaveAsync();

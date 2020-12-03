@@ -7,16 +7,16 @@ namespace Etimo.Id.Data.Repositories
 {
     public class AccessTokensRepository : IAccessTokensRepository
     {
-        private readonly EtimoIdDbContext _dbContext;
+        private readonly IEtimoIdDbContext _dbContext;
 
-        public AccessTokensRepository(EtimoIdDbContext dbContext)
+        public AccessTokensRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public ValueTask<AccessToken> FindAsync(Guid accessTokenId)
+        public Task<AccessToken> FindAsync(Guid accessTokenId)
         {
-            return _dbContext.AccessTokens.FindAsync(accessTokenId);
+            return _dbContext.AccessTokens.FindAsync(accessTokenId).AsTask();
         }
 
         public AccessToken Add(AccessToken token)
