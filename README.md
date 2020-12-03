@@ -1,8 +1,8 @@
 # Etimo ID
 
-Etimo ID is an OAuth2 compliant api that aims to be a simple-to-use implementation of OAuth2.
+Etimo ID is an [OAuth2](https://tools.ietf.org/html/rfc6749#section-5.2) compliant api that aims to be a simple-to-use implementation of OAuth2.
 
-At a later stage, OpenID Connect will also be implemented.
+At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) will also be implemented.
 
 ## Prerequisites
 
