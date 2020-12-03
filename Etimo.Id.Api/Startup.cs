@@ -25,12 +25,14 @@ namespace Etimo.Id.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -42,8 +44,10 @@ namespace Etimo.Id.Api
 
             var connectionString = Configuration.GetConnectionString("EtimoId");
             services.AddDbContext<IEtimoIdDbContext, EtimoIdDbContext>(options =>
-                options.UseNpgsql(connectionString)
-            );
+            {
+                options.UseNpgsql(connectionString);
+                options.EnableSensitiveDataLogging(Environment.IsDevelopment());
+            });
 
             var siteSettings = new SiteSettings();
             Configuration.GetSection("SiteSettings").Bind(siteSettings);
@@ -113,11 +117,11 @@ namespace Etimo.Id.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseExceptionHandler("/error");
 
-            if (env.IsDevelopment())
+            if (Environment.IsDevelopment())
             {
                 ApplyDevelopmentSettings(app);
             }
