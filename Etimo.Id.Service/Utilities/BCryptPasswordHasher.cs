@@ -1,4 +1,5 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Service.Settings;
 using System;
 using System.Diagnostics;
 using System.Text;
@@ -14,9 +15,9 @@ namespace Etimo.Id.Service.Utilities
     {
         private readonly int _workFactor;
 
-        public BCryptPasswordHasher()
+        public BCryptPasswordHasher(CryptologySettings settings)
         {
-            _workFactor = 14;
+            _workFactor = CalculateIdealWorkFactor(settings.MinimumHashingMilliseconds);
         }
 
         // When initializing this class using Dependency Injection, make sure it's used as a singleton

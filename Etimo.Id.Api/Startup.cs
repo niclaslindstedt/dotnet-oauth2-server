@@ -53,9 +53,18 @@ namespace Etimo.Id.Api
             Configuration.GetSection("SiteSettings").Bind(siteSettings);
             services.AddSingleton(siteSettings);
 
-            var oauthSettings = new OAuthSettings();
-            Configuration.GetSection("OAuthSettings").Bind(oauthSettings);
-            services.AddSingleton(oauthSettings);
+            var cryptologySettings = new CryptologySettings();
+            Configuration.GetSection("CryptologySettings").Bind(cryptologySettings);
+            services.AddSingleton(cryptologySettings);
+            services.AddSingleton(cryptologySettings.PasswordSettings);
+
+            var oauth2Settings = new OAuth2Settings();
+            Configuration.GetSection("OAuth2Settings").Bind(oauth2Settings);
+            services.AddSingleton(oauth2Settings);
+
+            var jwtSettings = new JwtSettings();
+            Configuration.GetSection("JwtSettings").Bind(jwtSettings);
+            services.AddSingleton(jwtSettings);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -68,9 +77,9 @@ namespace Etimo.Id.Api
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = oauthSettings.Issuer,
-                        ValidAudience = oauthSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(oauthSettings.Secret)),
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                         ClockSkew = TimeSpan.Zero
                     };
                 });
@@ -88,7 +97,7 @@ namespace Etimo.Id.Api
 
             services.AddSingleton(Log.Logger);
 
-            var passwordHasher = new BCryptPasswordHasher();
+            var passwordHasher = new BCryptPasswordHasher(cryptologySettings);
             services.AddSingleton<IPasswordHasher>(passwordHasher);
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
 

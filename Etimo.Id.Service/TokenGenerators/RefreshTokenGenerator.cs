@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Service.Settings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,19 +15,22 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
         private readonly IPasswordGenerator _passwordGenerator;
+        private readonly OAuth2Settings _settings;
 
         public RefreshTokenGenerator(
             IApplicationsService applicationsService,
             IRefreshTokensRepository refreshTokensRepository,
             IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory,
-            IPasswordGenerator passwordGenerator)
+            IPasswordGenerator passwordGenerator,
+            OAuth2Settings settings)
         {
             _applicationsService = applicationsService;
             _refreshTokensRepository = refreshTokensRepository;
             _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
             _passwordGenerator = passwordGenerator;
+            _settings = settings;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
@@ -78,9 +82,9 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             var refreshToken = new RefreshToken
             {
-                RefreshTokenId = _passwordGenerator.Generate(32),
+                RefreshTokenId = _passwordGenerator.Generate(_settings.RefreshTokenLength),
                 ApplicationId = applicationId,
-                ExpirationDate = DateTime.UtcNow.AddDays(30),
+                ExpirationDate = DateTime.UtcNow.AddDays(_settings.RefreshTokenLifetimeDays),
                 RedirectUri = redirectUri,
                 UserId = userId
             };

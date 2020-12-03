@@ -16,9 +16,9 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class JwtTokenFactory : IJwtTokenFactory
     {
-        private readonly OAuthSettings _settings;
+        private readonly JwtSettings _settings;
 
-        public JwtTokenFactory(OAuthSettings settings)
+        public JwtTokenFactory(JwtSettings settings)
         {
             _settings = settings;
         }
@@ -26,7 +26,7 @@ namespace Etimo.Id.Service.TokenGenerators
         public JwtToken CreateJwtToken(IJwtTokenRequest request)
         {
             var audiences = CompileAudiences(request.Audience);
-            var expiresAt = DateTime.UtcNow.AddMinutes(_settings.TokenExpirationMinutes);
+            var expiresAt = DateTime.UtcNow.AddMinutes(_settings.LifetimeMinutes);
             var tokenId = Guid.NewGuid();
 
             var claims = new[]

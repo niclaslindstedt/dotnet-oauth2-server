@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Service.Settings;
 using System;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace Etimo.Id.Service
         private readonly IResourceOwnerCredentialsTokenGenerator _resourceOwnerCredentialsTokenGenerator;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IPasswordGenerator _passwordGenerator;
+        private readonly OAuth2Settings _settings;
 
         public OAuthService(
             IApplicationsService applicationsService,
@@ -28,7 +30,8 @@ namespace Etimo.Id.Service
             IClientCredentialsTokenGenerator clientCredentialsTokenGenerator,
             IResourceOwnerCredentialsTokenGenerator resourceOwnerCredentialsTokenGenerator,
             IRefreshTokenGenerator refreshTokenGenerator,
-            IPasswordGenerator passwordGenerator)
+            IPasswordGenerator passwordGenerator,
+            OAuth2Settings settings)
         {
             _applicationsService = applicationsService;
             _usersService = usersService;
@@ -39,6 +42,7 @@ namespace Etimo.Id.Service
             _resourceOwnerCredentialsTokenGenerator = resourceOwnerCredentialsTokenGenerator;
             _refreshTokenGenerator = refreshTokenGenerator;
             _passwordGenerator = passwordGenerator;
+            _settings = settings;
         }
 
         public Task<JwtToken> GenerateTokenAsync(TokenRequest request)
@@ -94,8 +98,8 @@ namespace Etimo.Id.Service
         {
             var code = new AuthorizationCode
             {
-                Code = _passwordGenerator.Generate(32),
-                ExpirationDate = DateTime.UtcNow.AddMinutes(10),
+                Code = _passwordGenerator.Generate(_settings.AuthorizationCodeLength),
+                ExpirationDate = DateTime.UtcNow.AddMinutes(_settings.AuthorizationCodeLifetimeMinutes),
                 ClientId = clientId,
                 UserId = userId,
                 RedirectUri = redirectUri

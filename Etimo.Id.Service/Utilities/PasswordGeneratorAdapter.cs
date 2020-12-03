@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using PasswordGenerator;
+using PasswordSettings = Etimo.Id.Service.Settings.PasswordSettings;
 
 namespace Etimo.Id.Service.Utilities
 {
@@ -9,14 +10,38 @@ namespace Etimo.Id.Service.Utilities
     /// </summary>
     public class PasswordGeneratorAdapter : IPasswordGenerator
     {
+        private readonly PasswordSettings _settings;
+
+        public PasswordGeneratorAdapter(PasswordSettings settings)
+        {
+            _settings = settings;
+        }
+
         public string Generate(int length)
         {
-            var pwd = new Password()
-                .IncludeNumeric()
-                .IncludeLowercase()
-                .IncludeUppercase()
-                .LengthRequired(length);
-            return pwd.Next();
+            IPassword password = new Password();
+
+            if (_settings.IncludeLowercase)
+            {
+                password = password.IncludeLowercase();
+            }
+
+            if (_settings.IncludeUppercase)
+            {
+                password = password.IncludeUppercase();
+            }
+
+            if (_settings.IncludeNumeric)
+            {
+                password = password.IncludeNumeric();
+            }
+
+            if (_settings.IncludeSpecial)
+            {
+                password = password.IncludeSpecial();
+            }
+
+            return password.LengthRequired(length).Next();
         }
     }
 }

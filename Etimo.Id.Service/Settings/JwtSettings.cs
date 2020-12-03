@@ -1,9 +1,9 @@
 namespace Etimo.Id.Service.Settings
 {
-    public class OAuthSettings
+    public class JwtSettings
     {
         public string Issuer { get; set; }
         public string Secret { get; set; }
-        public int TokenExpirationMinutes { get; set; }
+        public int LifetimeMinutes { get; set; }
     }
 }
