@@ -73,9 +73,6 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
 
-            var refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
-                application.ApplicationId, redirectUri, code.UserId.GetValueOrDefault());
-
             var jwtRequest = new JwtTokenRequest
             {
                 Audience = new List<string> { code.ClientId.ToString() },
@@ -83,6 +80,9 @@ namespace Etimo.Id.Service.TokenGenerators
             };
 
             var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            var refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
+                application.ApplicationId, redirectUri, code.UserId.GetValueOrDefault());
+            refreshToken.AccessTokenId = jwtToken.TokenId;
             jwtToken.RefreshToken = refreshToken.RefreshTokenId;
 
             code.Used = true;
