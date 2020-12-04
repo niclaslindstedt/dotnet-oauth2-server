@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Etimo.Id.Api.Attributes
 {
+    /// <summary>
+    /// Allows ASCII characters.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class VsCharAttribute : ValidationAttribute
     {

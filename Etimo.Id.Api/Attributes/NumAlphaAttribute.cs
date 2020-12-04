@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Etimo.Id.Api.Attributes
 {
+    /// <summary>
+    /// Allows numeric and alphabetical (a-z) characters.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class NumAlphaAttribute : ValidationAttribute
     {
