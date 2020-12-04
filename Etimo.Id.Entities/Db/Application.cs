@@ -21,17 +21,14 @@ namespace Etimo.Id.Entities
         public virtual User User { get; set; }
         public virtual ICollection<Scope> Scopes { get; set; }
 
-        /// <summary>
-        /// Updates the current application with values from otherApplication.
-        /// </summary>
-        /// <param name="otherApplication">The application to fetch values from.</param>
-        public void MergeWith(Application otherApplication)
+        public void Update(Application applicationWithUpdates)
         {
-            Name = otherApplication.Name;
-            Description = otherApplication.Description;
-            Type = otherApplication.Type;
-            HomepageUri = otherApplication.HomepageUri;
-            RedirectUri = otherApplication.RedirectUri;
+            Name = applicationWithUpdates.Name;
+            Description = applicationWithUpdates.Description;
+            Type = applicationWithUpdates.Type;
+            HomepageUri = applicationWithUpdates.HomepageUri;
+            RedirectUri = applicationWithUpdates.RedirectUri;
+            ModifiedDateTime = DateTime.UtcNow;
         }
     }
 }

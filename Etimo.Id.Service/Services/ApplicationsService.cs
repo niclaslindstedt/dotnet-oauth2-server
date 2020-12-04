@@ -36,26 +36,26 @@ namespace Etimo.Id.Service
 
         public async ValueTask<Application> FindAsync(int applicationId)
         {
-            var app = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationsRepository.FindAsync(applicationId);
 
-            if (app == null)
+            if (application == null)
             {
                 throw new NotFoundException();
             }
 
-            return app;
+            return application;
         }
 
         public async Task<Application> FindAsync(int applicationId, Guid userId)
         {
-            var app = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationsRepository.FindAsync(applicationId);
 
-            if (app?.UserId != userId)
+            if (application?.UserId != userId)
             {
                 throw new NotFoundException();
             }
 
-            return app;
+            return application;
         }
 
         public Task<Application> FindByClientIdAsync(Guid clientId)
@@ -82,7 +82,7 @@ namespace Etimo.Id.Service
                 application.ClientSecret = null;
             }
 
-            application.MergeWith(updatedApp);
+            application.Update(updatedApp);
             await _applicationsRepository.SaveAsync();
 
             return application;
