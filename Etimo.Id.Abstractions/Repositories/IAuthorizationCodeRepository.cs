@@ -7,7 +7,6 @@ namespace Etimo.Id.Abstractions
     {
         void Add(AuthorizationCode code);
         Task<AuthorizationCode> FindAsync(string code);
-        void Remove(AuthorizationCode code);
         Task<int> SaveAsync();
     }
 }

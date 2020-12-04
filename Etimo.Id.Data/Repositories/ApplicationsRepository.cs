@@ -42,9 +42,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
         }
 
-        public Application Add(Application application)
+        public void Add(Application application)
         {
-            return _dbContext.Applications.Add(application).Entity;
+            _dbContext.Applications.Add(application);
         }
 
         public Task<int> SaveAsync()

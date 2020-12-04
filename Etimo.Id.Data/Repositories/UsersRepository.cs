@@ -31,9 +31,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
-        public User Add(User user)
+        public void Add(User user)
         {
-            return _dbContext.Users.Add(user).Entity;
+            _dbContext.Users.Add(user);
         }
 
         public Task<int> SaveAsync()

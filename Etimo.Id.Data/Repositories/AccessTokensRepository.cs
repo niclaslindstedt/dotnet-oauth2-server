@@ -19,9 +19,9 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.AccessTokens.FindAsync(accessTokenId).AsTask();
         }
 
-        public AccessToken Add(AccessToken token)
+        public void Add(AccessToken token)
         {
-            return _dbContext.AccessTokens.Add(token).Entity;
+            _dbContext.AccessTokens.Add(token);
         }
 
         public Task<int> SaveAsync()

@@ -10,7 +10,7 @@ namespace Etimo.Id.Abstractions
         Task<bool> AnyAsync();
         Task<User> FindAsync(Guid userId);
         Task<User> FindByUsernameAsync(string username);
-        User Add(User user);
+        void Add(User user);
         Task<int> SaveAsync();
         Task<List<User>> GetAllAsync();
         void Delete(User user);
