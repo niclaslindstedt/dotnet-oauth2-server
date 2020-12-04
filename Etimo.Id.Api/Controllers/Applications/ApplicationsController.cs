@@ -62,13 +62,13 @@ namespace Etimo.Id.Api.Applications
         }
 
         [HttpPost]
-        [Route("/applications/")]
+        [Route("/applications")]
         [ValidateModel]
         [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
             var app = await _applicationsService.AddAsync(dto.ToApplication(), this.GetUserId());
-            var created = ApplicationSecretResponseDto.FromApplication(app);
+            var created = ApplicationResponseDto.FromApplication(app);
 
             return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
         }
