@@ -113,6 +113,8 @@ namespace Etimo.Id.Api
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
             services.AddTransient<IOAuthService, OAuthService>();
             services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
+            services.AddTransient<IScopesService, ScopesService>();
+            services.AddTransient<IScopesRepository, ScopesRepository>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
 

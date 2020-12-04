@@ -1,0 +1,47 @@
+using Etimo.Id.Abstractions;
+using Etimo.Id.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Etimo.Id.Data.Repositories
+{
+    public class ScopesRepository : IScopesRepository
+    {
+        private readonly IEtimoIdDbContext _dbContext;
+
+        public ScopesRepository(IEtimoIdDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        public Task<List<Scope>> GetAllAsync()
+        {
+            return _dbContext.Scopes.ToListAsync();
+        }
+
+        public Task<Scope> FindAsync(Guid scopeId)
+        {
+            return _dbContext.Scopes.FindAsync(scopeId).AsTask();
+        }
+
+        public void Add(Scope scope)
+        {
+            _dbContext.Scopes.Add(scope);
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
+        }
+
+        public void Delete(Scope scope)
+        {
+            if (scope != null)
+            {
+                _dbContext.Scopes.Remove(scope);
+            }
+        }
+    }
+}

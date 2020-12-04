@@ -53,6 +53,20 @@ namespace Etimo.Id.Api.Helpers
         }
 
         /// <summary>
+        /// Returns the "aud" claim (ClientId).
+        /// </summary>
+        public static Guid GetClientId(this Controller controller)
+        {
+            var audClaim = controller.GetUserClaim(JwtRegisteredClaimNames.Aud);
+            if (audClaim == null || !Guid.TryParse(audClaim, out var clientId))
+            {
+                throw new UnauthorizedAccessException("The access token lacks the 'aud' claim.");
+            }
+
+            return clientId;
+        }
+
+        /// <summary>
         /// Returns the "jti" claim (AccessTokenId).
         /// </summary>
         public static Guid GetAccessTokenId(this Controller controller)

@@ -19,6 +19,7 @@ namespace Etimo.Id.Entities
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual User User { get; set; }
+        public virtual ICollection<Scope> Scopes { get; set; }
 
         /// <summary>
         /// Updates the current application with values from otherApplication.

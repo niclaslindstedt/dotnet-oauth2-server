@@ -13,6 +13,7 @@ namespace Etimo.Id.Data
         public DbSet<Application> Applications { get; set; }
         public DbSet<AuthorizationCode> AuthorizationCodes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Scope> Scopes { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,6 +26,7 @@ namespace Etimo.Id.Data
             application.HasKey(a => a.ApplicationId);
             application.HasIndex(a => a.ClientId).IsUnique();
             application.HasOne(a => a.User).WithMany(u => u.Applications).HasForeignKey(a => a.UserId);
+            application.HasMany(a => a.Scopes);
 
             var accessToken = modelBuilder.Entity<AccessToken>();
             accessToken.HasKey(at => at.AccessTokenId);
@@ -38,9 +40,15 @@ namespace Etimo.Id.Data
             refreshToken.HasOne(rt => rt.AccessToken);
             refreshToken.HasOne(rt => rt.Application);
 
+            var scope = modelBuilder.Entity<Scope>();
+            scope.HasKey(s => s.ScopeId);
+            scope.HasIndex(a => a.Name);
+            scope.HasOne(s => s.Application).WithMany(u => u.Scopes).HasForeignKey(s => s.ApplicationId);
+
             var user = modelBuilder.Entity<User>();
             user.HasKey(u => u.UserId);
             user.HasIndex(u => u.Username).IsUnique();
+            user.HasMany(u => u.Applications).WithOne(a => a.User);
 
             base.OnModelCreating(modelBuilder);
         }
