@@ -72,7 +72,7 @@ namespace Etimo.Id.Api.Scopes
             var scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
             var created = ScopeResponseDto.FromScope(scope);
 
-            return Created($"{_siteSettings.ListenUri}/applications/{scope.ApplicationId}", created);
+            return Created($"{_siteSettings.ListenUri}/scopes/{scope.ApplicationId}", created);
         }
 
         [HttpPut]
