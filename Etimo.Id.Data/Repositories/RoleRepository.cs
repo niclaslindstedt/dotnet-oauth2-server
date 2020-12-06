@@ -7,28 +7,28 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
 {
-    public class ScopeRepository : IScopeRepository
+    public class RoleRepository : IRoleRepository
     {
         private readonly IEtimoIdDbContext _dbContext;
 
-        public ScopeRepository(IEtimoIdDbContext dbContext)
+        public RoleRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public Task<List<Scope>> GetAllAsync()
+        public Task<List<Role>> GetAllAsync()
         {
-            return _dbContext.Scopes.ToListAsync();
+            return _dbContext.Roles.ToListAsync();
         }
 
-        public Task<Scope> FindAsync(Guid scopeId)
+        public Task<Role> FindAsync(Guid roleId)
         {
-            return _dbContext.Scopes.FindAsync(scopeId).AsTask();
+            return _dbContext.Roles.FindAsync(roleId).AsTask();
         }
 
-        public void Add(Scope scope)
+        public void Add(Role role)
         {
-            _dbContext.Scopes.Add(scope);
+            _dbContext.Roles.Add(role);
         }
 
         public Task<int> SaveAsync()
@@ -36,11 +36,11 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.SaveChangesAsync();
         }
 
-        public void Delete(Scope scope)
+        public void Delete(Role role)
         {
-            if (scope != null)
+            if (role != null)
             {
-                _dbContext.Scopes.Remove(scope);
+                _dbContext.Roles.Remove(role);
             }
         }
     }

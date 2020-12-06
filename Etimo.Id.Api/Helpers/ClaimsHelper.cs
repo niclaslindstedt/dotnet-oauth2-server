@@ -42,7 +42,7 @@ namespace Etimo.Id.Api.Helpers
             var claimScopes = controller.Request.HttpContext.User.Claims.Where(c => c.Type == "scope");
 
             // The caller must either have the scope claim or be an admin.
-            return claimScopes.Any(r => r.Value == scope) || controller.UserHasRole(Roles.Admin);
+            return claimScopes.Any(r => r.Value == scope) || controller.UserHasRole(RoleNames.Admin);
         }
 
         /// <summary>
@@ -52,9 +52,9 @@ namespace Etimo.Id.Api.Helpers
         {
             var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
 
-            foreach (var role in Roles.InPrivilegeOrder())
+            foreach (var role in RoleNames.InPrivilegeOrder())
             {
-                if (claimRoles.Any(r => r.Value == Roles.Admin))
+                if (claimRoles.Any(r => r.Value == RoleNames.Admin))
                 {
                     return role;
                 }

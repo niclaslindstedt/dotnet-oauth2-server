@@ -6,8 +6,8 @@ namespace Etimo.Id.Api.Security
 {
     public class Policies
     {
-        public const string Admin = Roles.Admin;
-        public const string User = Roles.User;
+        public const string Admin = RoleNames.Admin;
+        public const string User = RoleNames.User;
 
         public static AuthorizationPolicy AdminPolicy()
         {
@@ -27,7 +27,7 @@ namespace Etimo.Id.Api.Security
                 var hasClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
 
                 // The caller must either have the scope claim or be an admin.
-                return hasClaim || context.User.IsInRole(Roles.Admin);
+                return hasClaim || context.User.IsInRole(RoleNames.Admin);
             }).Build();
         }
     }

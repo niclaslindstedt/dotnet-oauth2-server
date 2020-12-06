@@ -1,10 +1,7 @@
 using Etimo.Id.Abstractions;
-using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Bootstrapping;
-using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
-using Etimo.Id.Api.Users;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
@@ -12,6 +9,7 @@ using Etimo.Id.Service.Settings;
 using Etimo.Id.Service.TokenGenerators;
 using Etimo.Id.Service.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +20,11 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
+using Etimo.Id.Api.Applications;
+using Etimo.Id.Api.Roles;
+using Etimo.Id.Api.Scopes;
+using Etimo.Id.Api.Users;
+using IAuthorizationService = Etimo.Id.Abstractions.IAuthorizationService;
 
 namespace Etimo.Id.Api
 {
@@ -85,15 +88,19 @@ namespace Etimo.Id.Api
             {
                 config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
                 config.AddPolicy(Policies.User, Policies.UserPolicy());
-                config.AddPolicy(ApplicationScopes.Read, Policies.ScopePolicy(ApplicationScopes.Read));
-                config.AddPolicy(ApplicationScopes.Write, Policies.ScopePolicy(ApplicationScopes.Write));
-                config.AddPolicy(ApplicationScopes.Admin, Policies.ScopePolicy(ApplicationScopes.Admin));
-                config.AddPolicy(ScopeScopes.Read, Policies.ScopePolicy(ScopeScopes.Read));
-                config.AddPolicy(ScopeScopes.Write, Policies.ScopePolicy(ScopeScopes.Write));
-                config.AddPolicy(ScopeScopes.Admin, Policies.ScopePolicy(ScopeScopes.Admin));
-                config.AddPolicy(UserScopes.Read, Policies.ScopePolicy(UserScopes.Read));
-                config.AddPolicy(UserScopes.Write, Policies.ScopePolicy(UserScopes.Write));
-                config.AddPolicy(UserScopes.Admin, Policies.ScopePolicy(UserScopes.Admin));
+                AddScopePolicies(config,
+                    ApplicationScopes.Read,
+                    ApplicationScopes.Write,
+                    ApplicationScopes.Admin,
+                    RoleScopes.Read,
+                    RoleScopes.Write,
+                    RoleScopes.Admin,
+                    ScopeScopes.Read,
+                    ScopeScopes.Write,
+                    ScopeScopes.Admin,
+                    UserScopes.Read,
+                    UserScopes.Write,
+                    UserScopes.Admin);
             });
 
             Log.Logger = new LoggerConfiguration()
@@ -110,6 +117,7 @@ namespace Etimo.Id.Api
             // Services
             services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
+            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IScopeService, ScopeService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
@@ -125,9 +133,10 @@ namespace Etimo.Id.Api
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IAccessTokenRepository, AccessTokenRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IScopeRepository, ScopeRepository>();
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IScopeRepository, ScopeRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>
@@ -177,6 +186,20 @@ namespace Etimo.Id.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddScopePolicies(AuthorizationOptions config, params string[] policies)
+        {
+            foreach (var policy in policies)
+            {
+                AddScopePolicy(policy, config);
+            }
+
+        }
+
+        private static void AddScopePolicy(string policy, AuthorizationOptions config)
+        {
+            config.AddPolicy(policy, Policies.ScopePolicy(policy));
         }
     }
 }

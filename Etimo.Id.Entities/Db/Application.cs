@@ -20,6 +20,7 @@ namespace Etimo.Id.Entities
 
         public virtual User User { get; set; }
         public virtual ICollection<Scope> Scopes { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
 
         public void Update(Application applicationWithUpdates)
         {

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IScopesRepository
+    public interface IScopeRepository
     {
         Task<List<Scope>> GetAllAsync();
         Task<Scope> FindAsync(Guid scopeId);

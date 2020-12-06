@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IApplicationsRepository
+    public interface IApplicationRepository
     {
         Task<List<Application>> GetAllAsync();
         Task<List<Application>> GetByUserIdAsync(Guid userId);

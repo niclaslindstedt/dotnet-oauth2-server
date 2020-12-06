@@ -12,6 +12,7 @@ namespace Etimo.Id.Entities
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime { get; set; } = DateTime.UtcNow;
 
+        public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<Application> Applications { get; set; }
     }
 }

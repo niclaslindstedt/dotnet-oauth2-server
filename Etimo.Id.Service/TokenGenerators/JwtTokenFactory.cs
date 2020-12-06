@@ -42,8 +42,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 // https://tools.ietf.org/html/rfc8693#section-4.2
                 new Claim("scope", request.Scope),
                 // https://tools.ietf.org/html/rfc7519#section-4.2
-                new Claim(ClaimTypes.Role, Roles.User),
-                new Claim(ClaimTypes.Role, Roles.Admin)
+                new Claim(ClaimTypes.Role, RoleNames.User),
+                new Claim(ClaimTypes.Role, RoleNames.Admin)
             };
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);

@@ -10,11 +10,11 @@ namespace Etimo.Id.Service
 {
     public class ScopeService : IScopeService
     {
-        private readonly IScopesRepository _scopeRepository;
+        private readonly IScopeRepository _scopeRepository;
         private readonly IApplicationRepository _applicationRepository;
 
         public ScopeService(
-            IScopesRepository scopeRepository,
+            IScopeRepository scopeRepository,
             IApplicationRepository applicationRepository)
         {
             _scopeRepository = scopeRepository;

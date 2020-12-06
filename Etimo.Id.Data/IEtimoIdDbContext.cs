@@ -11,6 +11,7 @@ namespace Etimo.Id.Data
         DbSet<Application> Applications { get; }
         DbSet<AuthorizationCode> AuthorizationCodes { get; }
         DbSet<RefreshToken> RefreshTokens { get; }
+        DbSet<Role> Roles { get; }
         DbSet<Scope> Scopes { get; }
         DbSet<User> Users { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
