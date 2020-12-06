@@ -7,11 +7,11 @@ using Microsoft.Extensions.Hosting;
 namespace Etimo.Id.Api.Errors
 {
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class ErrorsController : ControllerBase
+    public class ErrorController : ControllerBase
     {
         private readonly IWebHostEnvironment _environment;
 
-        public ErrorsController(IWebHostEnvironment environment)
+        public ErrorController(IWebHostEnvironment environment)
         {
             _environment = environment;
         }

@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 namespace Etimo.Id.Api.Scopes
 {
     [ApiController]
-    public class ScopesController : Controller
+    public class ScopeController : Controller
     {
         private readonly SiteSettings _siteSettings;
         private readonly IScopeService _scopeService;
 
-        public ScopesController(
+        public ScopeController(
             SiteSettings siteSettings,
             IScopeService scopeService)
         {

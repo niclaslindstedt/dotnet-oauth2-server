@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 namespace Etimo.Id.Api.Applications
 {
     [ApiController]
-    public class ApplicationsController : Controller
+    public class ApplicationController : Controller
     {
         private readonly SiteSettings _siteSettings;
         private readonly IApplicationService _applicationService;
 
-        public ApplicationsController(
+        public ApplicationController(
             SiteSettings siteSettings,
             IApplicationService applicationService)
         {

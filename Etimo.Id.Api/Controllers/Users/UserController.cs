@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace Etimo.Id.Api.Users
 {
     [ApiController]
-    public class UsersController : Controller
+    public class UserController : Controller
     {
         private readonly SiteSettings _siteSettings;
         private readonly IUserService _userService;
 
-        public UsersController(
+        public UserController(
             SiteSettings siteSettings,
             IUserService userService)
         {
