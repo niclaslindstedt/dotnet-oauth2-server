@@ -7,5 +7,6 @@ namespace Etimo.Id.Entities
     {
         public string Subject { get; set; }
         public List<string> Audience { get; set; }
+        public string Scope { get; set; }
     }
 }

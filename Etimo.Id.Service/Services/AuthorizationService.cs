@@ -1,8 +1,10 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Settings;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
@@ -15,6 +17,10 @@ namespace Etimo.Id.Service
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
+
+        private IAuthorizationRequest _request;
+        private AuthorizationCode _code;
+        private User _user;
 
         public AuthorizationService(
             IApplicationService applicationService,
@@ -32,32 +38,13 @@ namespace Etimo.Id.Service
             _settings = settings;
         }
 
-        public async Task<string> AuthorizeAsync(AuthorizationRequest request)
+        public async Task<string> AuthorizeAsync(IAuthorizationRequest request)
         {
-            if (request.ResponseType != "code")
-            {
-                throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
-            }
+            await ValidateRequestAsync(request);
+            await AuthenticateUserAsync();
+            await GenerateAuthorizationCodeAsync();
 
-            var application = await _applicationService.FindByClientIdAsync(request.ClientId);
-            if (application == null)
-            {
-                throw new InvalidClientException("No application with that client ID could be found.");
-            }
-
-            // Make sure the provided redirect uri is identical to the registered redirect uri.
-            var redirectUri = request.RedirectUri ?? application.RedirectUri;
-            if (redirectUri != application.RedirectUri)
-            {
-                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
-            }
-
-            var user = await _userService.AuthenticateAsync(request.Username, request.Password);
-            var code = await GenerateAuthorizationCodeAsync(user.UserId, request.ClientId, request.RedirectUri);
-
-            var delimiter = code.RedirectUri.Contains("?") ? "&" : "?";
-
-            return $"{code.RedirectUri}{delimiter}code={code.Code}&state={request.State}";
+            return GenerateAuthorizationUrl();
         }
 
         public async Task ValidateAsync(Guid accessTokenId)
@@ -69,20 +56,67 @@ namespace Etimo.Id.Service
             }
         }
 
-        private async Task<AuthorizationCode> GenerateAuthorizationCodeAsync(Guid userId, Guid clientId, string redirectUri)
+        private async Task ValidateRequestAsync(IAuthorizationRequest request)
         {
-            var code = new AuthorizationCode
+            _request = request;
+
+            if (_request.ResponseType != "code")
+            {
+                throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
+            }
+
+            var application = await _applicationService.FindByClientIdAsync(_request.ClientId);
+            if (application == null)
+            {
+                throw new InvalidClientException("No application with that client ID could be found.");
+            }
+
+            // Make sure the provided scopes actually exists within this application.
+            if (_request.Scope != null)
+            {
+                var scopes = _request.Scope.Split(" ");
+                foreach (var scope in scopes)
+                {
+                    if (application.Scopes.All(s => s.Name != scope))
+                    {
+                        throw new InvalidScopeException("The provided scope is invalid.");
+                    }
+                }
+            }
+
+            // Make sure the provided redirect uri is identical to the registered redirect uri.
+            var redirectUri = _request.RedirectUri ?? application.RedirectUri;
+            if (redirectUri != application.RedirectUri)
+            {
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+            }
+        }
+
+        private async Task AuthenticateUserAsync()
+        {
+            _user = await _userService.AuthenticateAsync(_request.Username, _request.Password);
+        }
+
+        private async Task GenerateAuthorizationCodeAsync()
+        {
+            _code = new AuthorizationCode
             {
                 Code = _passwordGenerator.Generate(_settings.AuthorizationCodeLength),
                 ExpirationDate = DateTime.UtcNow.AddMinutes(_settings.AuthorizationCodeLifetimeMinutes),
-                ClientId = clientId,
-                UserId = userId,
-                RedirectUri = redirectUri
+                ClientId = _request.ClientId,
+                UserId = _user.UserId,
+                RedirectUri = _request.RedirectUri,
+                Scope = _request.Scope
             };
-            _authorizationCodeRepository.Add(code);
+            _authorizationCodeRepository.Add(_code);
             await _authorizationCodeRepository.SaveAsync();
+        }
 
-            return code;
+        private string GenerateAuthorizationUrl()
+        {
+            var delimiter = _code.RedirectUri.Contains("?") ? "&" : "?";
+
+            return $"{_code.RedirectUri}{delimiter}code={_code.Code}&state={_request.State}";
         }
     }
 }

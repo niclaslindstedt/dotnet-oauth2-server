@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201206112942_AddCodeToRefreshToken")]
+    partial class AddCodeToRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +35,6 @@ namespace Etimo.Id.Data.Migrations
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Scope")
-                        .HasColumnType("text");
 
                     b.HasKey("AccessTokenId");
 

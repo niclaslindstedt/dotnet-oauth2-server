@@ -8,6 +8,7 @@ namespace Etimo.Id.Entities
         public DateTime ExpirationDate { get; set; }
         public string Scope { get; set; }
         public string RedirectUri { get; set; }
+        public string Code { get; set; }
         public Guid? AccessTokenId { get; set; }
         public Guid UserId { get; set; }
         public int ApplicationId { get; set; }
@@ -17,6 +18,7 @@ namespace Etimo.Id.Entities
         public virtual User User { get; set; }
         public virtual Application Application { get; set; }
         public virtual AccessToken AccessToken { get; set; }
+        public virtual AuthorizationCode AuthorizationCode { get; set; }
 
         public bool IsExpired => ExpirationDate < DateTime.UtcNow;
     }

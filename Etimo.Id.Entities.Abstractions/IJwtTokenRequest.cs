@@ -6,5 +6,6 @@ namespace Etimo.Id.Entities.Abstractions
     {
         string Subject { get; }
         List<string> Audience { get; }
+        string Scope { get; }
     }
 }

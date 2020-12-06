@@ -18,6 +18,13 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IRefreshTokensRepository _refreshTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
+        private IAuthorizationCodeTokenRequest _request;
+        private JwtToken _jwtToken;
+        private RefreshToken _refreshToken;
+        private AuthorizationCode _code;
+        private Application _application;
+        private string _redirectUri;
+
         public AuthorizationCodeTokenGenerator(
             IApplicationService applicationService,
             IRefreshTokenGenerator refreshTokenGenerator,
@@ -36,78 +43,101 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request)
         {
-            ValidateRequest(request);
+            await ValidateRequestAsync(request);
+            CreateJwtToken();
+            GenerateRefreshToken();
 
-            var code = await _authorizationCodeRepository.FindAsync(request.Code);
-            if (code?.UserId == null || code.IsExpired)
+            _code.Used = true;
+            _code.AccessTokenId = _jwtToken.TokenId;
+            _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
+
+            var accessToken = _jwtToken.ToAccessToken();
+            _accessTokensRepository.Add(accessToken);
+
+            await SaveAsync();
+
+            return _jwtToken;
+        }
+
+        private async Task ValidateRequestAsync(IAuthorizationCodeTokenRequest request)
+        {
+            _request = request;
+
+            if (_request.ClientId == Guid.Empty)
+            {
+                throw new InvalidClientException("Invalid client credentials.");
+            }
+
+            if (_request.Code == null)
+            {
+                throw new InvalidGrantException("Invalid authorization code.");
+            }
+
+            _code = await _authorizationCodeRepository.FindAsync(_request.Code);
+            if (_code?.UserId == null || _code.IsExpired)
             {
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
             // If someone tries to use the same authorization code twice, disable the access token.
-            if (code.Used)
+            if (_code.Used)
             {
-                if (code.AccessToken != null)
+                if (_code.AccessToken != null)
                 {
-                    code.AccessToken.Disabled = true;
+                    _code.AccessToken.Disabled = true;
                     await _accessTokensRepository.SaveAsync();
                 }
 
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
-            if (code.ClientId != request.ClientId)
+            if (_code.ClientId != _request.ClientId)
             {
                 throw new InvalidGrantException("Invalid client id.");
             }
 
-            var application = await _applicationService.FindByClientIdAsync(request.ClientId);
-            if (application.Type == ClientTypes.Confidential)
+            _application = await _applicationService.FindByClientIdAsync(request.ClientId);
+            if (_application.Type == ClientTypes.Confidential)
             {
                 await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             }
 
-            var redirectUri = request.RedirectUri ?? application.RedirectUri;
-            if (redirectUri != application.RedirectUri)
+            _redirectUri = request.RedirectUri ?? _application.RedirectUri;
+            if (_redirectUri != _application.RedirectUri)
             {
                 throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
+        }
 
+        private void CreateJwtToken()
+        {
             var jwtRequest = new JwtTokenRequest
             {
-                Audience = new List<string> { code.ClientId.ToString() },
-                Subject = code.UserId?.ToString()
+                Audience = new List<string> { _code.ClientId.ToString() },
+                Subject = _code.UserId?.ToString(),
+                Scope = _code.Scope
             };
 
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-            var refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
-                application.ApplicationId, redirectUri, code.UserId.GetValueOrDefault());
-            refreshToken.AccessTokenId = jwtToken.TokenId;
-            jwtToken.RefreshToken = refreshToken.RefreshTokenId;
+            _jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+        }
 
-            code.Used = true;
-            code.AccessTokenId = jwtToken.TokenId;
+        private void GenerateRefreshToken()
+        {
+            _refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
+                _application.ApplicationId,
+                _redirectUri,
+                _code.UserId.GetValueOrDefault(),
+                _code.Scope);
 
-            _accessTokensRepository.Add(jwtToken.ToAccessToken());
+            _refreshToken.AccessTokenId = _jwtToken.TokenId;
+            _refreshToken.Code = _code.Code;
+        }
 
+        private async Task SaveAsync()
+        {
             await _authorizationCodeRepository.SaveAsync();
             await _refreshTokensRepository.SaveAsync();
             await _accessTokensRepository.SaveAsync();
-
-            return jwtToken;
-        }
-
-        private static void ValidateRequest(IAuthorizationCodeTokenRequest request)
-        {
-            if (request.ClientId == Guid.Empty)
-            {
-                throw new InvalidClientException("Invalid client credentials.");
-            }
-
-            if (request.Code == null)
-            {
-                throw new InvalidGrantException("Invalid authorization code.");
-            }
         }
     }
 }

@@ -37,6 +37,7 @@ namespace Etimo.Id.Data
 
             var refreshToken = modelBuilder.Entity<RefreshToken>();
             refreshToken.HasKey(rt => rt.RefreshTokenId);
+            refreshToken.HasOne(rt => rt.AuthorizationCode).WithMany().HasForeignKey(rt => rt.Code);
             refreshToken.HasOne(rt => rt.AccessToken);
             refreshToken.HasOne(rt => rt.Application);
 

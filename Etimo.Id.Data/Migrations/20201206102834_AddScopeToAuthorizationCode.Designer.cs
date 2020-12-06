@@ -3,15 +3,17 @@ using System;
 using Etimo.Id.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Etimo.Id.Data.Migrations
 {
     [DbContext(typeof(EtimoIdDbContext))]
-    partial class EtimoIdDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201206102834_AddScopeToAuthorizationCode")]
+    partial class AddScopeToAuthorizationCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,9 +35,6 @@ namespace Etimo.Id.Data.Migrations
 
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("Scope")
-                        .HasColumnType("text");
 
                     b.HasKey("AccessTokenId");
 
@@ -136,9 +135,6 @@ namespace Etimo.Id.Data.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Code")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("timestamp without time zone");
 
@@ -162,8 +158,6 @@ namespace Etimo.Id.Data.Migrations
                     b.HasIndex("AccessTokenId");
 
                     b.HasIndex("ApplicationId");
-
-                    b.HasIndex("Code");
 
                     b.HasIndex("UserId");
 
@@ -258,10 +252,6 @@ namespace Etimo.Id.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Etimo.Id.Entities.AuthorizationCode", "AuthorizationCode")
-                        .WithMany()
-                        .HasForeignKey("Code");
-
                     b.HasOne("Etimo.Id.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -271,8 +261,6 @@ namespace Etimo.Id.Data.Migrations
                     b.Navigation("AccessToken");
 
                     b.Navigation("Application");
-
-                    b.Navigation("AuthorizationCode");
 
                     b.Navigation("User");
                 });

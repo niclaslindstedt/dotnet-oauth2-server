@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Etimo.Id.Entities
 {
@@ -11,14 +10,15 @@ namespace Etimo.Id.Entities
         public int ExpiresIn { get; set; }
         public DateTime ExpiresAt { get; set; }
         public string RefreshToken { get; set; }
-        public List<string> Scopes { get; set; }
+        public string Scope { get; set; }
 
         public AccessToken ToAccessToken()
         {
             return new AccessToken
             {
                 AccessTokenId = TokenId,
-                ExpirationDate = ExpiresAt
+                ExpirationDate = ExpiresAt,
+                Scope = Scope
             };
         }
     }

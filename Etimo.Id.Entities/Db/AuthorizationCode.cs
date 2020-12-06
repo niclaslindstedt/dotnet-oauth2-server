@@ -8,6 +8,7 @@ namespace Etimo.Id.Entities
         public DateTime ExpirationDate { get; set; }
         public bool Used { get; set; }
         public string RedirectUri { get; set; }
+        public string Scope { get; set; }
         public Guid? AccessTokenId { get; set; }
         public Guid ClientId { get; set; }
         public Guid? UserId { get; set; }

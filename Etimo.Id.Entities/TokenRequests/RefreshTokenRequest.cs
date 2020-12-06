@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Etimo.Id.Entities
 {
     public class RefreshTokenRequest : TokenRequest
@@ -12,7 +10,7 @@ namespace Etimo.Id.Entities
         {
             GrantType = grantType;
             RefreshToken = refreshToken;
-            Scope = scope?.Split(" ").ToList();
+            Scope = scope;
         }
     }
 }

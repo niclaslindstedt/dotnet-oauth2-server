@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Etimo.Id.Entities
 {
     public class ClientCredentialsTokenRequest : TokenRequest
@@ -11,7 +9,7 @@ namespace Etimo.Id.Entities
         public ClientCredentialsTokenRequest(string grantType, string scope)
         {
             GrantType = grantType;
-            Scope = scope?.Split(" ").ToList();
+            Scope = scope;
         }
     }
 }

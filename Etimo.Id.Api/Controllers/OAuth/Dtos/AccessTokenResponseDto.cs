@@ -20,7 +20,7 @@ namespace Etimo.Id.Api.OAuth
                 token_type = token.TokenType,
                 expires_in = token.ExpiresIn,
                 refresh_token = token.RefreshToken,
-                scope = token.Scopes != null ? string.Join(" ", token.Scopes) : null,
+                scope = token.Scope
             };
         }
     }

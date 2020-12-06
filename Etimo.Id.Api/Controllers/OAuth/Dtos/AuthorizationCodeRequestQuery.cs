@@ -22,7 +22,7 @@ namespace Etimo.Id.Api.OAuth
         [ValidUri]
         public string redirect_uri { get; set; }
 
-        [NqChar]
+        [NqsChar] // Should be NQCHAR but since we're splitting these values with a space, we need to allow space as well.
         public string scope { get; set; }
 
         [VsChar]

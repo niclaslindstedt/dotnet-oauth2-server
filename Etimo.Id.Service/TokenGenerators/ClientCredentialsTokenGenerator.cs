@@ -15,6 +15,9 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
+        private IClientCredentialsTokenRequest _request;
+        private Application _application;
+
         public ClientCredentialsTokenGenerator(
             IApplicationService applicationService,
             IAccessTokensRepository accessTokensRepository,
@@ -27,34 +30,40 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IClientCredentialsTokenRequest request)
         {
-            ValidateRequest(request);
-
-            var application = await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
-            if (application.Type == ClientTypes.Public)
-            {
-                throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
-            }
-
-            var jwtRequest = new JwtTokenRequest
-            {
-                Audience = new List<string> { application.ClientId.ToString() },
-                Subject = application.UserId.ToString()
-            };
-
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-
-            _accessTokensRepository.Add(jwtToken.ToAccessToken());
+            await ValidateRequestAsync(request);
+            var jwtToken = CreateJwtToken();
+            var accessToken = jwtToken.ToAccessToken();
+            _accessTokensRepository.Add(accessToken);
             await _accessTokensRepository.SaveAsync();
 
             return jwtToken;
         }
 
-        private static void ValidateRequest(IClientCredentialsTokenRequest request)
+        private async Task ValidateRequestAsync(IClientCredentialsTokenRequest request)
         {
-            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
+            _request = request;
+
+            if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }
+
+            _application = await _applicationService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            if (_application.Type == ClientTypes.Public)
+            {
+                throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
+            }
+        }
+
+        private JwtToken CreateJwtToken()
+        {
+            var jwtRequest = new JwtTokenRequest
+            {
+                Audience = new List<string> { _request.ClientId.ToString() },
+                Subject = _application.UserId.ToString()
+            };
+
+            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
         }
     }
 }

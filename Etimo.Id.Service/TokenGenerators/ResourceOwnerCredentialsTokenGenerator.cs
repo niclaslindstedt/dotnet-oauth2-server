@@ -15,6 +15,10 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
+        private IResourceOwnerPasswordCredentialsTokenRequest _request;
+        private User _user;
+        private Application _application;
+
         public ResourceOwnerCredentialsTokenGenerator(
             IUserService userService,
             IApplicationService applicationService,
@@ -29,36 +33,42 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
-            ValidateRequest(request);
-
-            var user = await _userService.AuthenticateAsync(request.Username, request.Password);
-            var application = await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
-
-            var jwtRequest = new JwtTokenRequest
-            {
-                Audience = new List<string> { application.ClientId.ToString() },
-                Subject = user.UserId.ToString()
-            };
-
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
-
-            _accessTokensRepository.Add(jwtToken.ToAccessToken());
+            await ValidateRequestAsync(request);
+            var jwtToken = CreateJwtToken();
+            var accessToken = jwtToken.ToAccessToken();
+            _accessTokensRepository.Add(accessToken);
             await _accessTokensRepository.SaveAsync();
 
             return jwtToken;
         }
 
-        private static void ValidateRequest(IResourceOwnerPasswordCredentialsTokenRequest request)
+        private async Task ValidateRequestAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
-            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
+            _request = request;
+
+            if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }
 
-            if (request.Username == null || request.Password == null)
+            if (_request.Username == null || _request.Password == null)
             {
                 throw new InvalidGrantException("Invalid resource owner credentials.");
             }
+
+            _user = await _userService.AuthenticateAsync(request.Username, request.Password);
+            _application = await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+        }
+
+        private JwtToken CreateJwtToken()
+        {
+            var jwtRequest = new JwtTokenRequest
+            {
+                Audience = new List<string> { _application.ClientId.ToString() },
+                Subject = _user.UserId.ToString()
+            };
+
+            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
         }
     }
 }

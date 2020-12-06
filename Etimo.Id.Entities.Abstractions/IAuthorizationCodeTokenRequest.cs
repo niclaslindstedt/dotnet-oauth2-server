@@ -8,5 +8,6 @@ namespace Etimo.Id.Entities.Abstractions
         Guid ClientId { get; }
         string ClientSecret { get; }
         string RedirectUri { get; }
+        string Scope { get; set; }
     }
 }

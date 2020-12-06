@@ -39,6 +39,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
+                // https://tools.ietf.org/html/rfc8693#section-4.2
+                new Claim("scope", request.Scope),
                 // https://tools.ietf.org/html/rfc7519#section-4.2
                 new Claim(ClaimTypes.Role, Roles.User),
                 new Claim(ClaimTypes.Role, Roles.Admin)
@@ -59,7 +61,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 AccessToken = tokenJson,
                 TokenType = TokenTypes.Bearer,
                 ExpiresIn = GetSecondsUntil(expiresAt),
-                ExpiresAt = expiresAt
+                ExpiresAt = expiresAt,
+                Scope = request.Scope
             };
         }
 

@@ -1,3 +1,4 @@
+using Etimo.Id.Entities.Abstractions;
 using System;
 
 namespace Etimo.Id.Entities
@@ -5,7 +6,7 @@ namespace Etimo.Id.Entities
     /// <summary>
     /// This data object is used in the authorization code grant flow.
     /// </summary>
-    public class AuthorizationRequest
+    public class AuthorizationRequest : IAuthorizationRequest
     {
         public AuthorizationRequest(string responseType, Guid clientId, string state, string scope = null, string redirectUri = null)
         {

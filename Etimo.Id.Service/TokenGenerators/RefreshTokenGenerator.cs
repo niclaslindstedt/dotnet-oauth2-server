@@ -5,7 +5,9 @@ using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Settings;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
@@ -17,6 +19,10 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IJwtTokenFactory _jwtTokenFactory;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
+
+        private IRefreshTokenRequest _request;
+        private RefreshToken _refreshToken;
+        private string _scope;
 
         public RefreshTokenGenerator(
             IApplicationService applicationService,
@@ -36,50 +42,23 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public async Task<JwtToken> GenerateTokenAsync(IRefreshTokenRequest request)
         {
-            ValidateRequest(request);
+            await ValidateRequestAsync(request);
+            var refreshToken = GenerateRefreshToken();
+            var jwtToken = CreateJwtToken();
 
-            var refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken);
-            if (refreshToken == null || refreshToken.IsExpired || refreshToken.Application.ClientId != request.ClientId)
-            {
-                throw new InvalidGrantException("Refresh token could not be found.");
-            }
-
-            // If someone tries to use the same refresh token twice, disable the access token.
-            if (refreshToken.Used)
-            {
-                if (refreshToken.AccessToken != null && !refreshToken.AccessToken.IsExpired)
-                {
-                    refreshToken.AccessToken.Disabled = true;
-                    await _accessTokensRepository.SaveAsync();
-                }
-
-                throw new InvalidGrantException("Refresh token could not be found.");
-            }
-
-            await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
-
-            refreshToken.Used = true;
-            refreshToken = GenerateRefreshToken(refreshToken.ApplicationId, refreshToken.RedirectUri, refreshToken.UserId);
-
-            var jwtRequest = new JwtTokenRequest
-            {
-                Audience = new List<string> { refreshToken.Application.ClientId.ToString() },
-                Subject = refreshToken.UserId.ToString()
-            };
-
-            var jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
             jwtToken.RefreshToken = refreshToken.RefreshTokenId;
             refreshToken.AccessTokenId = jwtToken.TokenId;
+            refreshToken.Code = _refreshToken.Code;
+            _refreshToken.Used = true;
+            var accessToken = jwtToken.ToAccessToken();
+            _accessTokensRepository.Add(accessToken);
 
-            _accessTokensRepository.Add(jwtToken.ToAccessToken());
-
-            await _refreshTokensRepository.SaveAsync();
-            await _accessTokensRepository.SaveAsync();
+            await SaveAsync();
 
             return jwtToken;
         }
 
-        public RefreshToken GenerateRefreshToken(int applicationId, string redirectUri, Guid userId)
+        public RefreshToken GenerateRefreshToken(int applicationId, string redirectUri, Guid userId, string scope = null)
         {
             var refreshToken = new RefreshToken
             {
@@ -87,7 +66,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 ApplicationId = applicationId,
                 ExpirationDate = DateTime.UtcNow.AddDays(_settings.RefreshTokenLifetimeDays),
                 RedirectUri = redirectUri,
-                UserId = userId
+                UserId = userId,
+                Scope = scope
             };
 
             _refreshTokensRepository.Add(refreshToken);
@@ -95,17 +75,80 @@ namespace Etimo.Id.Service.TokenGenerators
             return refreshToken;
         }
 
-        private static void ValidateRequest(IRefreshTokenRequest request)
+        private async Task ValidateRequestAsync(IRefreshTokenRequest request)
         {
-            if (request.ClientId == Guid.Empty || request.ClientSecret == null)
+            _request = request;
+
+            if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");
             }
 
-            if (request.RefreshToken == null)
+            if (_request.RefreshToken == null)
             {
                 throw new InvalidGrantException("Refresh token could not be found");
             }
+
+            _refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken);
+            if (_refreshToken == null || _refreshToken.IsExpired || _refreshToken.Application.ClientId != request.ClientId)
+            {
+                throw new InvalidGrantException("Refresh token could not be found.");
+            }
+
+            // If someone tries to use the same refresh token twice, disable the access token.
+            if (_refreshToken.Used)
+            {
+                if (_refreshToken.AccessToken != null && !_refreshToken.AccessToken.IsExpired)
+                {
+                    _refreshToken.AccessToken.Disabled = true;
+                    await _accessTokensRepository.SaveAsync();
+                }
+
+                throw new InvalidGrantException("Refresh token could not be found.");
+            }
+
+            await _applicationService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+
+            // Make sure all requested scopes were requested in the original refresh token.
+            if (request.Scope != null)
+            {
+                var scopes = request.Scope.Split(" ");
+                foreach (var scope in scopes)
+                {
+                    // Only allow the refreshed token to use the scopes issued with the
+                    // original token as per https://tools.ietf.org/html/rfc6749#section-6
+                    var originalScopes = _refreshToken.AuthorizationCode.Scope.Split(" ");
+                    if (originalScopes.All(scopeName => scopeName != scope))
+                    {
+                        throw new InvalidScopeException("The provided scope is invalid.");
+                    }
+                }
+            }
+
+            _scope = request.Scope ?? _refreshToken.Scope;
+        }
+
+        private RefreshToken GenerateRefreshToken()
+        {
+            return GenerateRefreshToken(_refreshToken.ApplicationId, _refreshToken.RedirectUri, _refreshToken.UserId, _scope);
+        }
+
+        private JwtToken CreateJwtToken()
+        {
+            var jwtRequest = new JwtTokenRequest
+            {
+                Audience = new List<string> { _refreshToken.Application.ClientId.ToString() },
+                Subject = _refreshToken.UserId.ToString(),
+                Scope = _scope
+            };
+
+            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+        }
+
+        private async Task SaveAsync()
+        {
+            await _refreshTokensRepository.SaveAsync();
+            await _accessTokensRepository.SaveAsync();
         }
     }
 }
