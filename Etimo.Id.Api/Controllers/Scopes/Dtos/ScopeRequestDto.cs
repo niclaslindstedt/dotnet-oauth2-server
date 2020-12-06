@@ -1,8 +1,8 @@
 // ReSharper disable InconsistentNaming
 
-using System;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Etimo.Id.Api.Scopes.Dtos
@@ -23,13 +23,19 @@ namespace Etimo.Id.Api.Scopes.Dtos
 
         public Scope ToScope(Guid? scopeId = null)
         {
-            return new Scope
+            var scope = new Scope
             {
-                ScopeId = scopeId ?? Guid.NewGuid(),
                 Name = name,
                 Description = description,
                 ApplicationId = application_id ?? default
             };
+
+            if (scopeId != null)
+            {
+                scope.ScopeId = scopeId.Value;
+            }
+
+            return scope;
         }
     }
 }
