@@ -36,23 +36,14 @@ namespace Etimo.Id.Api.OAuth
 
         public TokenRequest ToTokenRequest()
         {
-            switch (grant_type)
+            return grant_type switch
             {
-                case "password":
-                    return new TokenRequest(grant_type, username, password, scope);
-
-                case "client_credentials":
-                    return new TokenRequest(grant_type, scope);
-
-                case "authorization_code":
-                    return new TokenRequest(grant_type, code, redirect_uri, client_id ?? Guid.Empty);
-
-                case "refresh_token":
-                    return new TokenRequest(grant_type, refresh_token, scope);
-
-                default:
-                    throw new UnsupportedGrantTypeException("Invalid grant type.");
-            }
+                "password" => new ResourceOwnerPasswordCredentialsTokenRequest(grant_type, username, password, scope),
+                "client_credentials" => new ClientCredentialsTokenRequest(grant_type, scope),
+                "authorization_code" => new AuthorizationCodeTokenRequest(grant_type, code, redirect_uri, client_id ?? Guid.Empty),
+                "refresh_token" => new RefreshTokenRequest(grant_type, refresh_token, scope),
+                _ => throw new UnsupportedGrantTypeException("Invalid grant type.")
+            };
         }
     }
 }
