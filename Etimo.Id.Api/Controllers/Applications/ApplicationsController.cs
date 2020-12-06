@@ -16,14 +16,14 @@ namespace Etimo.Id.Api.Applications
     public class ApplicationsController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IApplicationsService _applicationsService;
+        private readonly IApplicationService _applicationService;
 
         public ApplicationsController(
             SiteSettings siteSettings,
-            IApplicationsService applicationsService)
+            IApplicationService applicationService)
         {
             _siteSettings = siteSettings;
-            _applicationsService = applicationsService;
+            _applicationService = applicationService;
         }
 
         [HttpGet]
@@ -34,11 +34,11 @@ namespace Etimo.Id.Api.Applications
             // If the user calling is not an admin, revert to the GetByUserId method.
             if (!this.UserHasRole(Roles.Admin))
             {
-                var apps = await _applicationsService.GetByUserIdAsync(this.GetUserId());
+                var apps = await _applicationService.GetByUserIdAsync(this.GetUserId());
                 return Ok(apps);
             }
 
-            var allApps = await _applicationsService.GetAllAsync();
+            var allApps = await _applicationService.GetAllAsync();
 
             return Ok(allApps.Select(ApplicationResponseDto.FromApplication));
         }
@@ -51,11 +51,11 @@ namespace Etimo.Id.Api.Applications
             Application app;
             if (this.UserHasRole(Roles.Admin))
             {
-                app = await _applicationsService.FindAsync(applicationId);
+                app = await _applicationService.FindAsync(applicationId);
             }
             else
             {
-                app = await _applicationsService.FindAsync(applicationId, this.GetUserId());
+                app = await _applicationService.FindAsync(applicationId, this.GetUserId());
             }
 
             return Ok(ApplicationResponseDto.FromApplication(app));
@@ -67,7 +67,7 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
-            var app = await _applicationsService.AddAsync(dto.ToApplication(), this.GetUserId());
+            var app = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
             var created = ApplicationResponseDto.FromApplication(app);
 
             return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
@@ -79,7 +79,7 @@ namespace Etimo.Id.Api.Applications
         [NoCache]
         public async Task<IActionResult> GenerateSecretAsync(int applicationId)
         {
-            var application = await _applicationsService.GenerateSecretAsync(applicationId, this.GetUserId());
+            var application = await _applicationService.GenerateSecretAsync(applicationId, this.GetUserId());
 
             return Ok(ApplicationSecretResponseDto.FromApplication(application));
         }
@@ -90,7 +90,7 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = Policies.User)]
         public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
-            var app = await _applicationsService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+            var app = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
             var created = ApplicationResponseDto.FromApplication(app);
 
             return Ok(created);
@@ -103,10 +103,10 @@ namespace Etimo.Id.Api.Applications
         {
             if (this.UserHasRole(Roles.Admin))
             {
-                await _applicationsService.DeleteAsync(applicationId);
+                await _applicationService.DeleteAsync(applicationId);
             }
 
-            await _applicationsService.DeleteAsync(applicationId, this.GetUserId());
+            await _applicationService.DeleteAsync(applicationId, this.GetUserId());
 
             return NoContent();
         }

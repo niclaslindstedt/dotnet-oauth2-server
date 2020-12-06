@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
 {
-    public class UsersRepository : IUsersRepository
+    public class UserRepository : IUsersRepository
     {
         private readonly IEtimoIdDbContext _dbContext;
 
-        public UsersRepository(IEtimoIdDbContext dbContext)
+        public UserRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }

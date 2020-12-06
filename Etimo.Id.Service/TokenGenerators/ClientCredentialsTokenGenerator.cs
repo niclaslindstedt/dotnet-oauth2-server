@@ -11,16 +11,16 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
     {
-        private readonly IApplicationsService _applicationsService;
+        private readonly IApplicationService _applicationService;
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public ClientCredentialsTokenGenerator(
-            IApplicationsService applicationsService,
+            IApplicationService applicationService,
             IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _applicationsService = applicationsService;
+            _applicationService = applicationService;
             _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
@@ -29,7 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
-            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            var application = await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             if (application.Type == ClientTypes.Public)
             {
                 throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");

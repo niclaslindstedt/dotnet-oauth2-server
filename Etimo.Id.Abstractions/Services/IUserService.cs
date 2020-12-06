@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IUsersService
+    public interface IUserService
     {
         Task<List<User>> GetAllAsync();
         Task<User> AddAsync(User user);

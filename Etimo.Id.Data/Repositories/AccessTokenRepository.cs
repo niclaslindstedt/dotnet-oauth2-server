@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
 {
-    public class AccessTokensRepository : IAccessTokensRepository
+    public class AccessTokenRepository : IAccessTokensRepository
     {
         private readonly IEtimoIdDbContext _dbContext;
 
-        public AccessTokensRepository(IEtimoIdDbContext dbContext)
+        public AccessTokenRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }

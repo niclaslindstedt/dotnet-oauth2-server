@@ -9,23 +9,23 @@ namespace Etimo.Id.Service
 {
     public class AuthorizationService : IAuthorizationService
     {
-        private readonly IApplicationsService _applicationsService;
-        private readonly IUsersService _usersService;
+        private readonly IApplicationService _applicationService;
+        private readonly IUserService _userService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
 
         public AuthorizationService(
-            IApplicationsService applicationsService,
-            IUsersService usersService,
+            IApplicationService applicationService,
+            IUserService userService,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokensRepository accessTokensRepository,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
-            _applicationsService = applicationsService;
-            _usersService = usersService;
+            _applicationService = applicationService;
+            _userService = userService;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokensRepository = accessTokensRepository;
             _passwordGenerator = passwordGenerator;
@@ -39,7 +39,7 @@ namespace Etimo.Id.Service
                 throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
             }
 
-            var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
+            var application = await _applicationService.FindByClientIdAsync(request.ClientId);
             if (application == null)
             {
                 throw new InvalidClientException("No application with that client ID could be found.");
@@ -52,7 +52,7 @@ namespace Etimo.Id.Service
                 throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
 
-            var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
+            var user = await _userService.AuthenticateAsync(request.Username, request.Password);
             var code = await GenerateAuthorizationCodeAsync(user.UserId, request.ClientId, request.RedirectUri);
 
             var delimiter = code.RedirectUri.Contains("?") ? "&" : "?";

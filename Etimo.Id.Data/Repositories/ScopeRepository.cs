@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
 {
-    public class ScopesRepository : IScopesRepository
+    public class ScopeRepository : IScopesRepository
     {
         private readonly IEtimoIdDbContext _dbContext;
 
-        public ScopesRepository(IEtimoIdDbContext dbContext)
+        public ScopeRepository(IEtimoIdDbContext dbContext)
         {
             _dbContext = dbContext;
         }

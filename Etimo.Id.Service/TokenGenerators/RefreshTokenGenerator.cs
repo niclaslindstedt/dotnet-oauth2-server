@@ -11,7 +11,7 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
-        private readonly IApplicationsService _applicationsService;
+        private readonly IApplicationService _applicationService;
         private readonly IRefreshTokensRepository _refreshTokensRepository;
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
@@ -19,14 +19,14 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly OAuth2Settings _settings;
 
         public RefreshTokenGenerator(
-            IApplicationsService applicationsService,
+            IApplicationService applicationService,
             IRefreshTokensRepository refreshTokensRepository,
             IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
-            _applicationsService = applicationsService;
+            _applicationService = applicationService;
             _refreshTokensRepository = refreshTokensRepository;
             _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
@@ -56,7 +56,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Refresh token could not be found.");
             }
 
-            await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             refreshToken.Used = true;
             refreshToken = GenerateRefreshToken(refreshToken.ApplicationId, refreshToken.RedirectUri, refreshToken.UserId);

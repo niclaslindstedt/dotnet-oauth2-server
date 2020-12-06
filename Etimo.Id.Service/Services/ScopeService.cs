@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
 {
-    public class ScopesService : IScopesService
+    public class ScopeService : IScopeService
     {
         private readonly IScopesRepository _scopesRepository;
         private readonly IApplicationsRepository _applicationsRepository;
 
-        public ScopesService(
+        public ScopeService(
             IScopesRepository scopesRepository,
             IApplicationsRepository applicationsRepository)
         {

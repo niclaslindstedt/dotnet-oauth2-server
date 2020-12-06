@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
 {
-    public class ApplicationsService : IApplicationsService
+    public class ApplicationService : IApplicationService
     {
         private readonly IApplicationsRepository _applicationsRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly IPasswordHasher _passwordHasher;
 
-        public ApplicationsService(
+        public ApplicationService(
             IApplicationsRepository applicationsRepository,
             IPasswordGenerator passwordGenerator,
             IPasswordHasher passwordHasher)

@@ -96,11 +96,11 @@ namespace Etimo.Id.Api
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
 
             // Services
-            services.AddTransient<IApplicationsService, ApplicationsService>();
+            services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
-            services.AddTransient<IScopesService, ScopesService>();
+            services.AddTransient<IScopeService, ScopeService>();
             services.AddTransient<ITokenService, TokenService>();
-            services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IUserService, UserService>();
 
             // Token Generators
             services.AddTransient<IAuthorizationCodeTokenGenerator, AuthorizationCodeTokenGenerator>();
@@ -110,12 +110,12 @@ namespace Etimo.Id.Api
             services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
 
             // Repositories
-            services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
-            services.AddTransient<IAccessTokensRepository, AccessTokensRepository>();
+            services.AddTransient<IApplicationsRepository, ApplicationRepository>();
+            services.AddTransient<IAccessTokensRepository, AccessTokenRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
-            services.AddTransient<IUsersRepository, UsersRepository>();
-            services.AddTransient<IScopesRepository, ScopesRepository>();
-            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
+            services.AddTransient<IUsersRepository, UserRepository>();
+            services.AddTransient<IScopesRepository, ScopeRepository>();
+            services.AddTransient<IRefreshTokensRepository, RefreshTokenRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>

@@ -10,19 +10,19 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ResourceOwnerCredentialsTokenGenerator : IResourceOwnerCredentialsTokenGenerator
     {
-        private readonly IUsersService _usersService;
-        private readonly IApplicationsService _applicationsService;
+        private readonly IUserService _userService;
+        private readonly IApplicationService _applicationService;
         private readonly IAccessTokensRepository _accessTokensRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public ResourceOwnerCredentialsTokenGenerator(
-            IUsersService usersService,
-            IApplicationsService applicationsService,
+            IUserService userService,
+            IApplicationService applicationService,
             IAccessTokensRepository accessTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _usersService = usersService;
-            _applicationsService = applicationsService;
+            _userService = userService;
+            _applicationService = applicationService;
             _accessTokensRepository = accessTokensRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
@@ -31,8 +31,8 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             ValidateRequest(request);
 
-            var user = await _usersService.AuthenticateAsync(request.Username, request.Password);
-            var application = await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            var user = await _userService.AuthenticateAsync(request.Username, request.Password);
+            var application = await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
 
             var jwtRequest = new JwtTokenRequest
             {

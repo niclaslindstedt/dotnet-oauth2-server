@@ -17,14 +17,14 @@ namespace Etimo.Id.Api.Users
     public class UsersController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IUsersService _usersService;
+        private readonly IUserService _userService;
 
         public UsersController(
             SiteSettings siteSettings,
-            IUsersService usersService)
+            IUserService userService)
         {
             _siteSettings = siteSettings;
-            _usersService = usersService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -38,7 +38,7 @@ namespace Etimo.Id.Api.Users
                 return await FindAsync(this.GetUserId());
             }
 
-            var users = await _usersService.GetAllAsync();
+            var users = await _userService.GetAllAsync();
             var userDtos = users.Select(UserResponseDto.FromUser);
 
             return Ok(userDtos);
@@ -52,7 +52,7 @@ namespace Etimo.Id.Api.Users
         {
             await CheckPresenceOfSuperAdminKeyAsync();
 
-            var user = await _usersService.AddAsync(createDto.ToUser());
+            var user = await _userService.AddAsync(createDto.ToUser());
 
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", UserResponseDto.FromUser(user));
         }
@@ -72,7 +72,7 @@ namespace Etimo.Id.Api.Users
                 }
             }
 
-            var user = await _usersService.FindAsync(userId);
+            var user = await _userService.FindAsync(userId);
 
             return Ok(UserResponseDto.FromUser(user));
         }
@@ -82,7 +82,7 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = Policies.Admin)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
         {
-            await _usersService.DeleteAsync(userId);
+            await _userService.DeleteAsync(userId);
 
             return NoContent();
         }
@@ -103,7 +103,7 @@ namespace Etimo.Id.Api.Users
                     throw new UnauthorizedException();
                 }
 
-                if (await _usersService.AnyAsync())
+                if (await _userService.AnyAsync())
                 {
                     throw new BadRequestException("The SA key is only valid when database is empty.");
                 }

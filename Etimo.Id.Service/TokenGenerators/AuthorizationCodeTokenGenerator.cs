@@ -11,7 +11,7 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class AuthorizationCodeTokenGenerator : IAuthorizationCodeTokenGenerator
     {
-        private readonly IApplicationsService _applicationsService;
+        private readonly IApplicationService _applicationService;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IAccessTokensRepository _accessTokensRepository;
@@ -19,14 +19,14 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         public AuthorizationCodeTokenGenerator(
-            IApplicationsService applicationsService,
+            IApplicationService applicationService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokensRepository accessTokensRepository,
             IRefreshTokensRepository refreshTokensRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _applicationsService = applicationsService;
+            _applicationService = applicationService;
             _refreshTokenGenerator = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokensRepository = accessTokensRepository;
@@ -61,10 +61,10 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid client id.");
             }
 
-            var application = await _applicationsService.FindByClientIdAsync(request.ClientId);
+            var application = await _applicationService.FindByClientIdAsync(request.ClientId);
             if (application.Type == ClientTypes.Confidential)
             {
-                await _applicationsService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+                await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             }
 
             var redirectUri = request.RedirectUri ?? application.RedirectUri;
