@@ -10,32 +10,32 @@ namespace Etimo.Id.Service
 {
     public class ScopeService : IScopeService
     {
-        private readonly IScopesRepository _scopesRepository;
-        private readonly IApplicationsRepository _applicationsRepository;
+        private readonly IScopesRepository _scopeRepository;
+        private readonly IApplicationRepository _applicationRepository;
 
         public ScopeService(
-            IScopesRepository scopesRepository,
-            IApplicationsRepository applicationsRepository)
+            IScopesRepository scopeRepository,
+            IApplicationRepository applicationRepository)
         {
-            _scopesRepository = scopesRepository;
-            _applicationsRepository = applicationsRepository;
+            _scopeRepository = scopeRepository;
+            _applicationRepository = applicationRepository;
         }
 
         public async Task<List<Scope>> GetByClientIdAsync(Guid clientId)
         {
-            var applications = await _applicationsRepository.GetByUserIdAsync(clientId);
+            var applications = await _applicationRepository.GetByUserIdAsync(clientId);
 
             return applications.SelectMany(a => a.Scopes).ToList();
         }
 
         public Task<List<Scope>> GetAllAsync()
         {
-            return _scopesRepository.GetAllAsync();
+            return _scopeRepository.GetAllAsync();
         }
 
         public async Task<Scope> FindAsync(Guid scopeId)
         {
-            var scope = await _scopesRepository.FindAsync(scopeId);
+            var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope == null)
             {
                 throw new NotFoundException("Scope does not exist or does not belong to any applications you own.");
@@ -46,7 +46,7 @@ namespace Etimo.Id.Service
 
         public async Task<Scope> FindAsync(Guid scopeId, Guid userId)
         {
-            var scope = await _scopesRepository.FindAsync(scopeId);
+            var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope.Application.UserId != userId)
             {
                 throw new NotFoundException("Scope does not exist or does not belong to any applications you own.");
@@ -57,7 +57,7 @@ namespace Etimo.Id.Service
 
         public async Task<Scope> AddAsync(Scope scope, Guid userId)
         {
-            var application = await _applicationsRepository.FindAsync(scope.ApplicationId);
+            var application = await _applicationRepository.FindAsync(scope.ApplicationId);
             if (application.UserId != userId)
             {
                 throw new BadRequestException("Application does not exist or does not belong to you.");
@@ -68,15 +68,15 @@ namespace Etimo.Id.Service
                 throw new BadRequestException("Scope name is used by another Scope.");
             }
 
-            _scopesRepository.Add(scope);
-            await _scopesRepository.SaveAsync();
+            _scopeRepository.Add(scope);
+            await _scopeRepository.SaveAsync();
 
             return scope;
         }
 
         public async Task<Scope> UpdateAsync(Scope updatedScope, Guid userId)
         {
-            var scope = await _scopesRepository.FindAsync(updatedScope.ScopeId);
+            var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
             if (scope.Application.UserId != userId)
             {
                 throw new BadRequestException("Application does not exist or does not belong to you.");
@@ -88,20 +88,20 @@ namespace Etimo.Id.Service
             }
 
             scope.Update(updatedScope);
-            await _scopesRepository.SaveAsync();
+            await _scopeRepository.SaveAsync();
 
             return scope;
         }
 
         public async Task DeleteAsync(Guid scopeId)
         {
-            var scope = await _scopesRepository.FindAsync(scopeId);
+            var scope = await _scopeRepository.FindAsync(scopeId);
             await DeleteAsync(scope);
         }
 
         public async Task DeleteAsync(Guid scopeId, Guid userId)
         {
-            var scope = await _scopesRepository.FindAsync(scopeId);
+            var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope?.Application.UserId == userId)
             {
                 await DeleteAsync(scope);
@@ -112,8 +112,8 @@ namespace Etimo.Id.Service
         {
             if (scope != null)
             {
-                _scopesRepository.Delete(scope);
-                await _scopesRepository.SaveAsync();
+                _scopeRepository.Delete(scope);
+                await _scopeRepository.SaveAsync();
             }
         }
     }

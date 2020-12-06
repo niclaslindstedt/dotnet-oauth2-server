@@ -12,7 +12,7 @@ namespace Etimo.Id.Service.TokenGenerators
     public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
     {
         private readonly IApplicationService _applicationService;
-        private readonly IAccessTokensRepository _accessTokensRepository;
+        private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         private IClientCredentialsTokenRequest _request;
@@ -20,11 +20,11 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public ClientCredentialsTokenGenerator(
             IApplicationService applicationService,
-            IAccessTokensRepository accessTokensRepository,
+            IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
             _applicationService = applicationService;
-            _accessTokensRepository = accessTokensRepository;
+            _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
 
@@ -33,8 +33,8 @@ namespace Etimo.Id.Service.TokenGenerators
             await ValidateRequestAsync(request);
             var jwtToken = CreateJwtToken();
             var accessToken = jwtToken.ToAccessToken();
-            _accessTokensRepository.Add(accessToken);
-            await _accessTokensRepository.SaveAsync();
+            _accessTokenRepository.Add(accessToken);
+            await _accessTokenRepository.SaveAsync();
 
             return jwtToken;
         }

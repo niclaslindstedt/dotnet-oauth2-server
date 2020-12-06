@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IAccessTokensRepository
+    public interface IAccessTokenRepository
     {
         Task<AccessToken> FindAsync(Guid accessTokenId);
         void Add(AccessToken token);

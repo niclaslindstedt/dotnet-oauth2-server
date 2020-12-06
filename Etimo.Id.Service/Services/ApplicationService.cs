@@ -10,33 +10,33 @@ namespace Etimo.Id.Service
 {
     public class ApplicationService : IApplicationService
     {
-        private readonly IApplicationsRepository _applicationsRepository;
+        private readonly IApplicationRepository _applicationRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly IPasswordHasher _passwordHasher;
 
         public ApplicationService(
-            IApplicationsRepository applicationsRepository,
+            IApplicationRepository applicationRepository,
             IPasswordGenerator passwordGenerator,
             IPasswordHasher passwordHasher)
         {
-            _applicationsRepository = applicationsRepository;
+            _applicationRepository = applicationRepository;
             _passwordGenerator = passwordGenerator;
             _passwordHasher = passwordHasher;
         }
 
         public Task<List<Application>> GetAllAsync()
         {
-            return _applicationsRepository.GetAllAsync();
+            return _applicationRepository.GetAllAsync();
         }
 
         public Task<List<Application>> GetByUserIdAsync(Guid userId)
         {
-            return _applicationsRepository.GetByUserIdAsync(userId);
+            return _applicationRepository.GetByUserIdAsync(userId);
         }
 
         public async ValueTask<Application> FindAsync(int applicationId)
         {
-            var application = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationRepository.FindAsync(applicationId);
 
             if (application == null)
             {
@@ -48,7 +48,7 @@ namespace Etimo.Id.Service
 
         public async Task<Application> FindAsync(int applicationId, Guid userId)
         {
-            var application = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationRepository.FindAsync(applicationId);
 
             if (application?.UserId != userId)
             {
@@ -60,14 +60,14 @@ namespace Etimo.Id.Service
 
         public Task<Application> FindByClientIdAsync(Guid clientId)
         {
-            return _applicationsRepository.FindByClientIdAsync(clientId);
+            return _applicationRepository.FindByClientIdAsync(clientId);
         }
 
         public async Task<Application> AddAsync(Application application, Guid userId)
         {
             application.UserId = userId;
-            _applicationsRepository.Add(application);
-            await _applicationsRepository.SaveAsync();
+            _applicationRepository.Add(application);
+            await _applicationRepository.SaveAsync();
 
             return application;
         }
@@ -83,20 +83,20 @@ namespace Etimo.Id.Service
             }
 
             application.Update(updatedApp);
-            await _applicationsRepository.SaveAsync();
+            await _applicationRepository.SaveAsync();
 
             return application;
         }
 
         public async Task DeleteAsync(int applicationId)
         {
-            var application = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationRepository.FindAsync(applicationId);
             await DeleteAsync(application);
         }
 
         public async Task DeleteAsync(int applicationId, Guid userId)
         {
-            var application = await _applicationsRepository.FindAsync(applicationId);
+            var application = await _applicationRepository.FindAsync(applicationId);
             if (application?.UserId == userId)
             {
                 await DeleteAsync(application);
@@ -107,14 +107,14 @@ namespace Etimo.Id.Service
         {
             if (application != null)
             {
-                _applicationsRepository.Delete(application);
-                await _applicationsRepository.SaveAsync();
+                _applicationRepository.Delete(application);
+                await _applicationRepository.SaveAsync();
             }
         }
 
         public async Task<Application> AuthenticateAsync(Guid clientId, string clientSecret)
         {
-            var application = await _applicationsRepository.FindAsync(clientId);
+            var application = await _applicationRepository.FindAsync(clientId);
             if (application == null)
             {
                 throw new InvalidGrantException("Invalid client id.");
@@ -134,7 +134,7 @@ namespace Etimo.Id.Service
 
             var secret = _passwordGenerator.Generate(64);
             application.ClientSecret = _passwordHasher.Hash(secret);
-            await _applicationsRepository.SaveAsync();
+            await _applicationRepository.SaveAsync();
 
             application.ClientSecret = secret;
 

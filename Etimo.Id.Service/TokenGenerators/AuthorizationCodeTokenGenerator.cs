@@ -14,8 +14,8 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IApplicationService _applicationService;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
-        private readonly IAccessTokensRepository _accessTokensRepository;
-        private readonly IRefreshTokensRepository _refreshTokensRepository;
+        private readonly IAccessTokenRepository _accessTokenRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
         private IAuthorizationCodeTokenRequest _request;
@@ -29,15 +29,15 @@ namespace Etimo.Id.Service.TokenGenerators
             IApplicationService applicationService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
-            IAccessTokensRepository accessTokensRepository,
-            IRefreshTokensRepository refreshTokensRepository,
+            IAccessTokenRepository accessTokenRepository,
+            IRefreshTokenRepository refreshTokenRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
             _applicationService = applicationService;
             _refreshTokenGenerator = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
-            _accessTokensRepository = accessTokensRepository;
-            _refreshTokensRepository = refreshTokensRepository;
+            _accessTokenRepository = accessTokenRepository;
+            _refreshTokenRepository = refreshTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
 
@@ -52,7 +52,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
 
             var accessToken = _jwtToken.ToAccessToken();
-            _accessTokensRepository.Add(accessToken);
+            _accessTokenRepository.Add(accessToken);
 
             await SaveAsync();
 
@@ -85,7 +85,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 if (_code.AccessToken != null)
                 {
                     _code.AccessToken.Disabled = true;
-                    await _accessTokensRepository.SaveAsync();
+                    await _accessTokenRepository.SaveAsync();
                 }
 
                 throw new InvalidGrantException("Invalid authorization code.");
@@ -136,8 +136,8 @@ namespace Etimo.Id.Service.TokenGenerators
         private async Task SaveAsync()
         {
             await _authorizationCodeRepository.SaveAsync();
-            await _refreshTokensRepository.SaveAsync();
-            await _accessTokensRepository.SaveAsync();
+            await _refreshTokenRepository.SaveAsync();
+            await _accessTokenRepository.SaveAsync();
         }
     }
 }

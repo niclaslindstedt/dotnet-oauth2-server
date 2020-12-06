@@ -14,8 +14,8 @@ namespace Etimo.Id.Service.TokenGenerators
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
         private readonly IApplicationService _applicationService;
-        private readonly IRefreshTokensRepository _refreshTokensRepository;
-        private readonly IAccessTokensRepository _accessTokensRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
@@ -26,15 +26,15 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public RefreshTokenGenerator(
             IApplicationService applicationService,
-            IRefreshTokensRepository refreshTokensRepository,
-            IAccessTokensRepository accessTokensRepository,
+            IRefreshTokenRepository refreshTokenRepository,
+            IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
             _applicationService = applicationService;
-            _refreshTokensRepository = refreshTokensRepository;
-            _accessTokensRepository = accessTokensRepository;
+            _refreshTokenRepository = refreshTokenRepository;
+            _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
             _passwordGenerator = passwordGenerator;
             _settings = settings;
@@ -51,7 +51,7 @@ namespace Etimo.Id.Service.TokenGenerators
             refreshToken.Code = _refreshToken.Code;
             _refreshToken.Used = true;
             var accessToken = jwtToken.ToAccessToken();
-            _accessTokensRepository.Add(accessToken);
+            _accessTokenRepository.Add(accessToken);
 
             await SaveAsync();
 
@@ -70,7 +70,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 Scope = scope
             };
 
-            _refreshTokensRepository.Add(refreshToken);
+            _refreshTokenRepository.Add(refreshToken);
 
             return refreshToken;
         }
@@ -89,7 +89,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Refresh token could not be found");
             }
 
-            _refreshToken = await _refreshTokensRepository.FindAsync(request.RefreshToken);
+            _refreshToken = await _refreshTokenRepository.FindAsync(request.RefreshToken);
             if (_refreshToken == null || _refreshToken.IsExpired || _refreshToken.Application.ClientId != request.ClientId)
             {
                 throw new InvalidGrantException("Refresh token could not be found.");
@@ -101,7 +101,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 if (_refreshToken.AccessToken != null && !_refreshToken.AccessToken.IsExpired)
                 {
                     _refreshToken.AccessToken.Disabled = true;
-                    await _accessTokensRepository.SaveAsync();
+                    await _accessTokenRepository.SaveAsync();
                 }
 
                 throw new InvalidGrantException("Refresh token could not be found.");
@@ -147,8 +147,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private async Task SaveAsync()
         {
-            await _refreshTokensRepository.SaveAsync();
-            await _accessTokensRepository.SaveAsync();
+            await _refreshTokenRepository.SaveAsync();
+            await _accessTokenRepository.SaveAsync();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Etimo.Id.Service
         private readonly IApplicationService _applicationService;
         private readonly IUserService _userService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
-        private readonly IAccessTokensRepository _accessTokensRepository;
+        private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
 
@@ -26,14 +26,14 @@ namespace Etimo.Id.Service
             IApplicationService applicationService,
             IUserService userService,
             IAuthorizationCodeRepository authorizationCodeRepository,
-            IAccessTokensRepository accessTokensRepository,
+            IAccessTokenRepository accessTokenRepository,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
             _applicationService = applicationService;
             _userService = userService;
             _authorizationCodeRepository = authorizationCodeRepository;
-            _accessTokensRepository = accessTokensRepository;
+            _accessTokenRepository = accessTokenRepository;
             _passwordGenerator = passwordGenerator;
             _settings = settings;
         }
@@ -49,7 +49,7 @@ namespace Etimo.Id.Service
 
         public async Task ValidateAsync(Guid accessTokenId)
         {
-            var accessToken = await _accessTokensRepository.FindAsync(accessTokenId);
+            var accessToken = await _accessTokenRepository.FindAsync(accessTokenId);
             if (accessToken == null || accessToken.Disabled)
             {
                 throw new UnauthorizedException("Access token has been disabled.");

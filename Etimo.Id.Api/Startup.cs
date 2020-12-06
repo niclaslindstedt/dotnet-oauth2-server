@@ -122,12 +122,12 @@ namespace Etimo.Id.Api
             services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
 
             // Repositories
-            services.AddTransient<IApplicationsRepository, ApplicationRepository>();
-            services.AddTransient<IAccessTokensRepository, AccessTokenRepository>();
+            services.AddTransient<IApplicationRepository, ApplicationRepository>();
+            services.AddTransient<IAccessTokenRepository, AccessTokenRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
-            services.AddTransient<IUsersRepository, UserRepository>();
-            services.AddTransient<IScopesRepository, ScopeRepository>();
-            services.AddTransient<IRefreshTokensRepository, RefreshTokenRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IScopeRepository, ScopeRepository>();
+            services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>

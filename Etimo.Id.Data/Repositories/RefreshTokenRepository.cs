@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
 {
-    public class RefreshTokenRepository : IRefreshTokensRepository
+    public class RefreshTokenRepository : IRefreshTokenRepository
     {
         private readonly IEtimoIdDbContext _dbContext;
 

@@ -10,25 +10,25 @@ namespace Etimo.Id.Service
 {
     public class UserService : IUserService
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
 
         public UserService(
-            IUsersRepository usersRepository,
+            IUserRepository userRepository,
             IPasswordHasher passwordHasher)
         {
-            _usersRepository = usersRepository;
+            _userRepository = userRepository;
             _passwordHasher = passwordHasher;
         }
 
         public Task<bool> AnyAsync()
         {
-            return _usersRepository.AnyAsync();
+            return _userRepository.AnyAsync();
         }
 
         public async Task<User> AuthenticateAsync(string username, string password)
         {
-            var user = await _usersRepository.FindByUsernameAsync(username);
+            var user = await _userRepository.FindByUsernameAsync(username);
             if (user == null)
             {
                 throw new InvalidGrantException("Invalid user credentials.");
@@ -44,7 +44,7 @@ namespace Etimo.Id.Service
 
         public Task<List<User>> GetAllAsync()
         {
-            return _usersRepository.GetAllAsync();
+            return _userRepository.GetAllAsync();
         }
 
         public async Task<User> AddAsync(User user)
@@ -54,8 +54,8 @@ namespace Etimo.Id.Service
 
             try
             {
-                _usersRepository.Add(user);
-                await _usersRepository.SaveAsync();
+                _userRepository.Add(user);
+                await _userRepository.SaveAsync();
             }
             catch (DbUpdateException)
             {
@@ -67,7 +67,7 @@ namespace Etimo.Id.Service
 
         public async ValueTask<User> FindAsync(Guid userId)
         {
-            var user = await _usersRepository.FindAsync(userId);
+            var user = await _userRepository.FindAsync(userId);
             if (user == null)
             {
                 throw new NotFoundException();
@@ -78,11 +78,11 @@ namespace Etimo.Id.Service
 
         public async Task DeleteAsync(Guid userId)
         {
-            var user = await _usersRepository.FindAsync(userId);
+            var user = await _userRepository.FindAsync(userId);
             if (user != null)
             {
-                _usersRepository.Delete(user);
-                await _usersRepository.SaveAsync();
+                _userRepository.Delete(user);
+                await _userRepository.SaveAsync();
             }
         }
     }
