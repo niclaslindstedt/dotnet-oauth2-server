@@ -25,13 +25,24 @@ namespace Etimo.Id.Api.Helpers
         }
 
         /// <summary>
-        /// Gets the UserId from the list of claims that the requester has.
+        /// Checks if the caller has a specific role.
         /// </summary>
         public static bool UserHasRole(this Controller controller, string role)
         {
             var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role);
 
             return claimRoles.Any(r => r.Value == role);
+        }
+
+        /// <summary>
+        /// Checks if the caller has been granted a specific scope.
+        /// </summary>
+        public static bool UserHasScope(this Controller controller, string scope)
+        {
+            var claimScopes = controller.Request.HttpContext.User.Claims.Where(c => c.Type == "scope");
+
+            // The caller must either have the scope claim or be an admin.
+            return claimScopes.Any(r => r.Value == scope) || controller.UserHasRole(Roles.Admin);
         }
 
         /// <summary>

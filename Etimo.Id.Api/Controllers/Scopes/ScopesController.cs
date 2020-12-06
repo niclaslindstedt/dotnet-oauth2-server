@@ -1,17 +1,15 @@
-using System;
-using System.Linq;
 using Etimo.Id.Abstractions;
-using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
-using Etimo.Id.Api.Security;
+using Etimo.Id.Api.Scopes.Dtos;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Etimo.Id.Api.Scopes.Dtos;
 
 namespace Etimo.Id.Api.Scopes
 {
@@ -31,28 +29,29 @@ namespace Etimo.Id.Api.Scopes
 
         [HttpGet]
         [Route("/scopes")]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = ScopeScopes.Read)]
         public async Task<IActionResult> GetAsync()
         {
-            // If the user calling is not an admin, revert to the GetByClientIdAsync method.
-            if (!this.UserHasRole(Roles.Admin))
+            List<Scope> scopes;
+            if (this.UserHasScope(ScopeScopes.Admin))
             {
-                var scopes = await _scopeService.GetByClientIdAsync(this.GetClientId());
-                return Ok(scopes);
+                scopes = await _scopeService.GetAllAsync();
+            }
+            else
+            {
+                scopes = await _scopeService.GetByClientIdAsync(this.GetClientId());
             }
 
-            var allScopes = await _scopeService.GetAllAsync();
-
-            return Ok(allScopes.Select(ScopeResponseDto.FromScope));
+            return Ok(scopes.Select(ScopeResponseDto.FromScope));
         }
 
         [HttpGet]
         [Route("/scopes/{scopeId:guid}")]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = ScopeScopes.Read)]
         public async Task<IActionResult> FindAsync([FromRoute] Guid scopeId)
         {
             Scope scope;
-            if (this.UserHasRole(Roles.Admin))
+            if (this.UserHasScope(ScopeScopes.Admin))
             {
                 scope = await _scopeService.FindAsync(scopeId);
             }
@@ -67,7 +66,7 @@ namespace Etimo.Id.Api.Scopes
         [HttpPost]
         [Route("/scopes")]
         [ValidateModel]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = ScopeScopes.Write)]
         public async Task<IActionResult> CreateAsync([FromBody] ScopeRequestDto dto)
         {
             var scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
@@ -79,7 +78,7 @@ namespace Etimo.Id.Api.Scopes
         [HttpPut]
         [Route("/scopes/{scopeId:guid}")]
         [ValidateModel]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = ScopeScopes.Write)]
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid scopeId, [FromBody] ScopeRequestDto dto)
         {
             var scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
@@ -90,15 +89,17 @@ namespace Etimo.Id.Api.Scopes
 
         [HttpDelete]
         [Route("/scopes/{scopeId:guid}")]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = ScopeScopes.Write)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid scopeId)
         {
-            if (this.UserHasRole(Roles.Admin))
+            if (this.UserHasScope(ScopeScopes.Admin))
             {
                 await _scopeService.DeleteAsync(scopeId);
             }
-
-            await _scopeService.DeleteAsync(scopeId, this.GetUserId());
+            else
+            {
+                await _scopeService.DeleteAsync(scopeId, this.GetUserId());
+            }
 
             return NoContent();
         }

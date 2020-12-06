@@ -1,9 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
-using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
-using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,28 +27,28 @@ namespace Etimo.Id.Api.Users
 
         [HttpGet]
         [Route("/users")]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = UserScopes.Read)]
         public async Task<IActionResult> GetAsync()
         {
-            // If the caller is not an admin, revert to the FindAsync method.
-            if (!this.UserHasRole(Roles.Admin))
+            if (this.UserHasScope(UserScopes.Admin))
             {
-                return await FindAsync(this.GetUserId());
+                var users = await _userService.GetAllAsync();
+                var userDtos = users.Select(UserResponseDto.FromUser);
+
+                return Ok(userDtos);
             }
 
-            var users = await _userService.GetAllAsync();
-            var userDtos = users.Select(UserResponseDto.FromUser);
-
-            return Ok(userDtos);
+            return await FindAsync(this.GetUserId());
         }
 
         [HttpPost]
         [Route("/users")]
         [ValidateModel]
-        [Authorize(Policy = Policies.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
-            await CheckPresenceOfSuperAdminKeyAsync();
+            // This method will allow a user to use a super admin key to
+            // authenticate when the database is empty.
+            await AuthorizeAsync();
 
             var user = await _userService.AddAsync(createDto.ToUser());
 
@@ -59,11 +57,11 @@ namespace Etimo.Id.Api.Users
 
         [HttpGet]
         [Route("/users/{userId:guid}")]
-        [Authorize(Policy = Policies.User)]
+        [Authorize(Policy = UserScopes.Read)]
         public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
         {
             // If the caller is not an admin, only allow the user to fetch itself.
-            if (!this.UserHasRole(Roles.Admin))
+            if (!this.UserHasScope(UserScopes.Admin))
             {
                 var identityId = this.GetUserId();
                 if (userId != identityId)
@@ -79,7 +77,7 @@ namespace Etimo.Id.Api.Users
 
         [HttpDelete]
         [Route("/users/{userId:guid}")]
-        [Authorize(Policy = Policies.Admin)]
+        [Authorize(Policy = UserScopes.Admin)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
         {
             await _userService.DeleteAsync(userId);
@@ -87,9 +85,9 @@ namespace Etimo.Id.Api.Users
             return NoContent();
         }
 
-        private async Task CheckPresenceOfSuperAdminKeyAsync()
+        private async Task AuthorizeAsync()
         {
-            // The Super Admin Key can be used to create the first user with administrator privileges.
+            // The super admin key can be used to create the first user with administrator privileges.
             // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
             if (this.SuperAdminKeyHeader() != _siteSettings.SuperAdminKey)
             {
@@ -98,9 +96,9 @@ namespace Etimo.Id.Api.Users
                     throw new ForbiddenException();
                 }
 
-                if (!this.UserHasRole(Roles.Admin))
+                if (!this.UserHasScope(UserScopes.Admin))
                 {
-                    throw new UnauthorizedException();
+                    throw new ForbiddenException();
                 }
 
                 if (await _userService.AnyAsync())
