@@ -89,22 +89,22 @@ namespace Etimo.Id.Api.Users
         {
             // The super admin key can be used to create the first user with administrator privileges.
             // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
-            if (this.SuperAdminKeyHeader() != _siteSettings.SuperAdminKey)
+            if (this.SuperAdminKeyHeader() == _siteSettings.SuperAdminKey)
             {
-                if (this.UserIsAuthenticated())
-                {
-                    throw new ForbiddenException();
-                }
-
-                if (!this.UserHasScope(UserScopes.Admin))
-                {
-                    throw new ForbiddenException();
-                }
-
                 if (await _userService.AnyAsync())
                 {
                     throw new BadRequestException("The SA key is only valid when database is empty.");
                 }
+            }
+
+            if (!this.UserIsAuthenticated())
+            {
+                throw new ForbiddenException();
+            }
+
+            if (!this.UserHasScope(UserScopes.Admin))
+            {
+                throw new ForbiddenException();
             }
         }
     }
