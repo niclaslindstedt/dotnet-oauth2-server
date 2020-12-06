@@ -6,6 +6,6 @@ namespace Etimo.Id.Abstractions
 {
     public interface IResourceOwnerCredentialsTokenGenerator
     {
-        Task<JwtToken> GenerateTokenAsync(IResourceOwnerCredentialsRequest request);
+        Task<JwtToken> GenerateTokenAsync(IResourceOwnerPasswordCredentialsTokenRequest request);
     }
 }

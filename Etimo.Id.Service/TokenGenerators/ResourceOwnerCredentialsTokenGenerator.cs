@@ -27,7 +27,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _jwtTokenFactory = jwtTokenFactory;
         }
 
-        public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerCredentialsRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
             ValidateRequest(request);
 
@@ -48,7 +48,7 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
-        private static void ValidateRequest(IResourceOwnerCredentialsRequest request)
+        private static void ValidateRequest(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
             if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {

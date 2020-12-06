@@ -2,6 +2,7 @@
 
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations;

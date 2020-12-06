@@ -3,11 +3,12 @@
 namespace Etimo.Id.Entities.Abstractions
 {
     public interface ITokenRequest
-        : IClientCredentialsRequest,
-            IUserCredentials,
-            IAuthorizationCodeRequest,
-            IResourceOwnerCredentialsRequest,
+        : IUserCredentials,
+            IAuthorizationCodeTokenRequest,
+            IClientCredentialsTokenRequest,
+            IResourceOwnerPasswordCredentialsTokenRequest,
             IRefreshTokenRequest
     {
+        public string GrantType { get; }
     }
 }

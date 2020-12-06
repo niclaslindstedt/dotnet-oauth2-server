@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Settings;
 using System;
@@ -33,7 +34,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _settings = settings;
         }
 
-        public async Task<JwtToken> GenerateTokenAsync(TokenRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(IRefreshTokenRequest request)
         {
             ValidateRequest(request);
 
@@ -94,7 +95,7 @@ namespace Etimo.Id.Service.TokenGenerators
             return refreshToken;
         }
 
-        private static void ValidateRequest(TokenRequest request)
+        private static void ValidateRequest(IRefreshTokenRequest request)
         {
             if (request.ClientId == Guid.Empty || request.ClientSecret == null)
             {

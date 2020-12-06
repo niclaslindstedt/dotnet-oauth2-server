@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IAuthorizationCodeTokenGenerator
+    public interface ITokenService
     {
-        Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request);
+        Task<JwtToken> GenerateTokenAsync(ITokenRequest request);
     }
 }

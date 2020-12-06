@@ -9,17 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using IAuthorizationService = Etimo.Id.Abstractions.IAuthorizationService;
 
 namespace Etimo.Id.Api.OAuth
 {
     [ApiController]
     public class OAuthController : Controller
     {
-        private readonly IOAuthService _oauthService;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly ITokenService _tokenService;
 
-        public OAuthController(IOAuthService oauthService)
+        public OAuthController(
+            IAuthorizationService authorizationService,
+            ITokenService tokenService)
         {
-            _oauthService = oauthService;
+            _authorizationService = authorizationService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -27,7 +32,7 @@ namespace Etimo.Id.Api.OAuth
         [Authorize]
         public async Task<IActionResult> Validate()
         {
-            await _oauthService.ValidateAsync(this.GetAccessTokenId());
+            await _authorizationService.ValidateAsync(this.GetAccessTokenId());
 
             return NoContent();
         }
@@ -55,7 +60,7 @@ namespace Etimo.Id.Api.OAuth
             }
 
             var request = query.ToAuthorizeRequest(form.username, form.password);
-            var redirectUri = await _oauthService.AuthorizeAsync(request);
+            var redirectUri = await _authorizationService.AuthorizeAsync(request);
 
             return Redirect(redirectUri);
         }
@@ -86,7 +91,7 @@ namespace Etimo.Id.Api.OAuth
                 request.ClientSecret = clientSecret;
             }
 
-            var token = await _oauthService.GenerateTokenAsync(request);
+            var token = await _tokenService.GenerateTokenAsync(request);
 
             return Ok(AccessTokenResponseDto.FromJwtToken(token));
         }

@@ -95,22 +95,27 @@ namespace Etimo.Id.Api
             services.AddSingleton<IPasswordHasher>(passwordHasher);
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
 
+            // Services
+            services.AddTransient<IApplicationsService, ApplicationsService>();
+            services.AddTransient<IAuthorizationService, AuthorizationService>();
+            services.AddTransient<IScopesService, ScopesService>();
+            services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IUsersService, UsersService>();
+
+            // Token Generators
             services.AddTransient<IAuthorizationCodeTokenGenerator, AuthorizationCodeTokenGenerator>();
             services.AddTransient<IClientCredentialsTokenGenerator, ClientCredentialsTokenGenerator>();
             services.AddTransient<IResourceOwnerCredentialsTokenGenerator, ResourceOwnerCredentialsTokenGenerator>();
             services.AddTransient<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
 
-            services.AddTransient<IApplicationsService, ApplicationsService>();
+            // Repositories
             services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
             services.AddTransient<IAccessTokensRepository, AccessTokensRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
-            services.AddTransient<IOAuthService, OAuthService>();
-            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
-            services.AddTransient<IScopesService, ScopesService>();
-            services.AddTransient<IScopesRepository, ScopesRepository>();
-            services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IScopesRepository, ScopesRepository>();
+            services.AddTransient<IRefreshTokensRepository, RefreshTokensRepository>();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>

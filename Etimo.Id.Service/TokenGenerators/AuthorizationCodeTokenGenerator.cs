@@ -34,7 +34,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _jwtTokenFactory = jwtTokenFactory;
         }
 
-        public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeRequest request)
+        public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request)
         {
             ValidateRequest(request);
 
@@ -97,7 +97,7 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
-        private static void ValidateRequest(IAuthorizationCodeRequest request)
+        private static void ValidateRequest(IAuthorizationCodeTokenRequest request)
         {
             if (request.ClientId == Guid.Empty)
             {

@@ -1,6 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Settings;
 using System;
@@ -8,28 +7,20 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
 {
-    public class OAuthService : IOAuthService
+    public class AuthorizationService : IAuthorizationService
     {
         private readonly IApplicationsService _applicationsService;
         private readonly IUsersService _usersService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IAccessTokensRepository _accessTokensRepository;
-        private readonly IAuthorizationCodeTokenGenerator _authorizationCodeTokenGenerator;
-        private readonly IClientCredentialsTokenGenerator _clientCredentialsTokenGenerator;
-        private readonly IResourceOwnerCredentialsTokenGenerator _resourceOwnerCredentialsTokenGenerator;
-        private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
 
-        public OAuthService(
+        public AuthorizationService(
             IApplicationsService applicationsService,
             IUsersService usersService,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokensRepository accessTokensRepository,
-            IAuthorizationCodeTokenGenerator authorizationCodeTokenGenerator,
-            IClientCredentialsTokenGenerator clientCredentialsTokenGenerator,
-            IResourceOwnerCredentialsTokenGenerator resourceOwnerCredentialsTokenGenerator,
-            IRefreshTokenGenerator refreshTokenGenerator,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
@@ -37,24 +28,8 @@ namespace Etimo.Id.Service
             _usersService = usersService;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokensRepository = accessTokensRepository;
-            _authorizationCodeTokenGenerator = authorizationCodeTokenGenerator;
-            _clientCredentialsTokenGenerator = clientCredentialsTokenGenerator;
-            _resourceOwnerCredentialsTokenGenerator = resourceOwnerCredentialsTokenGenerator;
-            _refreshTokenGenerator = refreshTokenGenerator;
             _passwordGenerator = passwordGenerator;
             _settings = settings;
-        }
-
-        public Task<JwtToken> GenerateTokenAsync(TokenRequest request)
-        {
-            return request.GrantType switch
-            {
-                GrantTypes.AuthorizationCode => _authorizationCodeTokenGenerator.GenerateTokenAsync(request),
-                GrantTypes.ClientCredentials => _clientCredentialsTokenGenerator.GenerateTokenAsync(request),
-                GrantTypes.Password => _resourceOwnerCredentialsTokenGenerator.GenerateTokenAsync(request),
-                GrantTypes.RefreshToken => _refreshTokenGenerator.GenerateTokenAsync(request),
-                _ => throw new UnsupportedGrantTypeException("Grant type not supported.")
-            };
         }
 
         public async Task<string> AuthorizeAsync(AuthorizationRequest request)
