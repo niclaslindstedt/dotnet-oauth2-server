@@ -50,5 +50,10 @@ namespace Etimo.Id.Data.Repositories
         {
             return _dbContext.Users.AnyAsync();
         }
+
+        public Task<bool> AnyByUsernameAsync(string username)
+        {
+            return _dbContext.Users.AnyAsync(u => u.Username == username);
+        }
     }
 }
