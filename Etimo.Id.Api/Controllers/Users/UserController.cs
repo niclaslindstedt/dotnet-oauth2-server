@@ -75,7 +75,7 @@ namespace Etimo.Id.Api.Users
         {
             // This method will allow a user to use a super admin key to
             // authenticate when the database is empty.
-            await AuthorizeAsync();
+            await AuthorizeAsync(UserScopes.Admin);
 
             var user = await _userService.AddAsync(createDto.ToUser());
             var created = UserResponseDto.FromUser(user);
@@ -114,7 +114,7 @@ namespace Etimo.Id.Api.Users
             return NoContent();
         }
 
-        private async Task AuthorizeAsync()
+        private async Task AuthorizeAsync(string scope)
         {
             // The super admin key can be used to create the first user with administrator privileges.
             // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
@@ -131,7 +131,7 @@ namespace Etimo.Id.Api.Users
                 throw new ForbiddenException();
             }
 
-            if (!this.UserHasScope(UserScopes.Admin))
+            if (!this.UserHasScope(scope))
             {
                 throw new ForbiddenException();
             }
