@@ -26,6 +26,11 @@ namespace Etimo.Id.Service
             return _roleRepository.GetAllAsync();
         }
 
+        public Task<List<Role>> GetByUserIdAsync(Guid userId)
+        {
+            return _roleRepository.GetByUserIdAsync(userId);
+        }
+
         public async Task<Role> FindAsync(Guid roleId)
         {
             var role = await _roleRepository.FindAsync(roleId);
@@ -48,12 +53,61 @@ namespace Etimo.Id.Service
             return role;
         }
 
+        public async Task<Role> AddAsync(Role role)
+        {
+            var application = await _applicationRepository.FindAsync(role.ApplicationId);
+
+            return await AddAsync(role, application);
+        }
+
         public async Task<Role> AddAsync(Role role, Guid userId)
         {
             var application = await _applicationRepository.FindAsync(role.ApplicationId);
-            if (application == null || application.UserId != userId)
+            if (application?.UserId != userId)
             {
-                throw new BadRequestException("Application not found or does not belong to you.");
+                throw new ForbiddenException("Application not found or does not belong to you.");
+            }
+
+            return await AddAsync(role, application);
+        }
+
+        public async Task<Role> UpdateAsync(Role updatedRole)
+        {
+            var role = await FindAsync(updatedRole.RoleId);
+
+            return await UpdateAsync(role, updatedRole);
+        }
+
+        public async Task<Role> UpdateAsync(Role updatedRole, Guid userId)
+        {
+            var role = await FindAsync(updatedRole.RoleId, userId);
+
+            return await UpdateAsync(role, updatedRole);
+        }
+
+        public async Task DeleteAsync(Guid roleId)
+        {
+            var role = await _roleRepository.FindAsync(roleId);
+            if (role != null)
+            {
+                await DeleteAsync(role);
+            }
+        }
+
+        public async Task DeleteAsync(Guid roleId, Guid userId)
+        {
+            var role = await _roleRepository.FindAsync(roleId);
+            if (role?.Application?.UserId == userId)
+            {
+                await DeleteAsync(role);
+            }
+        }
+
+        private async Task<Role> AddAsync(Role role, Application application)
+        {
+            if (application == null)
+            {
+                throw new NotFoundException("Application does not exist.");
             }
 
             if (application.Roles.Any(r => r.Name == role.Name))
@@ -67,24 +121,18 @@ namespace Etimo.Id.Service
             return role;
         }
 
-        public async Task<Role> UpdateAsync(Role updatedRole, Guid userId)
+        private async Task<Role> UpdateAsync(Role role, Role updatedRole)
         {
-            var role = await FindAsync(updatedRole.RoleId, userId);
-
             role.Update(updatedRole);
             await _roleRepository.SaveAsync();
 
             return role;
         }
 
-        public async Task DeleteAsync(Guid roleId)
+        private async Task DeleteAsync(Role role)
         {
-            var role = await _roleRepository.FindAsync(roleId);
-            if (role != null)
-            {
-                _roleRepository.Delete(role);
-                await _roleRepository.SaveAsync();
-            }
+            _roleRepository.Delete(role);
+            await _roleRepository.SaveAsync();
         }
     }
 }

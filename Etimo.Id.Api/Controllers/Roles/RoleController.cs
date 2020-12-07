@@ -6,6 +6,7 @@ using Etimo.Id.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,10 +28,19 @@ namespace Etimo.Id.Api.Roles
 
         [HttpGet]
         [Route("/roles")]
-        [Authorize(Policy = RoleScopes.Admin)]
+        [Authorize(Policy = RoleScopes.Read)]
         public async Task<IActionResult> GetAsync()
         {
-            var roles = await _roleService.GetAllAsync();
+            List<Role> roles;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                roles = await _roleService.GetAllAsync();
+            }
+            else
+            {
+                roles = await _roleService.GetByUserIdAsync(this.GetUserId());
+            }
+
             var found = roles.Select(RoleResponseDto.FromRole);
 
             return Ok(found);
@@ -62,7 +72,16 @@ namespace Etimo.Id.Api.Roles
         [Authorize(Policy = RoleScopes.Write)]
         public async Task<IActionResult> CreateAsync([FromBody] RoleRequestDto dto)
         {
-            var role = await _roleService.AddAsync(dto.ToRole(), this.GetUserId());
+            Role role;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                role = await _roleService.AddAsync(dto.ToRole());
+            }
+            else
+            {
+                role = await _roleService.AddAsync(dto.ToRole(), this.GetUserId());
+            }
+
             var created = RoleResponseDto.FromRole(role);
 
             return Created($"{_siteSettings.ListenUri}/roles/{role.RoleId}", created);
@@ -74,7 +93,16 @@ namespace Etimo.Id.Api.Roles
         [Authorize(Policy = RoleScopes.Write)]
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid roleId, [FromBody] RoleRequestDto dto)
         {
-            var role = await _roleService.UpdateAsync(dto.ToRole(roleId), this.GetUserId());
+            Role role;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                role = await _roleService.UpdateAsync(dto.ToRole(roleId));
+            }
+            else
+            {
+                role = await _roleService.UpdateAsync(dto.ToRole(roleId), this.GetUserId());
+            }
+
             var updated = RoleResponseDto.FromRole(role);
 
             return Ok(updated);
@@ -82,10 +110,17 @@ namespace Etimo.Id.Api.Roles
 
         [HttpDelete]
         [Route("/roles/{roleId:guid}")]
-        [Authorize(Policy = RoleScopes.Admin)]
+        [Authorize(Policy = RoleScopes.Write)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid roleId)
         {
-            await _roleService.DeleteAsync(roleId);
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                await _roleService.DeleteAsync(roleId);
+            }
+            else
+            {
+                await _roleService.DeleteAsync(roleId, this.GetUserId());
+            }
 
             return NoContent();
         }

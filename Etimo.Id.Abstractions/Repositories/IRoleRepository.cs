@@ -8,6 +8,7 @@ namespace Etimo.Id.Abstractions
     public interface IRoleRepository
     {
         Task<List<Role>> GetAllAsync();
+        Task<List<Role>> GetByUserIdAsync(Guid userId);
         Task<Role> FindAsync(Guid roleId);
         void Add(Role role);
         void Delete(Role role);

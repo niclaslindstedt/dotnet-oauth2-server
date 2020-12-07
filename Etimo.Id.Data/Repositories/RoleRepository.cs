@@ -3,6 +3,7 @@ using Etimo.Id.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
@@ -19,6 +20,11 @@ namespace Etimo.Id.Data.Repositories
         public Task<List<Role>> GetAllAsync()
         {
             return _dbContext.Roles.ToListAsync();
+        }
+
+        public Task<List<Role>> GetByUserIdAsync(Guid userId)
+        {
+            return _dbContext.Roles.Where(r => r.Application.UserId == userId).ToListAsync();
         }
 
         public Task<Role> FindAsync(Guid roleId)
