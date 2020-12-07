@@ -2,6 +2,7 @@
 
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Etimo.Id.Api.Applications
@@ -29,6 +30,8 @@ namespace Etimo.Id.Api.Applications
         [ValidUri]
         public string redirect_uri { get; set; }
 
+        public Guid? user_id { get; set; }
+
         public Application ToApplication(int? applicationId = null)
         {
             return new Application
@@ -38,7 +41,8 @@ namespace Etimo.Id.Api.Applications
                 Description = description,
                 Type = type,
                 HomepageUri = homepage_uri,
-                RedirectUri = redirect_uri
+                RedirectUri = redirect_uri,
+                UserId = user_id.GetValueOrDefault()
             };
         }
     }

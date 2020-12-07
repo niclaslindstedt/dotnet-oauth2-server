@@ -34,7 +34,7 @@ namespace Etimo.Id.Service
             return _applicationRepository.GetByUserIdAsync(userId);
         }
 
-        public async ValueTask<Application> FindAsync(int applicationId)
+        public async Task<Application> FindAsync(int applicationId)
         {
             var application = await _applicationRepository.FindAsync(applicationId);
 
@@ -66,6 +66,7 @@ namespace Etimo.Id.Service
         public async Task<Application> AddAsync(Application application, Guid userId)
         {
             application.UserId = userId;
+
             _applicationRepository.Add(application);
             await _applicationRepository.SaveAsync();
 
@@ -119,10 +120,22 @@ namespace Etimo.Id.Service
             return application;
         }
 
+        public async Task<Application> GenerateSecretAsync(int applicationId)
+        {
+            var application = await FindAsync(applicationId);
+
+            return await GenerateSecretAsync(application);
+        }
+
         public async Task<Application> GenerateSecretAsync(int applicationId, Guid userId)
         {
             var application = await FindAsync(applicationId, userId);
 
+            return await GenerateSecretAsync(application);
+        }
+
+        private async Task<Application> GenerateSecretAsync(Application application)
+        {
             var secret = _passwordGenerator.Generate(64);
             application.ClientSecret = _passwordHasher.Hash(secret);
             await _applicationRepository.SaveAsync();

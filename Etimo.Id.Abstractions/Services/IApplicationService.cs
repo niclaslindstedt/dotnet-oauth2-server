@@ -9,7 +9,7 @@ namespace Etimo.Id.Abstractions
     {
         Task<List<Application>> GetAllAsync();
         Task<List<Application>> GetByUserIdAsync(Guid userId);
-        ValueTask<Application> FindAsync(int applicationId);
+        Task<Application> FindAsync(int applicationId);
         Task<Application> FindAsync(int applicationId, Guid userId);
         Task<Application> FindByClientIdAsync(Guid clientId);
         Task<Application> AddAsync(Application application, Guid userId);
@@ -17,6 +17,7 @@ namespace Etimo.Id.Abstractions
         Task DeleteAsync(int applicationId);
         Task DeleteAsync(int applicationId, Guid userId);
         Task<Application> AuthenticateAsync(Guid clientId, string clientSecret);
+        Task<Application> GenerateSecretAsync(int applicationId);
         Task<Application> GenerateSecretAsync(int applicationId, Guid userId);
     }
 }

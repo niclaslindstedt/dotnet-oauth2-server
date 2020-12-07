@@ -71,7 +71,16 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Write)]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
-            var application = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
+            Application application;
+            if (this.UserHasScope(ApplicationScopes.Admin))
+            {
+                application = await _applicationService.AddAsync(dto.ToApplication(), dto.user_id ?? this.GetUserId());
+            }
+            else
+            {
+                application = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
+            }
+
             var created = ApplicationResponseDto.FromApplication(application);
 
             return Created($"{_siteSettings.ListenUri}/applications/{application.ApplicationId}", created);
@@ -83,7 +92,16 @@ namespace Etimo.Id.Api.Applications
         [NoCache]
         public async Task<IActionResult> GenerateSecretAsync(int applicationId)
         {
-            var application = await _applicationService.GenerateSecretAsync(applicationId, this.GetUserId());
+            Application application;
+            if (this.UserHasScope(ApplicationScopes.Admin))
+            {
+                application = await _applicationService.GenerateSecretAsync(applicationId);
+            }
+            else
+            {
+                application = await _applicationService.GenerateSecretAsync(applicationId, this.GetUserId());
+            }
+
             var updated = ApplicationSecretResponseDto.FromApplication(application);
 
             return Ok(updated);
@@ -95,7 +113,16 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Write)]
         public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
-            var application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+            Application application;
+            if (this.UserHasScope(ApplicationScopes.Admin))
+            {
+                application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), dto.user_id ?? this.GetUserId());
+            }
+            else
+            {
+                application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+            }
+
             var updated = ApplicationResponseDto.FromApplication(application);
 
             return Ok(updated);
