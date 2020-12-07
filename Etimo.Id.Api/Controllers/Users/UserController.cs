@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Etimo.Id.Entities;
 
 namespace Etimo.Id.Api.Users
 {
@@ -53,6 +54,25 @@ namespace Etimo.Id.Api.Users
             var user = await _userService.AddAsync(createDto.ToUser());
 
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", UserResponseDto.FromUser(user));
+        }
+
+        [HttpPut]
+        [Route("/users/{userId:guid}")]
+        [ValidateModel]
+        [Authorize(Policy = UserScopes.Write)]
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid userId, [FromBody] UserRequestDto dto)
+        {
+            User user;
+            if (this.UserHasScope(UserScopes.Admin))
+            {
+                user = await _userService.UpdateAsync(dto.ToUser(userId));
+            }
+            else
+            {
+                user = await _userService.UpdateAsync(dto.ToUser(userId), this.GetUserId());
+            }
+
+            return Ok(UserResponseDto.FromUser(user));
         }
 
         [HttpGet]

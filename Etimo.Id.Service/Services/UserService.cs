@@ -47,6 +47,26 @@ namespace Etimo.Id.Service
             return _userRepository.GetAllAsync();
         }
 
+        public async Task<User> UpdateAsync(User updatedUser)
+        {
+            var user = await _userRepository.FindAsync(updatedUser.UserId);
+
+            user.Update(updatedUser);
+            await _userRepository.SaveAsync();
+
+            return user;
+        }
+
+        public Task<User> UpdateAsync(User updatedUser, Guid userId)
+        {
+            if (updatedUser.UserId != userId)
+            {
+                throw new BadRequestException("User does not exist or does not belong to you.");
+            }
+
+            return UpdateAsync(updatedUser);
+        }
+
         public async Task<User> AddAsync(User user)
         {
             // We assume the password is not encrypted at this point.

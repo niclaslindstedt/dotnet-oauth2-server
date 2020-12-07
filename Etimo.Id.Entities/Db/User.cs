@@ -14,5 +14,11 @@ namespace Etimo.Id.Entities
 
         public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<Application> Applications { get; set; }
+
+        public void Update(User userWithUpdates)
+        {
+            Username = userWithUpdates.Username;
+            ModifiedDateTime = DateTime.UtcNow;
+        }
     }
 }
