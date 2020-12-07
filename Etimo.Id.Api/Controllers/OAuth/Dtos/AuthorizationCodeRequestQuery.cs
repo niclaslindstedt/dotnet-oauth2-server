@@ -14,6 +14,7 @@ namespace Etimo.Id.Api.OAuth
     public class AuthorizationCodeRequestQuery
     {
         [Required]
+        [ValidValues("code")]
         public string response_type { get; set; }
 
         [Required]
