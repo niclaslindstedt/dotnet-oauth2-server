@@ -69,7 +69,7 @@ namespace Etimo.Id.Service
         {
             if (updatedUser.UserId != userId)
             {
-                throw new BadRequestException("User does not exist or does not belong to you.");
+                throw new BadRequestException("You can only update your own user.");
             }
 
             return UpdateAsync(updatedUser);

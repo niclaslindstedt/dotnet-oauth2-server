@@ -38,7 +38,7 @@ namespace Etimo.Id.Service
             var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope == null)
             {
-                throw new NotFoundException("Scope does not exist.");
+                throw new NotFoundException();
             }
 
             return scope;
@@ -49,7 +49,7 @@ namespace Etimo.Id.Service
             var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope.Application.UserId != userId)
             {
-                throw new NotFoundException("Scope does not exist or does not belong to any applications you own.");
+                throw new NotFoundException();
             }
 
             return scope;
@@ -67,7 +67,7 @@ namespace Etimo.Id.Service
             var application = await _applicationRepository.FindAsync(scope.ApplicationId);
             if (application?.UserId != userId)
             {
-                throw new ForbiddenException("Application does not belong to you.");
+                throw new ForbiddenException("The application does not belong to you.");
             }
 
             return await AddAsync(scope, application);
@@ -85,7 +85,7 @@ namespace Etimo.Id.Service
             var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
             if (scope?.Application?.UserId != userId)
             {
-                throw new BadRequestException("Application does not exist or does not belong to you.");
+                throw new ForbiddenException("The application does not belong to you.");
             }
 
             return await UpdateAsync(scope, updatedScope);
@@ -115,7 +115,7 @@ namespace Etimo.Id.Service
 
             if (application.Scopes.Any(s => s.Name == scope.Name))
             {
-                throw new BadRequestException("Scope name already exists.");
+                throw new ConflictException("Scope name already exists.");
             }
 
             _scopeRepository.Add(scope);

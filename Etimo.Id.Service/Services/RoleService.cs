@@ -36,7 +36,7 @@ namespace Etimo.Id.Service
             var role = await _roleRepository.FindAsync(roleId);
             if (role == null)
             {
-                throw new NotFoundException("Role not found.");
+                throw new NotFoundException();
             }
 
             return role;
@@ -47,7 +47,7 @@ namespace Etimo.Id.Service
             var role = await FindAsync(roleId);
             if (role.Application.UserId != userId)
             {
-                throw new NotFoundException("Role not found.");
+                throw new NotFoundException();
             }
 
             return role;
@@ -65,7 +65,7 @@ namespace Etimo.Id.Service
             var application = await _applicationRepository.FindAsync(role.ApplicationId);
             if (application?.UserId != userId)
             {
-                throw new ForbiddenException("Application not found or does not belong to you.");
+                throw new ForbiddenException("Application does not belong to you.");
             }
 
             return await AddAsync(role, application);
@@ -107,12 +107,12 @@ namespace Etimo.Id.Service
         {
             if (application == null)
             {
-                throw new NotFoundException("Application does not exist.");
+                throw new BadRequestException("The application does not exist.");
             }
 
             if (application.Roles.Any(r => r.Name == role.Name))
             {
-                throw new BadRequestException("A role with that name already exists in this application.");
+                throw new ConflictException("A role with that name already exists in this application.");
             }
 
             _roleRepository.Add(role);
