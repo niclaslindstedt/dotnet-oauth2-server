@@ -73,17 +73,17 @@ namespace Etimo.Id.Service
             return application;
         }
 
-        public async Task<Application> UpdateAsync(Application updatedApp, Guid userId)
+        public async Task<Application> UpdateAsync(Application updatedApplication, Guid userId)
         {
-            var application = await FindAsync(updatedApp.ApplicationId, userId);
+            var application = await FindAsync(updatedApplication.ApplicationId, userId);
 
             // If the application is going public, we don't want a secret laying around.
-            if (updatedApp.Type == ClientTypes.Confidential && updatedApp.Type == ClientTypes.Public)
+            if (updatedApplication.Type == ClientTypes.Confidential && updatedApplication.Type == ClientTypes.Public)
             {
                 application.ClientSecret = null;
             }
 
-            application.Update(updatedApp);
+            application.Update(updatedApplication);
             await _applicationRepository.SaveAsync();
 
             return application;

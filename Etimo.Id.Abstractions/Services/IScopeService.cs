@@ -13,8 +13,8 @@ namespace Etimo.Id.Abstractions
         Task<Scope> FindAsync(Guid scopeId, Guid userId);
         Task<Scope> AddAsync(Scope scope);
         Task<Scope> AddAsync(Scope scope, Guid userId);
-        Task<Scope> UpdateAsync(Scope scope);
-        Task<Scope> UpdateAsync(Scope scope, Guid userId);
+        Task<Scope> UpdateAsync(Scope updatedScope);
+        Task<Scope> UpdateAsync(Scope updatedScope, Guid userId);
         Task DeleteAsync(Guid scopeId);
         Task DeleteAsync(Guid scopeId, Guid userId);
     }
