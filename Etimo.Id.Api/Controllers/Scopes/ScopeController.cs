@@ -72,7 +72,7 @@ namespace Etimo.Id.Api.Scopes
             var scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
             var created = ScopeResponseDto.FromScope(scope);
 
-            return Created($"{_siteSettings.ListenUri}/scopes/{scope.ApplicationId}", created);
+            return Created($"{_siteSettings.ListenUri}/scopes/{scope.ScopeId}", created);
         }
 
         [HttpPut]
@@ -82,9 +82,9 @@ namespace Etimo.Id.Api.Scopes
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid scopeId, [FromBody] ScopeRequestDto dto)
         {
             var scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
-            var created = ScopeResponseDto.FromScope(scope);
+            var updated = ScopeResponseDto.FromScope(scope);
 
-            return Ok(created);
+            return Ok(updated);
         }
 
         [HttpDelete]

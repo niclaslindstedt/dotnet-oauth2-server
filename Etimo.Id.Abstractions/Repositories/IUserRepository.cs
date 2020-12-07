@@ -7,12 +7,12 @@ namespace Etimo.Id.Abstractions
 {
     public interface IUserRepository
     {
-        Task<bool> AnyAsync();
+        Task<List<User>> GetAllAsync();
         Task<User> FindAsync(Guid userId);
         Task<User> FindByUsernameAsync(string username);
         void Add(User user);
-        Task<int> SaveAsync();
-        Task<List<User>> GetAllAsync();
         void Delete(User user);
+        Task<int> SaveAsync();
+        Task<bool> AnyAsync();
     }
 }

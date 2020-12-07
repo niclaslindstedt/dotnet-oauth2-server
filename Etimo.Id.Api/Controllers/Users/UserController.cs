@@ -2,13 +2,14 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Settings;
+using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Etimo.Id.Entities;
 
 namespace Etimo.Id.Api.Users
 {
@@ -31,15 +32,40 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = UserScopes.Read)]
         public async Task<IActionResult> GetAsync()
         {
+            List<User> users;
             if (this.UserHasScope(UserScopes.Admin))
             {
-                var users = await _userService.GetAllAsync();
-                var userDtos = users.Select(UserResponseDto.FromUser);
-
-                return Ok(userDtos);
+                users = await _userService.GetAllAsync();
+            }
+            else
+            {
+                var user = await _userService.FindAsync(this.GetUserId());
+                users = new List<User> {user};
             }
 
-            return await FindAsync(this.GetUserId());
+            var found = users.Select(UserResponseDto.FromUser);
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/users/{userId:guid}")]
+        [Authorize(Policy = UserScopes.Read)]
+        public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
+        {
+            User user;
+            if (this.UserHasScope(UserScopes.Admin))
+            {
+                user = await _userService.FindAsync(userId);
+            }
+            else
+            {
+                user = await _userService.FindAsync(this.GetUserId());
+            }
+
+            var found = UserResponseDto.FromUser(user);
+
+            return Ok(found);
         }
 
         [HttpPost]
@@ -52,8 +78,9 @@ namespace Etimo.Id.Api.Users
             await AuthorizeAsync();
 
             var user = await _userService.AddAsync(createDto.ToUser());
+            var created = UserResponseDto.FromUser(user);
 
-            return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", UserResponseDto.FromUser(user));
+            return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", created);
         }
 
         [HttpPut]
@@ -72,27 +99,9 @@ namespace Etimo.Id.Api.Users
                 user = await _userService.UpdateAsync(dto.ToUser(userId), this.GetUserId());
             }
 
-            return Ok(UserResponseDto.FromUser(user));
-        }
+            var updated = UserResponseDto.FromUser(user);
 
-        [HttpGet]
-        [Route("/users/{userId:guid}")]
-        [Authorize(Policy = UserScopes.Read)]
-        public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
-        {
-            // If the caller is not an admin, only allow the user to fetch itself.
-            if (!this.UserHasScope(UserScopes.Admin))
-            {
-                var identityId = this.GetUserId();
-                if (userId != identityId)
-                {
-                    throw new ForbiddenException();
-                }
-            }
-
-            var user = await _userService.FindAsync(userId);
-
-            return Ok(UserResponseDto.FromUser(user));
+            return Ok(updated);
         }
 
         [HttpDelete]

@@ -1,14 +1,13 @@
-using System;
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
+using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Settings;
+using Etimo.Id.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Etimo.Id.Api.Helpers;
-using Etimo.Id.Api.Users;
-using Etimo.Id.Entities;
 
 namespace Etimo.Id.Api.Roles
 {
@@ -28,12 +27,13 @@ namespace Etimo.Id.Api.Roles
 
         [HttpGet]
         [Route("/roles")]
-        [Authorize(Policy = RoleScopes.Read)]
+        [Authorize(Policy = RoleScopes.Admin)]
         public async Task<IActionResult> GetAsync()
         {
             var roles = await _roleService.GetAllAsync();
+            var found = roles.Select(RoleResponseDto.FromRole);
 
-            return Ok(roles.Select(RoleResponseDto.FromRole));
+            return Ok(found);
         }
 
         [HttpGet]
@@ -51,18 +51,21 @@ namespace Etimo.Id.Api.Roles
                 role = await _roleService.FindAsync(roleId, this.GetUserId());
             }
 
-            return Ok(RoleResponseDto.FromRole(role));
+            var found = RoleResponseDto.FromRole(role);
+
+            return Ok(found);
         }
 
         [HttpPost]
         [Route("/roles")]
         [ValidateModel]
         [Authorize(Policy = RoleScopes.Write)]
-        public async Task<IActionResult> CreateAsync([FromBody] RoleRequestDto createDto)
+        public async Task<IActionResult> CreateAsync([FromBody] RoleRequestDto dto)
         {
-            var role = await _roleService.AddAsync(createDto.ToRole(), this.GetUserId());
+            var role = await _roleService.AddAsync(dto.ToRole(), this.GetUserId());
+            var created = RoleResponseDto.FromRole(role);
 
-            return Created($"{_siteSettings.ListenUri}/roles/{role.RoleId}", RoleResponseDto.FromRole(role));
+            return Created($"{_siteSettings.ListenUri}/roles/{role.RoleId}", created);
         }
 
         [HttpPut]
@@ -72,8 +75,9 @@ namespace Etimo.Id.Api.Roles
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid roleId, [FromBody] RoleRequestDto dto)
         {
             var role = await _roleService.UpdateAsync(dto.ToRole(roleId), this.GetUserId());
+            var updated = RoleResponseDto.FromRole(role);
 
-            return Created($"{_siteSettings.ListenUri}/roles/{role.RoleId}", RoleResponseDto.FromRole(role));
+            return Ok(updated);
         }
 
         [HttpDelete]

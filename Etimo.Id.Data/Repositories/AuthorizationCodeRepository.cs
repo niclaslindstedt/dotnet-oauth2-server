@@ -23,11 +23,6 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.AuthorizationCodes.Add(code);
         }
 
-        public void Remove(AuthorizationCode code)
-        {
-            _dbContext.AuthorizationCodes.Remove(code);
-        }
-
         public Task<int> SaveAsync()
         {
             return _dbContext.SaveChangesAsync();

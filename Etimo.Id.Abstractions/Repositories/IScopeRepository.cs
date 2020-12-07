@@ -10,7 +10,7 @@ namespace Etimo.Id.Abstractions
         Task<List<Scope>> GetAllAsync();
         Task<Scope> FindAsync(Guid scopeId);
         void Add(Scope scope);
-        Task<int> SaveAsync();
         void Delete(Scope scope);
+        Task<int> SaveAsync();
     }
 }

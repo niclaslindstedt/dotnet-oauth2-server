@@ -47,17 +47,17 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.Applications.Add(application);
         }
 
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
         public void Delete(Application application)
         {
             if (application != null)
             {
                 _dbContext.Applications.Remove(application);
             }
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

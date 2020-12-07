@@ -21,30 +21,38 @@ namespace Etimo.Id.Service
             _passwordHasher = passwordHasher;
         }
 
-        public Task<bool> AnyAsync()
+        public Task<List<User>> GetAllAsync()
         {
-            return _userRepository.AnyAsync();
+            return _userRepository.GetAllAsync();
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public async ValueTask<User> FindAsync(Guid userId)
         {
-            var user = await _userRepository.FindByUsernameAsync(username);
+            var user = await _userRepository.FindAsync(userId);
             if (user == null)
             {
-                throw new InvalidGrantException("Invalid user credentials.");
-            }
-
-            if (!_passwordHasher.Verify(password, user.Password))
-            {
-                throw new InvalidGrantException("Invalid user credentials.");
+                throw new NotFoundException();
             }
 
             return user;
         }
 
-        public Task<List<User>> GetAllAsync()
+        public async Task<User> AddAsync(User user)
         {
-            return _userRepository.GetAllAsync();
+            // We assume the password is not encrypted at this point.
+            user.Password = _passwordHasher.Hash(user.Password);
+
+            try
+            {
+                _userRepository.Add(user);
+                await _userRepository.SaveAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new ConflictException("Username or e-mail already taken.");
+            }
+
+            return user;
         }
 
         public async Task<User> UpdateAsync(User updatedUser)
@@ -67,35 +75,6 @@ namespace Etimo.Id.Service
             return UpdateAsync(updatedUser);
         }
 
-        public async Task<User> AddAsync(User user)
-        {
-            // We assume the password is not encrypted at this point.
-            user.Password = _passwordHasher.Hash(user.Password);
-
-            try
-            {
-                _userRepository.Add(user);
-                await _userRepository.SaveAsync();
-            }
-            catch (DbUpdateException)
-            {
-                throw new ConflictException("Username or e-mail already taken.");
-            }
-
-            return user;
-        }
-
-        public async ValueTask<User> FindAsync(Guid userId)
-        {
-            var user = await _userRepository.FindAsync(userId);
-            if (user == null)
-            {
-                throw new NotFoundException();
-            }
-
-            return user;
-        }
-
         public async Task DeleteAsync(Guid userId)
         {
             var user = await _userRepository.FindAsync(userId);
@@ -104,6 +83,27 @@ namespace Etimo.Id.Service
                 _userRepository.Delete(user);
                 await _userRepository.SaveAsync();
             }
+        }
+
+        public Task<bool> AnyAsync()
+        {
+            return _userRepository.AnyAsync();
+        }
+
+        public async Task<User> AuthenticateAsync(string username, string password)
+        {
+            var user = await _userRepository.FindByUsernameAsync(username);
+            if (user == null)
+            {
+                throw new InvalidGrantException("Invalid user credentials.");
+            }
+
+            if (!_passwordHasher.Verify(password, user.Password))
+            {
+                throw new InvalidGrantException("Invalid user credentials.");
+            }
+
+            return user;
         }
     }
 }

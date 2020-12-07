@@ -5,6 +5,7 @@ using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,16 +30,19 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Read)]
         public async Task<IActionResult> GetAsync()
         {
-            // If the user calling is not an admin, revert to the GetByUserId method.
-            if (!this.UserHasScope(ApplicationScopes.Admin))
+            List<Application> applications;
+            if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                var apps = await _applicationService.GetByUserIdAsync(this.GetUserId());
-                return Ok(apps);
+                applications = await _applicationService.GetAllAsync();
+            }
+            else
+            {
+                applications = await _applicationService.GetByUserIdAsync(this.GetUserId());
             }
 
-            var allApps = await _applicationService.GetAllAsync();
+            var found = applications.Select(ApplicationResponseDto.FromApplication);
 
-            return Ok(allApps.Select(ApplicationResponseDto.FromApplication));
+            return Ok(found);
         }
 
         [HttpGet]
@@ -46,17 +50,19 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Read)]
         public async Task<IActionResult> FindAsync([FromRoute] int applicationId)
         {
-            Application app;
+            Application application;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                app = await _applicationService.FindAsync(applicationId);
+                application = await _applicationService.FindAsync(applicationId);
             }
             else
             {
-                app = await _applicationService.FindAsync(applicationId, this.GetUserId());
+                application = await _applicationService.FindAsync(applicationId, this.GetUserId());
             }
 
-            return Ok(ApplicationResponseDto.FromApplication(app));
+            var found = ApplicationResponseDto.FromApplication(application);
+
+            return Ok(found);
         }
 
         [HttpPost]
@@ -65,10 +71,10 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Write)]
         public async Task<IActionResult> CreateAsync([FromBody] ApplicationRequestDto dto)
         {
-            var app = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
-            var created = ApplicationResponseDto.FromApplication(app);
+            var application = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
+            var created = ApplicationResponseDto.FromApplication(application);
 
-            return Created($"{_siteSettings.ListenUri}/applications/{app.ApplicationId}", created);
+            return Created($"{_siteSettings.ListenUri}/applications/{application.ApplicationId}", created);
         }
 
         [HttpPost]
@@ -78,8 +84,9 @@ namespace Etimo.Id.Api.Applications
         public async Task<IActionResult> GenerateSecretAsync(int applicationId)
         {
             var application = await _applicationService.GenerateSecretAsync(applicationId, this.GetUserId());
+            var updated = ApplicationSecretResponseDto.FromApplication(application);
 
-            return Ok(ApplicationSecretResponseDto.FromApplication(application));
+            return Ok(updated);
         }
 
         [HttpPut]
@@ -88,10 +95,10 @@ namespace Etimo.Id.Api.Applications
         [Authorize(Policy = ApplicationScopes.Write)]
         public async Task<IActionResult> UpdateAsync([FromRoute] int applicationId, [FromBody] ApplicationRequestDto dto)
         {
-            var app = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
-            var created = ApplicationResponseDto.FromApplication(app);
+            var application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+            var updated = ApplicationResponseDto.FromApplication(application);
 
-            return Ok(created);
+            return Ok(updated);
         }
 
         [HttpDelete]
@@ -103,9 +110,10 @@ namespace Etimo.Id.Api.Applications
             {
                 await _applicationService.DeleteAsync(applicationId);
             }
-
-            // If the caller doesn't have the admin:applications scope, it needs to own the application.
-            await _applicationService.DeleteAsync(applicationId, this.GetUserId());
+            else
+            {
+                await _applicationService.DeleteAsync(applicationId, this.GetUserId());
+            }
 
             return NoContent();
         }

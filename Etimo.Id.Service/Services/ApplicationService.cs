@@ -103,15 +103,6 @@ namespace Etimo.Id.Service
             }
         }
 
-        private async Task DeleteAsync(Application application)
-        {
-            if (application != null)
-            {
-                _applicationRepository.Delete(application);
-                await _applicationRepository.SaveAsync();
-            }
-        }
-
         public async Task<Application> AuthenticateAsync(Guid clientId, string clientSecret)
         {
             var application = await _applicationRepository.FindAsync(clientId);
@@ -139,6 +130,15 @@ namespace Etimo.Id.Service
             application.ClientSecret = secret;
 
             return application;
+        }
+
+        private async Task DeleteAsync(Application application)
+        {
+            if (application != null)
+            {
+                _applicationRepository.Delete(application);
+                await _applicationRepository.SaveAsync();
+            }
         }
     }
 }

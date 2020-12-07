@@ -16,9 +16,9 @@ namespace Etimo.Id.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<bool> AnyAsync()
+        public Task<List<User>> GetAllAsync()
         {
-            return _dbContext.Users.AnyAsync();
+            return _dbContext.Users.ToListAsync();
         }
 
         public Task<User> FindAsync(Guid userId)
@@ -36,19 +36,19 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.Users.Add(user);
         }
 
+        public void Delete(User user)
+        {
+            _dbContext.Users.Remove(user);
+        }
+
         public Task<int> SaveAsync()
         {
             return _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<User>> GetAllAsync()
+        public Task<bool> AnyAsync()
         {
-            return _dbContext.Users.ToListAsync();
-        }
-
-        public void Delete(User user)
-        {
-            _dbContext.Users.Remove(user);
+            return _dbContext.Users.AnyAsync();
         }
     }
 }

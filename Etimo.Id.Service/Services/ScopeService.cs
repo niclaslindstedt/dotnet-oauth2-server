@@ -21,16 +21,16 @@ namespace Etimo.Id.Service
             _applicationRepository = applicationRepository;
         }
 
+        public Task<List<Scope>> GetAllAsync()
+        {
+            return _scopeRepository.GetAllAsync();
+        }
+
         public async Task<List<Scope>> GetByClientIdAsync(Guid clientId)
         {
             var applications = await _applicationRepository.GetByUserIdAsync(clientId);
 
             return applications.SelectMany(a => a.Scopes).ToList();
-        }
-
-        public Task<List<Scope>> GetAllAsync()
-        {
-            return _scopeRepository.GetAllAsync();
         }
 
         public async Task<Scope> FindAsync(Guid scopeId)

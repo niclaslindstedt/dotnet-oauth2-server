@@ -7,8 +7,8 @@ namespace Etimo.Id.Abstractions
 {
     public interface IScopeService
     {
-        Task<List<Scope>> GetByClientIdAsync(Guid clientId);
         Task<List<Scope>> GetAllAsync();
+        Task<List<Scope>> GetByClientIdAsync(Guid clientId);
         Task<Scope> FindAsync(Guid scopeId);
         Task<Scope> FindAsync(Guid scopeId, Guid userId);
         Task<Scope> AddAsync(Scope scope, Guid userId);

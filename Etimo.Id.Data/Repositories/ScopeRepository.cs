@@ -31,17 +31,17 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.Scopes.Add(scope);
         }
 
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
         public void Delete(Scope scope)
         {
             if (scope != null)
             {
                 _dbContext.Scopes.Remove(scope);
             }
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

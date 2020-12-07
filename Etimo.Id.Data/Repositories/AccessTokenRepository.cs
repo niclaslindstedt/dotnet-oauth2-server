@@ -1,6 +1,6 @@
-using System;
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Data.Repositories
@@ -24,17 +24,17 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.AccessTokens.Add(token);
         }
 
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
         public void Delete(AccessToken token)
         {
             if (token != null)
             {
                 _dbContext.AccessTokens.Remove(token);
             }
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -25,6 +25,7 @@ namespace Etimo.Id.Api.OAuth
 
         [NqChar]
         public string scope { get; set; }
+
         public string state { get; set; }
 
         public string ToQueryParameters()

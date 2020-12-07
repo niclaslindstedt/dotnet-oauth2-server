@@ -31,17 +31,17 @@ namespace Etimo.Id.Data.Repositories
             _dbContext.Roles.Add(role);
         }
 
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
         public void Delete(Role role)
         {
             if (role != null)
             {
                 _dbContext.Roles.Remove(role);
             }
+        }
+
+        public Task<int> SaveAsync()
+        {
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Etimo.Id.Abstractions
     {
         Task<AccessToken> FindAsync(Guid accessTokenId);
         void Add(AccessToken token);
-        Task<int> SaveAsync();
         void Delete(AccessToken token);
+        Task<int> SaveAsync();
     }
 }

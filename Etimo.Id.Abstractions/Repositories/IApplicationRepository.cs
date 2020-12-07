@@ -13,7 +13,7 @@ namespace Etimo.Id.Abstractions
         Task<Application> FindAsync(Guid clientId);
         Task<Application> FindByClientIdAsync(Guid clientId);
         void Add(Application application);
-        Task<int> SaveAsync();
         void Delete(Application application);
+        Task<int> SaveAsync();
     }
 }

@@ -10,7 +10,7 @@ namespace Etimo.Id.Abstractions
         Task<List<Role>> GetAllAsync();
         Task<Role> FindAsync(Guid roleId);
         void Add(Role role);
-        Task<int> SaveAsync();
         void Delete(Role role);
+        Task<int> SaveAsync();
     }
 }
