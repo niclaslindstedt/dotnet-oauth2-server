@@ -38,7 +38,7 @@ namespace Etimo.Id.Service
             var scope = await _scopeRepository.FindAsync(scopeId);
             if (scope == null)
             {
-                throw new NotFoundException("Scope does not exist or does not belong to any applications you own.");
+                throw new NotFoundException("Scope does not exist.");
             }
 
             return scope;
@@ -55,42 +55,40 @@ namespace Etimo.Id.Service
             return scope;
         }
 
+        public async Task<Scope> AddAsync(Scope scope)
+        {
+            var application = await _applicationRepository.FindAsync(scope.ApplicationId);
+
+            return await AddAsync(scope, application);
+        }
+
         public async Task<Scope> AddAsync(Scope scope, Guid userId)
         {
             var application = await _applicationRepository.FindAsync(scope.ApplicationId);
-            if (application.UserId != userId)
+            if (application?.UserId != userId)
             {
-                throw new BadRequestException("Application does not exist or does not belong to you.");
+                throw new ForbiddenException("Application does not belong to you.");
             }
 
-            if (application.Scopes.Any(s => s.Name == scope.Name))
-            {
-                throw new BadRequestException("Scope name is used by another Scope.");
-            }
+            return await AddAsync(scope, application);
+        }
 
-            _scopeRepository.Add(scope);
-            await _scopeRepository.SaveAsync();
+        public async Task<Scope> UpdateAsync(Scope updatedScope)
+        {
+            var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
 
-            return scope;
+            return await UpdateAsync(scope, updatedScope);
         }
 
         public async Task<Scope> UpdateAsync(Scope updatedScope, Guid userId)
         {
             var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
-            if (scope.Application.UserId != userId)
+            if (scope?.Application?.UserId != userId)
             {
                 throw new BadRequestException("Application does not exist or does not belong to you.");
             }
 
-            if (updatedScope.ApplicationId != scope.ApplicationId)
-            {
-                throw new BadRequestException("A scope cannot change application owner.");
-            }
-
-            scope.Update(updatedScope);
-            await _scopeRepository.SaveAsync();
-
-            return scope;
+            return await UpdateAsync(scope, updatedScope);
         }
 
         public async Task DeleteAsync(Guid scopeId)
@@ -106,6 +104,42 @@ namespace Etimo.Id.Service
             {
                 await DeleteAsync(scope);
             }
+        }
+
+        private async Task<Scope> AddAsync(Scope scope, Application application)
+        {
+            if (application == null)
+            {
+                throw new BadRequestException("Application does not exist.");
+            }
+
+            if (application.Scopes.Any(s => s.Name == scope.Name))
+            {
+                throw new BadRequestException("Scope name already exists.");
+            }
+
+            _scopeRepository.Add(scope);
+            await _scopeRepository.SaveAsync();
+
+            return scope;
+        }
+
+        public async Task<Scope> UpdateAsync(Scope scope, Scope updatedScope)
+        {
+            if (scope == null)
+            {
+                throw new BadRequestException("Scope does not exist.");
+            }
+
+            if (updatedScope.ApplicationId != scope.ApplicationId)
+            {
+                throw new BadRequestException("Cannot change application of a scope.");
+            }
+
+            scope.Update(updatedScope);
+            await _scopeRepository.SaveAsync();
+
+            return scope;
         }
 
         private async Task DeleteAsync(Scope scope)

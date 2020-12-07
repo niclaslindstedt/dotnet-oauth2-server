@@ -69,7 +69,16 @@ namespace Etimo.Id.Api.Scopes
         [Authorize(Policy = ScopeScopes.Write)]
         public async Task<IActionResult> CreateAsync([FromBody] ScopeRequestDto dto)
         {
-            var scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
+            Scope scope;
+            if (this.UserHasScope(ScopeScopes.Admin))
+            {
+                scope = await _scopeService.AddAsync(dto.ToScope());
+            }
+            else
+            {
+                scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
+            }
+
             var created = ScopeResponseDto.FromScope(scope);
 
             return Created($"{_siteSettings.ListenUri}/scopes/{scope.ScopeId}", created);
@@ -81,7 +90,16 @@ namespace Etimo.Id.Api.Scopes
         [Authorize(Policy = ScopeScopes.Write)]
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid scopeId, [FromBody] ScopeRequestDto dto)
         {
-            var scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
+            Scope scope;
+            if (this.UserHasScope(ScopeScopes.Admin))
+            {
+                scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId));
+            }
+            else
+            {
+                scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
+            }
+
             var updated = ScopeResponseDto.FromScope(scope);
 
             return Ok(updated);
