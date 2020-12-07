@@ -5,3 +5,4 @@
 **/nupkg/
 *.DotSettings.user
 appsettings.json
+package-lock.json
