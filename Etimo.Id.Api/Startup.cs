@@ -1,7 +1,11 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Bootstrapping;
+using Etimo.Id.Api.Roles;
+using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
+using Etimo.Id.Api.Users;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
@@ -20,10 +24,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System;
 using System.Text;
-using Etimo.Id.Api.Applications;
-using Etimo.Id.Api.Roles;
-using Etimo.Id.Api.Scopes;
-using Etimo.Id.Api.Users;
 using IAuthorizationService = Etimo.Id.Abstractions.IAuthorizationService;
 
 namespace Etimo.Id.Api
@@ -86,8 +86,6 @@ namespace Etimo.Id.Api
 
             services.AddAuthorization(config =>
             {
-                config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
-                config.AddPolicy(Policies.User, Policies.UserPolicy());
                 AddScopePolicies(config,
                     ApplicationScopes.Read,
                     ApplicationScopes.Write,
@@ -192,14 +190,8 @@ namespace Etimo.Id.Api
         {
             foreach (var policy in policies)
             {
-                AddScopePolicy(policy, config);
+                config.AddPolicy(policy, Policies.ScopePolicy(policy));
             }
-
-        }
-
-        private static void AddScopePolicy(string policy, AuthorizationOptions config)
-        {
-            config.AddPolicy(policy, Policies.ScopePolicy(policy));
         }
     }
 }
