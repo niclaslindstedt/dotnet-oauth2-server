@@ -6,6 +6,5 @@ namespace Etimo.Id.Api.Settings
     {
         public string ListenUri { get; set; }
         public List<string> TlsVersions { get; set; }
-        public string SuperAdminKey { get; set; }
     }
 }

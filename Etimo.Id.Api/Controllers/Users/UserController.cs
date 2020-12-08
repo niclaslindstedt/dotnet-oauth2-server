@@ -71,12 +71,9 @@ namespace Etimo.Id.Api.Users
         [HttpPost]
         [Route("/users")]
         [ValidateModel]
+        [Authorize(Policy = UserScopes.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
-            // This method will allow a user to use a super admin key to
-            // authenticate when the database is empty.
-            await AuthorizeAsync(UserScopes.Admin);
-
             var user = await _userService.AddAsync(createDto.ToUser());
             var created = UserResponseDto.FromUser(user);
 
@@ -112,29 +109,6 @@ namespace Etimo.Id.Api.Users
             await _userService.DeleteAsync(userId);
 
             return NoContent();
-        }
-
-        private async Task AuthorizeAsync(string scope)
-        {
-            // The super admin key can be used to create the first user with administrator privileges.
-            // Set the key using: dotnet user-secrets set SiteSettings:SuperAdminKey 'key'
-            if (this.SuperAdminKeyHeader() == _siteSettings.SuperAdminKey)
-            {
-                if (await _userService.AnyAsync())
-                {
-                    throw new BadRequestException("The SA key is only valid when database is empty.");
-                }
-            }
-
-            if (!this.UserIsAuthenticated())
-            {
-                throw new ForbiddenException();
-            }
-
-            if (!this.UserHasScope(scope))
-            {
-                throw new ForbiddenException();
-            }
         }
     }
 }
