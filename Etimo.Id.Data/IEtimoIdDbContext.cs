@@ -1,5 +1,6 @@
 using Etimo.Id.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace Etimo.Id.Data
         DbSet<Role> Roles { get; }
         DbSet<Scope> Scopes { get; }
         DbSet<User> Users { get; }
+        DatabaseFacade Database { get; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

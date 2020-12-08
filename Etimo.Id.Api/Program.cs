@@ -1,11 +1,14 @@
 using Etimo.Id.Api.Settings;
+using Etimo.Id.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Security.Authentication;
+using System.Threading.Tasks;
 
 namespace Etimo.Id.Api
 {
@@ -43,6 +46,8 @@ namespace Etimo.Id.Api
                     .UseStartup<Startup>()
                     .UseUrls(siteSettings.ListenUri)
                     .Build();
+
+                SeedDatabaseAsync(host).Wait();
 
                 host.Run();
             }
@@ -88,6 +93,24 @@ namespace Etimo.Id.Api
             }
 
             return tlsVersions;
+        }
+
+        private static async Task SeedDatabaseAsync(IWebHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<IEtimoIdDbContext>();
+
+                    await Seeder.SeedAsync(context, services);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("An error occurred while seeding the database");
+                }
+            }
         }
     }
 }
