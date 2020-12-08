@@ -25,6 +25,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@etimo.se
       PGADMIN_DEFAULT_PASSWORD: test123!
     ports:
-      - "8000:80"
+      - "8011:80"
     depends_on:
       - postgres
