@@ -1,3 +1,5 @@
+#!/usr/bin/pwsh
+
 $cwd = Get-Location
 Set-Location $PSScriptRoot\.. | Out-Null
 
