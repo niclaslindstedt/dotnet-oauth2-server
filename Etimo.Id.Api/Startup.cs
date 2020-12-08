@@ -1,6 +1,8 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Bootstrapping;
+using Etimo.Id.Api.Errors;
+using Etimo.Id.Api.Middleware;
 using Etimo.Id.Api.Roles;
 using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Security;
@@ -136,6 +138,7 @@ namespace Etimo.Id.Api
             services.AddTransient<IScopeRepository, ScopeRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
+            services.AddDistributedMemoryCache();
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>
                 {
@@ -148,7 +151,7 @@ namespace Etimo.Id.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.UseExceptionHandler("/error");
+            app.UseErrorMiddleware();
 
             if (Environment.IsDevelopment())
             {
@@ -178,6 +181,7 @@ namespace Etimo.Id.Api
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseBruteForceProtection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
