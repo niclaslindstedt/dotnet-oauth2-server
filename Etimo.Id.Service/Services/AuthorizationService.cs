@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Service.Scopes;
 using Etimo.Id.Service.Settings;
 using System;
 using System.Linq;
@@ -77,7 +78,8 @@ namespace Etimo.Id.Service
                 var scopes = _request.Scope.Split(" ");
                 foreach (var scope in scopes)
                 {
-                    if (application.Scopes.All(s => s.Name != scope))
+                    var allScopes = InbuiltScopes.All.Concat(application.Scopes.Select(s => s.Name));
+                    if (!allScopes.Contains(scope))
                     {
                         throw new InvalidScopeException("The provided scope is invalid.");
                     }

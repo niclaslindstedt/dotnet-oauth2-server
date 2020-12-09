@@ -1,4 +1,4 @@
-namespace Etimo.Id.Api.Roles
+namespace Etimo.Id.Service.Scopes
 {
     public class RoleScopes
     {

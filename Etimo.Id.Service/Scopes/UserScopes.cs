@@ -1,4 +1,4 @@
-namespace Etimo.Id.Api.Users
+namespace Etimo.Id.Service.Scopes
 {
     public class UserScopes
     {

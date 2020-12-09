@@ -4,6 +4,7 @@ using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Service.Scopes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
