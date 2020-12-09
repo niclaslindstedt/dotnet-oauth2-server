@@ -45,17 +45,47 @@ namespace Etimo.Id.Data
                 Type = "confidential"
             });
 
-            context.Roles.Add(new Role
+            var adminRole = new Role
             {
                 Name = "admin",
                 Description = "Automatically generated.",
                 ApplicationId = 1,
                 Users = new List<User> { adminUser }
-            });
+            };
+            context.Roles.Add(adminRole);
+
+            var scopes = GetBuiltInScopes("read")
+                .Concat(GetBuiltInScopes("write"))
+                .Concat(GetBuiltInScopes("admin"))
+                .ToList();
+            context.Scopes.AddRange(scopes);
+
+            adminRole.Scopes = scopes;
 
             await context.SaveChangesAsync();
 
             Console.WriteLine("Finished seeding the database.");
+        }
+
+        private static List<Scope> GetBuiltInScopes(string type)
+        {
+            var scopes = new List<Scope>();
+
+            var resources = new List<string> {
+                "application","scope", "role", "user"
+            };
+
+            foreach (var resource in resources) {
+                var scope = new Scope
+                {
+                    ApplicationId = 1,
+                    Name = $"{type}:{resource}",
+                    Description = "Built-in scope."
+                };
+                scopes.Add(scope);
+            }
+
+            return scopes;
         }
     }
 }
