@@ -124,7 +124,7 @@ namespace Etimo.Id.Service
             return scope;
         }
 
-        public async Task<Scope> UpdateAsync(Scope scope, Scope updatedScope)
+        private async Task<Scope> UpdateAsync(Scope scope, Scope updatedScope)
         {
             if (scope == null)
             {
