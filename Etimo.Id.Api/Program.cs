@@ -106,7 +106,7 @@ namespace Etimo.Id.Api
 
                     await Seeder.SeedAsync(context, services);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Log.Error("An error occurred while seeding the database");
                 }
