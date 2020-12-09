@@ -1,9 +1,12 @@
 // ReSharper disable InconsistentNaming
 
+using Etimo.Id.Api.Roles;
 using Etimo.Id.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Etimo.Id.Api.Scopes.Dtos
+namespace Etimo.Id.Api.Scopes
 {
     public class ScopeResponseDto
     {
@@ -13,10 +16,13 @@ namespace Etimo.Id.Api.Scopes.Dtos
         public int application_id { get; set; }
         public DateTime created_date { get; set; }
         public DateTime modified_date { get; set; }
+        public List<RoleResponseDto> roles { get; set; }
 
-        public static ScopeResponseDto FromScope(Scope scope)
+
+        public static ScopeResponseDto FromScope(Scope scope) => FromScope(scope, true);
+        public static ScopeResponseDto FromScope(Scope scope, bool includeChildren)
         {
-            return new ScopeResponseDto
+            var dto = new ScopeResponseDto
             {
                 scope_id = scope.ScopeId,
                 name = scope.Name,
@@ -25,6 +31,14 @@ namespace Etimo.Id.Api.Scopes.Dtos
                 created_date = scope.CreatedDateTime,
                 modified_date = scope.ModifiedDateTime
             };
+
+            if (includeChildren)
+            {
+                dto.roles = scope.Roles.Select(r =>
+                    RoleResponseDto.FromRole(r, false)).ToList();
+            }
+
+            return dto;
         }
     }
 }

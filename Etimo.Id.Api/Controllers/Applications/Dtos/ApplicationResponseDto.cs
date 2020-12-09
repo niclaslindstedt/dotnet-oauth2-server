@@ -1,7 +1,10 @@
 // ReSharper disable InconsistentNaming
 
+using Etimo.Id.Api.Roles;
 using Etimo.Id.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Etimo.Id.Api.Applications
 {
@@ -17,10 +20,12 @@ namespace Etimo.Id.Api.Applications
         public Guid user_id { get; set; }
         public DateTime created_date { get; set; }
         public DateTime modified_date { get; set; }
+        public List<RoleResponseDto> roles { get; set; }
 
-        public static ApplicationResponseDto FromApplication(Application application)
+        public static ApplicationResponseDto FromApplication(Application application) => FromApplication(application, true);
+        public static ApplicationResponseDto FromApplication(Application application, bool includeChildren)
         {
-            return new ApplicationResponseDto
+            var dto = new ApplicationResponseDto
             {
                 application_id = application.ApplicationId,
                 name = application.Name,
@@ -33,6 +38,14 @@ namespace Etimo.Id.Api.Applications
                 created_date = application.CreatedDateTime,
                 modified_date = application.ModifiedDateTime
             };
+
+            if (includeChildren)
+            {
+                dto.roles = application.Roles.Select(r =>
+                    RoleResponseDto.FromRole(r, true)).ToList();
+            }
+
+            return dto;
         }
     }
 }
