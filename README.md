@@ -61,10 +61,13 @@ This project uses [conventional commits](https://www.conventionalcommits.org/en/
 
 Type | Description
 --- | ---
+chore | Adding/updating scripts, configs, etc; no code change
+ci | Changes to continuous integration
+docs | Changes to documentation
 feat | New feature
 fix | Bug fix
-docs | Changes to documentation
-style | Formatting, etc; no code change
 refactor | Code refactoring
+repo | Updates to e.g. git hooks
+script | Updates to scripts in repository
 test | Write and refactor tests; no code change
-chore | Adding/updating scripts, configs, etc; no code change
+wip | Work in progress -- use in feature branches where you squash merge
