@@ -27,12 +27,11 @@ namespace Etimo.Id.Data
             {
                 UserId = adminUserId,
                 Username = "admin",
-                Password = "etimo"
+                Password = passwordHasher.Hash("etimo")
             };
             context.Users.Add(adminUser);
 
             var adminClientId = new Guid("11111111-1111-1111-1111-111111111111");
-            var adminClientSecret = passwordHasher.Hash("etimo");
             context.Applications.Add(new Application
             {
                 ApplicationId = 1,
@@ -41,7 +40,7 @@ namespace Etimo.Id.Data
                 HomepageUri = "https://localhost:5010",
                 RedirectUri = "https://localhost:5010/oauth2/callback",
                 ClientId = adminClientId,
-                ClientSecret = adminClientSecret,
+                ClientSecret = passwordHasher.Hash("etimo"),
                 UserId = adminUserId,
                 Type = "confidential"
             });
