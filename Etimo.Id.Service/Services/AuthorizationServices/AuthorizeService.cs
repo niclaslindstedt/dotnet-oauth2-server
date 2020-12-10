@@ -10,12 +10,11 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
 {
-    public class AuthorizationService : IAuthorizationService
+    public class AuthorizeService : IAuthorizeService
     {
         private readonly IFindApplicationService _findApplicationService;
         private readonly IUserService _userService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
-        private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
 
@@ -23,18 +22,16 @@ namespace Etimo.Id.Service
         private AuthorizationCode _code;
         private User _user;
 
-        public AuthorizationService(
+        public AuthorizeService(
             IFindApplicationService findApplicationService,
             IUserService userService,
             IAuthorizationCodeRepository authorizationCodeRepository,
-            IAccessTokenRepository accessTokenRepository,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
             _findApplicationService = findApplicationService;
             _userService = userService;
             _authorizationCodeRepository = authorizationCodeRepository;
-            _accessTokenRepository = accessTokenRepository;
             _passwordGenerator = passwordGenerator;
             _settings = settings;
         }
@@ -46,15 +43,6 @@ namespace Etimo.Id.Service
             await GenerateAuthorizationCodeAsync();
 
             return GenerateAuthorizationUrl();
-        }
-
-        public async Task ValidateAsync(Guid accessTokenId)
-        {
-            var accessToken = await _accessTokenRepository.FindAsync(accessTokenId);
-            if (accessToken == null || accessToken.Disabled)
-            {
-                throw new UnauthorizedException("Access token has been disabled.");
-            }
         }
 
         private async Task ValidateRequestAsync(IAuthorizationRequest request)

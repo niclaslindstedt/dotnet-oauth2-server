@@ -1,12 +1,10 @@
 using Etimo.Id.Entities.Abstractions;
-using System;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Abstractions
 {
-    public interface IAuthorizationService
+    public interface IAuthorizeService
     {
         Task<string> AuthorizeAsync(IAuthorizationRequest request);
-        Task ValidateAsync(Guid accessTokenId);
     }
 }

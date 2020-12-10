@@ -9,21 +9,23 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using IAuthorizationService = Etimo.Id.Abstractions.IAuthorizationService;
 
 namespace Etimo.Id.Api.OAuth
 {
     [ApiController]
     public class OAuthController : Controller
     {
-        private readonly IAuthorizationService _authorizationService;
+        private readonly IAuthorizeService _authorizeService;
+        private readonly IValidateTokenService _validateTokenService;
         private readonly ITokenService _tokenService;
 
         public OAuthController(
-            IAuthorizationService authorizationService,
+            IAuthorizeService authorizeService,
+            IValidateTokenService validateTokenService,
             ITokenService tokenService)
         {
-            _authorizationService = authorizationService;
+            _authorizeService = authorizeService;
+            _validateTokenService = validateTokenService;
             _tokenService = tokenService;
         }
 
@@ -32,7 +34,7 @@ namespace Etimo.Id.Api.OAuth
         [Authorize]
         public async Task<IActionResult> Validate()
         {
-            await _authorizationService.ValidateAsync(this.GetAccessTokenId());
+            await _validateTokenService.ValidateTokenAsync(this.GetAccessTokenId());
 
             return NoContent();
         }
@@ -60,7 +62,7 @@ namespace Etimo.Id.Api.OAuth
             }
 
             var request = query.ToAuthorizeRequest(form.username, form.password);
-            var redirectUri = await _authorizationService.AuthorizeAsync(request);
+            var redirectUri = await _authorizeService.AuthorizeAsync(request);
 
             return Redirect(redirectUri);
         }

@@ -1,13 +1,9 @@
 using Etimo.Id.Abstractions;
-using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Middleware;
-using Etimo.Id.Api.Roles;
-using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
-using Etimo.Id.Api.Users;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
@@ -28,7 +24,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using IAuthorizationService = Etimo.Id.Abstractions.IAuthorizationService;
 
 namespace Etimo.Id.Api
 {
@@ -113,8 +108,11 @@ namespace Etimo.Id.Api
             services.AddTransient<IGetApplicationsService, GetApplicationsService>();
             services.AddTransient<IUpdateApplicationService, UpdateApplicationService>();
 
+            // AuthorizationServices
+            services.AddTransient<IValidateTokenService, ValidateTokenService>();
+            services.AddTransient<IAuthorizeService, AuthorizeService>();
+
             // Services
-            services.AddTransient<IAuthorizationService, AuthorizationService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IScopeService, ScopeService>();
             services.AddTransient<ITokenService, TokenService>();
