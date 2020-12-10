@@ -18,14 +18,32 @@ namespace Etimo.Id.Api.Roles
     public class RoleController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IRoleService _roleService;
+        private readonly IAddRoleScopeRelationService _addRoleScopeRelationService;
+        private readonly IAddRoleService _addRoleService;
+        private readonly IDeleteRoleScopeRelationService _deleteRoleScopeRelationService;
+        private readonly IDeleteRoleService _deleteRoleService;
+        private readonly IFindRoleService _findRoleService;
+        private readonly IGetRolesService _getRolesService;
+        private readonly IUpdateRoleService _updateRoleService;
 
         public RoleController(
             SiteSettings siteSettings,
-            IRoleService roleService)
+            IAddRoleScopeRelationService addRoleScopeRelationService,
+            IAddRoleService addRoleService,
+            IDeleteRoleScopeRelationService deleteRoleScopeRelationService,
+            IDeleteRoleService deleteRoleService,
+            IFindRoleService findRoleService,
+            IGetRolesService getRolesService,
+            IUpdateRoleService updateRoleService)
         {
             _siteSettings = siteSettings;
-            _roleService = roleService;
+            _addRoleScopeRelationService = addRoleScopeRelationService;
+            _addRoleService = addRoleService;
+            _deleteRoleScopeRelationService = deleteRoleScopeRelationService;
+            _deleteRoleService = deleteRoleService;
+            _findRoleService = findRoleService;
+            _getRolesService = getRolesService;
+            _updateRoleService = updateRoleService;
         }
 
         [HttpGet]
@@ -36,11 +54,11 @@ namespace Etimo.Id.Api.Roles
             List<Role> roles;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                roles = await _roleService.GetAllAsync();
+                roles = await _getRolesService.GetAllAsync();
             }
             else
             {
-                roles = await _roleService.GetByUserIdAsync(this.GetUserId());
+                roles = await _getRolesService.GetByUserIdAsync(this.GetUserId());
             }
 
             var found = roles.Select(RoleResponseDto.FromRole);
@@ -56,11 +74,11 @@ namespace Etimo.Id.Api.Roles
             Role role;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _roleService.FindAsync(roleId);
+                role = await _findRoleService.FindAsync(roleId);
             }
             else
             {
-                role = await _roleService.FindAsync(roleId, this.GetUserId());
+                role = await _findRoleService.FindAsync(roleId, this.GetUserId());
             }
 
             var found = RoleResponseDto.FromRole(role);
@@ -77,11 +95,11 @@ namespace Etimo.Id.Api.Roles
             Role role;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _roleService.AddAsync(dto.ToRole());
+                role = await _addRoleService.AddAsync(dto.ToRole());
             }
             else
             {
-                role = await _roleService.AddAsync(dto.ToRole(), this.GetUserId());
+                role = await _addRoleService.AddAsync(dto.ToRole(), this.GetUserId());
             }
 
             var created = RoleResponseDto.FromRole(role);
@@ -98,11 +116,11 @@ namespace Etimo.Id.Api.Roles
             Role role;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _roleService.UpdateAsync(dto.ToRole(roleId));
+                role = await _updateRoleService.UpdateAsync(dto.ToRole(roleId));
             }
             else
             {
-                role = await _roleService.UpdateAsync(dto.ToRole(roleId), this.GetUserId());
+                role = await _updateRoleService.UpdateAsync(dto.ToRole(roleId), this.GetUserId());
             }
 
             var updated = RoleResponseDto.FromRole(role);
@@ -117,11 +135,11 @@ namespace Etimo.Id.Api.Roles
         {
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                await _roleService.DeleteAsync(roleId);
+                await _deleteRoleService.DeleteAsync(roleId);
             }
             else
             {
-                await _roleService.DeleteAsync(roleId, this.GetUserId());
+                await _deleteRoleService.DeleteAsync(roleId, this.GetUserId());
             }
 
             return NoContent();
@@ -135,11 +153,11 @@ namespace Etimo.Id.Api.Roles
             Role role;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _roleService.AddScopeRelationAsync(roleId, scopeId);
+                role = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId);
             }
             else
             {
-                role = await _roleService.AddScopeRelationAsync(roleId, scopeId, this.GetUserId());
+                role = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId, this.GetUserId());
             }
 
             var added = RoleResponseDto.FromRole(role);
@@ -155,11 +173,11 @@ namespace Etimo.Id.Api.Roles
             Role role;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _roleService.DeleteScopeRelationAsync(roleId, scopeId);
+                role = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId);
             }
             else
             {
-                role = await _roleService.DeleteScopeRelationAsync(roleId, scopeId, this.GetUserId());
+                role = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId, this.GetUserId());
             }
 
             var added = RoleResponseDto.FromRole(role);

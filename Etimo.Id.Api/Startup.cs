@@ -112,8 +112,16 @@ namespace Etimo.Id.Api
             services.AddTransient<IValidateTokenService, ValidateTokenService>();
             services.AddTransient<IAuthorizeService, AuthorizeService>();
 
+            // RoleServices
+            services.AddTransient<IAddRoleScopeRelationService, AddRoleScopeRelationService>();
+            services.AddTransient<IAddRoleService, AddRoleService>();
+            services.AddTransient<IDeleteRoleScopeRelationService, DeleteRoleScopeRelationService>();
+            services.AddTransient<IDeleteRoleService, DeleteRoleService>();
+            services.AddTransient<IFindRoleService, FindRoleService>();
+            services.AddTransient<IGetRolesService, GetRolesService>();
+            services.AddTransient<IUpdateRoleService, UpdateRoleService>();
+
             // Services
-            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IScopeService, ScopeService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
