@@ -6,15 +6,24 @@ namespace Etimo.Id.Api.Security
 {
     public class Policies
     {
-        public static AuthorizationPolicy ScopePolicy(string scope)
+        public static AuthorizationPolicy ScopePolicy(params string[] scopes)
         {
             return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireAssertion(context =>
             {
-                var claim = context.User.FindFirst("scope");
-                var hasClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
+                var hasAllClaims = true;
+                foreach (var scope in scopes)
+                {
+                    var claim = context.User.FindFirst("scope");
+                    var hasThisClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
+                    if (!hasThisClaim)
+                    {
+                        hasAllClaims = false;
+                        break;
+                    }
+                }
 
-                // The caller must either have the scope claim or be an admin.
-                return hasClaim || context.User.IsInRole(RoleNames.Admin);
+                // The caller must either have the scope claims or be an admin.
+                return hasAllClaims || context.User.IsInRole(RoleNames.Admin);
             }).Build();
         }
     }

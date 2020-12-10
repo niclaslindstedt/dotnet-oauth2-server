@@ -86,6 +86,10 @@ namespace Etimo.Id.Api
             services.AddAuthorization(config =>
             {
                 AddScopePolicies(config, InbuiltScopes.All);
+                AddCombinedScopePolicies(config, new Dictionary<string, string[]>
+                {
+                    { CombinedScopes.ReadApplicationRole, new string[] { ApplicationScopes.Read, RoleScopes.Read } }
+                });
             });
 
             Log.Logger = new LoggerConfiguration()
@@ -210,6 +214,14 @@ namespace Etimo.Id.Api
             foreach (var policy in policies)
             {
                 config.AddPolicy(policy, Policies.ScopePolicy(policy));
+            }
+        }
+
+        private static void AddCombinedScopePolicies(AuthorizationOptions config, Dictionary<string, string[]> policies)
+        {
+            foreach (var policy in policies)
+            {
+                config.AddPolicy(policy.Key, Policies.ScopePolicy(policy.Value));
             }
         }
     }
