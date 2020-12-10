@@ -87,6 +87,11 @@ namespace Etimo.Id.Service
             return _userRepository.AnyAsync();
         }
 
+        public Task<bool> AnyAsync(Guid userId)
+        {
+            return _userRepository.AnyAsync(userId);
+        }
+
         public async Task<User> AuthenticateAsync(string username, string password)
         {
             var user = await _userRepository.FindByUsernameAsync(username);

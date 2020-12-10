@@ -12,7 +12,7 @@ namespace Etimo.Id.Service
 {
     public class AuthorizationService : IAuthorizationService
     {
-        private readonly IApplicationService _applicationService;
+        private readonly IFindApplicationService _findApplicationService;
         private readonly IUserService _userService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IAccessTokenRepository _accessTokenRepository;
@@ -24,14 +24,14 @@ namespace Etimo.Id.Service
         private User _user;
 
         public AuthorizationService(
-            IApplicationService applicationService,
+            IFindApplicationService findApplicationService,
             IUserService userService,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokenRepository accessTokenRepository,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
-            _applicationService = applicationService;
+            _findApplicationService = findApplicationService;
             _userService = userService;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokenRepository = accessTokenRepository;
@@ -66,7 +66,7 @@ namespace Etimo.Id.Service
                 throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
             }
 
-            var application = await _applicationService.FindByClientIdAsync(_request.ClientId);
+            var application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (application == null)
             {
                 throw new InvalidClientException("No application with that client ID could be found.");

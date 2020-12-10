@@ -16,14 +16,32 @@ namespace Etimo.Id.Api.Applications
     public class ApplicationController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IApplicationService _applicationService;
+        private readonly IAddApplicationService _addApplicationService;
+        private readonly IAuthenticateClientService _authenticateClientService;
+        private readonly IDeleteApplicationService _deleteApplicationService;
+        private readonly IFindApplicationService _findApplicationService;
+        private readonly IGenerateClientSecretService _generateClientSecretService;
+        private readonly IGetApplicationsService _getApplicationsService;
+        private readonly IUpdateApplicationService _updateApplicationService;
 
         public ApplicationController(
             SiteSettings siteSettings,
-            IApplicationService applicationService)
+            IAddApplicationService addApplicationService,
+            IAuthenticateClientService authenticateClientService,
+            IDeleteApplicationService deleteApplicationService,
+            IFindApplicationService findApplicationService,
+            IGenerateClientSecretService generateClientSecretService,
+            IGetApplicationsService getApplicationsService,
+            IUpdateApplicationService updateApplicationService)
         {
             _siteSettings = siteSettings;
-            _applicationService = applicationService;
+            _addApplicationService = addApplicationService;
+            _authenticateClientService = authenticateClientService;
+            _deleteApplicationService = deleteApplicationService;
+            _findApplicationService = findApplicationService;
+            _generateClientSecretService = generateClientSecretService;
+            _getApplicationsService = getApplicationsService;
+            _updateApplicationService = updateApplicationService;
         }
 
         [HttpGet]
@@ -34,11 +52,11 @@ namespace Etimo.Id.Api.Applications
             List<Application> applications;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                applications = await _applicationService.GetAllAsync();
+                applications = await _getApplicationsService.GetAllAsync();
             }
             else
             {
-                applications = await _applicationService.GetByUserIdAsync(this.GetUserId());
+                applications = await _getApplicationsService.GetByUserIdAsync(this.GetUserId());
             }
 
             var found = applications.Select(ApplicationResponseDto.FromApplication);
@@ -54,11 +72,11 @@ namespace Etimo.Id.Api.Applications
             Application application;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                application = await _applicationService.FindAsync(applicationId);
+                application = await _findApplicationService.FindAsync(applicationId);
             }
             else
             {
-                application = await _applicationService.FindAsync(applicationId, this.GetUserId());
+                application = await _findApplicationService.FindAsync(applicationId, this.GetUserId());
             }
 
             var found = ApplicationResponseDto.FromApplication(application);
@@ -75,11 +93,11 @@ namespace Etimo.Id.Api.Applications
             Application application;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                application = await _applicationService.AddAsync(dto.ToApplication(), dto.user_id ?? this.GetUserId());
+                application = await _addApplicationService.AddAsync(dto.ToApplication(), dto.user_id ?? this.GetUserId());
             }
             else
             {
-                application = await _applicationService.AddAsync(dto.ToApplication(), this.GetUserId());
+                application = await _addApplicationService.AddAsync(dto.ToApplication(), this.GetUserId());
             }
 
             var created = ApplicationResponseDto.FromApplication(application);
@@ -96,11 +114,11 @@ namespace Etimo.Id.Api.Applications
             Application application;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                application = await _applicationService.GenerateSecretAsync(applicationId);
+                application = await _generateClientSecretService.GenerateSecretAsync(applicationId);
             }
             else
             {
-                application = await _applicationService.GenerateSecretAsync(applicationId, this.GetUserId());
+                application = await _generateClientSecretService.GenerateSecretAsync(applicationId, this.GetUserId());
             }
 
             var updated = ApplicationSecretResponseDto.FromApplication(application);
@@ -117,11 +135,11 @@ namespace Etimo.Id.Api.Applications
             Application application;
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), dto.user_id ?? this.GetUserId());
+                application = await _updateApplicationService.UpdateAsync(dto.ToApplication(applicationId), dto.user_id ?? this.GetUserId());
             }
             else
             {
-                application = await _applicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
+                application = await _updateApplicationService.UpdateAsync(dto.ToApplication(applicationId), this.GetUserId());
             }
 
             var updated = ApplicationResponseDto.FromApplication(application);
@@ -136,11 +154,11 @@ namespace Etimo.Id.Api.Applications
         {
             if (this.UserHasScope(ApplicationScopes.Admin))
             {
-                await _applicationService.DeleteAsync(applicationId);
+                await _deleteApplicationService.DeleteAsync(applicationId);
             }
             else
             {
-                await _applicationService.DeleteAsync(applicationId, this.GetUserId());
+                await _deleteApplicationService.DeleteAsync(applicationId, this.GetUserId());
             }
 
             return NoContent();

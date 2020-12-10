@@ -11,7 +11,8 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class AuthorizationCodeTokenGenerator : IAuthorizationCodeTokenGenerator
     {
-        private readonly IApplicationService _applicationService;
+        private readonly IAuthenticateClientService _authenticateClientService;
+        private readonly IFindApplicationService _findApplicationService;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IAccessTokenRepository _accessTokenRepository;
@@ -26,14 +27,16 @@ namespace Etimo.Id.Service.TokenGenerators
         private string _redirectUri;
 
         public AuthorizationCodeTokenGenerator(
-            IApplicationService applicationService,
+            IAuthenticateClientService authenticateClientService,
+            IFindApplicationService applicationService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokenRepository accessTokenRepository,
             IRefreshTokenRepository refreshTokenRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _applicationService = applicationService;
+            _authenticateClientService = authenticateClientService;
+            _findApplicationService = applicationService;
             _refreshTokenGenerator = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokenRepository = accessTokenRepository;
@@ -96,10 +99,10 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid client id.");
             }
 
-            _application = await _applicationService.FindByClientIdAsync(request.ClientId);
+            _application = await _findApplicationService.FindByClientIdAsync(request.ClientId);
             if (_application.Type == ClientTypes.Confidential)
             {
-                await _applicationService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+                await _authenticateClientService.AuthenticateAsync(request.ClientId, request.ClientSecret);
             }
 
             _redirectUri = request.RedirectUri ?? _application.RedirectUri;

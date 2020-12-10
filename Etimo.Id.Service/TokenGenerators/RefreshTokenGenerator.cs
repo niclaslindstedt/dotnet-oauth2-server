@@ -7,13 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Storage.Internal.Mapping;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
-        private readonly IApplicationService _applicationService;
+        private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
@@ -25,14 +24,14 @@ namespace Etimo.Id.Service.TokenGenerators
         private string _scope;
 
         public RefreshTokenGenerator(
-            IApplicationService applicationService,
+            IAuthenticateClientService applicationService,
             IRefreshTokenRepository refreshTokenRepository,
             IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
-            _applicationService = applicationService;
+            _authenticateClientService = applicationService;
             _refreshTokenRepository = refreshTokenRepository;
             _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
@@ -107,7 +106,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Refresh token could not be found.");
             }
 
-            await _applicationService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
 
             // Make sure all requested scopes were requested in the original refresh token.
             if (request.Scope != null)

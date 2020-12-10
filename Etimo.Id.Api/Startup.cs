@@ -104,8 +104,16 @@ namespace Etimo.Id.Api
             services.AddSingleton<IPasswordHasher>(passwordHasher);
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
 
+            // ApplicationServices
+            services.AddTransient<IAddApplicationService, AddApplicationService>();
+            services.AddTransient<IAuthenticateClientService, AuthenticateClientService>();
+            services.AddTransient<IDeleteApplicationService, DeleteApplicationService>();
+            services.AddTransient<IFindApplicationService, FindApplicationService>();
+            services.AddTransient<IGenerateClientSecretService, GenerateClientSecretService>();
+            services.AddTransient<IGetApplicationsService, GetApplicationsService>();
+            services.AddTransient<IUpdateApplicationService, UpdateApplicationService>();
+
             // Services
-            services.AddTransient<IApplicationService, ApplicationService>();
             services.AddTransient<IAuthorizationService, AuthorizationService>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IScopeService, ScopeService>();

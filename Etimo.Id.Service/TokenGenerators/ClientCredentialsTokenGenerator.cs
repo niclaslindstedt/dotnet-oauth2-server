@@ -11,7 +11,7 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
     {
-        private readonly IApplicationService _applicationService;
+        private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
 
@@ -19,11 +19,11 @@ namespace Etimo.Id.Service.TokenGenerators
         private Application _application;
 
         public ClientCredentialsTokenGenerator(
-            IApplicationService applicationService,
+            IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _applicationService = applicationService;
+            _authenticateClientService = applicationService;
             _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
         }
@@ -48,7 +48,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidClientException("Invalid client credentials.");
             }
 
-            _application = await _applicationService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            _application = await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
             if (_application.Type == ClientTypes.Public)
             {
                 throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
