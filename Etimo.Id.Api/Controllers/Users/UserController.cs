@@ -1,8 +1,12 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Api.Roles;
+using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
+using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Scopes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,24 +21,36 @@ namespace Etimo.Id.Api.Users
     public class UserController : Controller
     {
         private readonly SiteSettings _siteSettings;
+        private readonly IAddUserRoleRelationService _addUserRoleRelationService;
         private readonly IAddUserService _addUserService;
+        private readonly IDeleteUserRoleRelationService _deleteUserRoleRelationService;
         private readonly IDeleteUserService _deleteUserService;
         private readonly IFindUserService _findUserService;
+        private readonly IGetApplicationsService _getApplicationsService;
+        private readonly IGetRolesService _getRolesService;
         private readonly IGetUsersService _getUsersService;
         private readonly IUpdateUserService _updateUserService;
 
         public UserController(
             SiteSettings siteSettings,
+            IAddUserRoleRelationService addUserRoleRelationService,
             IAddUserService addUserService,
+            IDeleteUserRoleRelationService deleteUserRoleRelationService,
             IDeleteUserService deleteUserService,
             IFindUserService findUserService,
+            IGetApplicationsService getApplicationsService,
+            IGetRolesService getRolesService,
             IGetUsersService getUsersService,
             IUpdateUserService updateUserService)
         {
             _siteSettings = siteSettings;
+            _addUserRoleRelationService = addUserRoleRelationService;
             _addUserService = addUserService;
+            _deleteUserRoleRelationService = deleteUserRoleRelationService;
             _deleteUserService = deleteUserService;
             _findUserService = findUserService;
+            _getApplicationsService = getApplicationsService;
+            _getRolesService = getRolesService;
             _getUsersService = getUsersService;
             _updateUserService = updateUserService;
         }
@@ -66,16 +82,56 @@ namespace Etimo.Id.Api.Users
         public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
         {
             User user;
-            if (this.UserHasScope(UserScopes.Admin))
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
             {
                 user = await _findUserService.FindAsync(userId);
             }
             else
             {
-                user = await _findUserService.FindAsync(this.GetUserId());
+                throw new ForbiddenException("You cannot access that user.");
             }
 
             var found = UserResponseDto.FromUser(user);
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/users/{userId:guid}/applications")]
+        [Authorize(Policy = CombinedScopes.ReadUserApplication)]
+        public async Task<IActionResult> GetApplicationsAsync([FromRoute] Guid userId)
+        {
+            List<Application> applications;
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
+            {
+                applications = await _getApplicationsService.GetByUserIdAsync(userId);
+            }
+            else
+            {
+                throw new ForbiddenException("You cannot access that user.");
+            }
+
+            var found = applications.Select(a => ApplicationResponseDto.FromApplication(a, false));
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/users/{userId:guid}/roles")]
+        [Authorize(Policy = CombinedScopes.ReadUserRole)]
+        public async Task<IActionResult> GetRolesAsync([FromRoute] Guid userId)
+        {
+            List<Role> roles;
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
+            {
+                roles = await _getRolesService.GetByUserIdAsync(userId);
+            }
+            else
+            {
+                throw new ForbiddenException("You cannot access that user.");
+            }
+
+            var found = roles.Select(a => RoleResponseDto.FromRole(a, false));
 
             return Ok(found);
         }
@@ -99,18 +155,38 @@ namespace Etimo.Id.Api.Users
         public async Task<IActionResult> UpdateAsync([FromRoute] Guid userId, [FromBody] UserRequestDto dto)
         {
             User user;
-            if (this.UserHasScope(UserScopes.Admin))
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
             {
                 user = await _updateUserService.UpdateAsync(dto.ToUser(userId));
             }
             else
             {
-                user = await _updateUserService.UpdateAsync(dto.ToUser(userId), this.GetUserId());
+                throw new ForbiddenException("You cannot access that user.");
             }
 
             var updated = UserResponseDto.FromUser(user);
 
             return Ok(updated);
+        }
+
+        [HttpPut]
+        [Route("/users/{userId:guid}/roles/{roleId:guid}")]
+        [Authorize(Policy = UserScopes.Write)]
+        public async Task<IActionResult> AddRoleRelationAsync([FromRoute] Guid userId, [FromRoute] Guid roleId)
+        {
+            List<Role> roles;
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
+            {
+                roles = await _addUserRoleRelationService.AddRoleRelationAsync(userId, roleId);
+            }
+            else
+            {
+                throw new ForbiddenException("You cannot access that user.");
+            }
+
+            var added = roles.Select(r => RoleResponseDto.FromRole(r, false));
+
+            return Ok(added);
         }
 
         [HttpDelete]
@@ -121,6 +197,26 @@ namespace Etimo.Id.Api.Users
             await _deleteUserService.DeleteAsync(userId);
 
             return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("/users/{userId:guid}/roles/{roleId:guid}")]
+        [Authorize(Policy = UserScopes.Write)]
+        public async Task<IActionResult> DeleteApplicationRelationAsync([FromRoute] Guid userId, [FromRoute] Guid roleId)
+        {
+            List<Role> roles;
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
+            {
+                roles = await _deleteUserRoleRelationService.DeleteRoleRelationAsync(userId, roleId);
+            }
+            else
+            {
+                throw new ForbiddenException("You cannot access that user.");
+            }
+
+            var remaining = roles.Select(r => RoleResponseDto.FromRole(r, false));
+
+            return Ok(remaining);
         }
     }
 }

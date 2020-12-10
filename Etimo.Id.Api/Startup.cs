@@ -89,7 +89,9 @@ namespace Etimo.Id.Api
                 AddCombinedScopePolicies(config, new Dictionary<string, string[]>
                 {
                     { CombinedScopes.ReadApplicationRole, new string[] { ApplicationScopes.Read, RoleScopes.Read } },
-                    { CombinedScopes.ReadRoleScope, new string[] { RoleScopes.Read, ScopeScopes.Read } }
+                    { CombinedScopes.ReadRoleScope, new string[] { RoleScopes.Read, ScopeScopes.Read } },
+                    { CombinedScopes.ReadUserApplication, new string[] { UserScopes.Read, ApplicationScopes.Read } },
+                    { CombinedScopes.ReadUserRole, new string[] { UserScopes.Read, RoleScopes.Read } }
                 });
             });
 
@@ -135,8 +137,10 @@ namespace Etimo.Id.Api
             services.AddTransient<IUpdateScopeService, UpdateScopeService>();
 
             // UserServices
+            services.AddTransient<IAddUserRoleRelationService, AddUserRoleRelationService>();
             services.AddTransient<IAddUserService, AddUserService>();
             services.AddTransient<IAuthenticateUserService, AuthenticateUserService>();
+            services.AddTransient<IDeleteUserRoleRelationService, DeleteUserRoleRelationService>();
             services.AddTransient<IDeleteUserService, DeleteUserService>();
             services.AddTransient<IFindUserService, FindUserService>();
             services.AddTransient<IGetUsersService, GetUsersService>();

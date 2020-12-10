@@ -20,7 +20,7 @@ namespace Etimo.Id.Service
             var user = await _userRepository.FindAsync(userId);
             if (user == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("User not found.");
             }
 
             return user;

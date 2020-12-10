@@ -1,7 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Exceptions;
-using System;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
@@ -27,16 +25,6 @@ namespace Etimo.Id.Service
             await _userRepository.SaveAsync();
 
             return user;
-        }
-
-        public Task<User> UpdateAsync(User updatedUser, Guid userId)
-        {
-            if (updatedUser.UserId != userId)
-            {
-                throw new BadRequestException("You can only update your own user.");
-            }
-
-            return UpdateAsync(updatedUser);
         }
     }
 }
