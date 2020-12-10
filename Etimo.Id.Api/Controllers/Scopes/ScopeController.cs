@@ -1,7 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
-using Etimo.Id.Api.Scopes.Dtos;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Scopes;
@@ -43,7 +42,9 @@ namespace Etimo.Id.Api.Scopes
                 scopes = await _scopeService.GetByClientIdAsync(this.GetClientId());
             }
 
-            return Ok(scopes.Select(ScopeResponseDto.FromScope));
+            var found = scopes.Select(ScopeResponseDto.FromScope);
+
+            return Ok(found);
         }
 
         [HttpGet]
@@ -61,7 +62,9 @@ namespace Etimo.Id.Api.Scopes
                 scope = await _scopeService.FindAsync(scopeId, this.GetUserId());
             }
 
-            return Ok(ScopeResponseDto.FromScope(scope));
+            var found = ScopeResponseDto.FromScope(scope);
+
+            return Ok(found);
         }
 
         [HttpPost]

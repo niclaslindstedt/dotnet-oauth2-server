@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Scopes;
@@ -124,6 +125,46 @@ namespace Etimo.Id.Api.Roles
             }
 
             return NoContent();
+        }
+
+        [HttpPut]
+        [Route("/roles/{roleId:guid}/scopes/{scopeId:guid}")]
+        [Authorize(Policy = RoleScopes.Write)]
+        public async Task<IActionResult> AddScopeRelationAsync([FromRoute] Guid roleId, [FromRoute] Guid scopeId)
+        {
+            Role role;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                role = await _roleService.AddScopeRelationAsync(roleId, scopeId);
+            }
+            else
+            {
+                role = await _roleService.AddScopeRelationAsync(roleId, scopeId, this.GetUserId());
+            }
+
+            var added = RoleResponseDto.FromRole(role);
+
+            return Ok(added);
+        }
+
+        [HttpDelete]
+        [Route("/roles/{roleId:guid}/scopes/{scopeId:guid}")]
+        [Authorize(Policy = RoleScopes.Write)]
+        public async Task<IActionResult> DeleteScopeRelationAsync([FromRoute] Guid roleId, [FromRoute] Guid scopeId)
+        {
+            Role role;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                role = await _roleService.DeleteScopeRelationAsync(roleId, scopeId);
+            }
+            else
+            {
+                role = await _roleService.DeleteScopeRelationAsync(roleId, scopeId, this.GetUserId());
+            }
+
+            var added = RoleResponseDto.FromRole(role);
+
+            return Ok(added);
         }
     }
 }

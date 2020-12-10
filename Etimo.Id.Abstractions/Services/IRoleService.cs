@@ -17,5 +17,9 @@ namespace Etimo.Id.Abstractions
         Task<Role> UpdateAsync(Role updatedRole, Guid userId);
         Task DeleteAsync(Guid roleId);
         Task DeleteAsync(Guid roleId, Guid userId);
+        Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId);
+        Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId);
+        Task<Role> DeleteScopeRelationAsync(Guid roleId, Guid scopeId);
+        Task<Role> DeleteScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId);
     }
 }

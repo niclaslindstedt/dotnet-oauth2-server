@@ -12,13 +12,16 @@ namespace Etimo.Id.Service
     {
         private readonly IRoleRepository _roleRepository;
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IScopeRepository _scopeRepository;
 
         public RoleService(
             IRoleRepository roleRepository,
-            IApplicationRepository applicationRepository)
+            IApplicationRepository applicationRepository,
+            IScopeRepository scopeRepository)
         {
             _roleRepository = roleRepository;
             _applicationRepository = applicationRepository;
+            _scopeRepository = scopeRepository;
         }
 
         public Task<List<Role>> GetAllAsync()
@@ -103,6 +106,42 @@ namespace Etimo.Id.Service
             }
         }
 
+        public async Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId)
+        {
+            var role = await FindAsync(roleId);
+
+            return await AddScopeRelationAsync(role, scopeId);
+        }
+
+        public async Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId)
+        {
+            var role = await FindAsync(roleId);
+            if (role.Application.UserId != userId)
+            {
+                throw new ForbiddenException("Role does not belong to you.");
+            }
+
+            return await AddScopeRelationAsync(role, scopeId);
+        }
+
+        public async Task<Role> DeleteScopeRelationAsync(Guid roleId, Guid scopeId)
+        {
+            var role = await FindAsync(roleId);
+
+            return await DeleteScopeRelationAsync(role, scopeId);
+        }
+
+        public async Task<Role> DeleteScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId)
+        {
+            var role = await FindAsync(roleId);
+            if (role.Application.UserId != userId)
+            {
+                throw new ForbiddenException("Role does not belong to you.");
+            }
+
+            return await DeleteScopeRelationAsync(role, scopeId);
+        }
+
         private async Task<Role> AddAsync(Role role, Application application)
         {
             if (application == null)
@@ -133,6 +172,40 @@ namespace Etimo.Id.Service
         {
             _roleRepository.Delete(role);
             await _roleRepository.SaveAsync();
+        }
+
+        private async Task<Role> AddScopeRelationAsync(Role role, Guid scopeId)
+        {
+            if (!role.Scopes.Any(s => s.ScopeId == scopeId))
+            {
+                var scope = await _scopeRepository.FindAsync(scopeId);
+                if (scope == null)
+                {
+                    throw new BadRequestException("Scope not found.");
+                }
+
+                role.Scopes.Add(scope);
+                await _roleRepository.SaveAsync();
+            }
+
+            return role;
+        }
+
+        private async Task<Role> DeleteScopeRelationAsync(Role role, Guid scopeId)
+        {
+            if (role.Scopes.Any(s => s.ScopeId == scopeId))
+            {
+                var scope = await _scopeRepository.FindAsync(scopeId);
+                if (scope == null)
+                {
+                    throw new BadRequestException("Scope not found.");
+                }
+
+                role.Scopes.Remove(scope);
+                await _roleRepository.SaveAsync();
+            }
+
+            return role;
         }
     }
 }
