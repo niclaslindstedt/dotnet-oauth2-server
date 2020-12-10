@@ -41,7 +41,7 @@ namespace Etimo.Id.Api.Applications
 
             if (includeChildren)
             {
-                dto.roles = application.Roles.Select(r =>
+                dto.roles = application.Roles?.Select(r =>
                     RoleResponseDto.FromRole(r, true)).ToList();
             }
 

@@ -33,7 +33,7 @@ namespace Etimo.Id.Api.Roles
 
             if (includeChildren)
             {
-                dto.scopes = role.Scopes.Select(s =>
+                dto.scopes = role.Scopes?.Select(s =>
                     ScopeResponseDto.FromScope(s, false)).ToList();
             }
 

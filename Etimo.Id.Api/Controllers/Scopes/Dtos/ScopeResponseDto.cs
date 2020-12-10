@@ -34,7 +34,7 @@ namespace Etimo.Id.Api.Scopes
 
             if (includeChildren)
             {
-                dto.roles = scope.Roles.Select(r =>
+                dto.roles = scope.Roles?.Select(r =>
                     RoleResponseDto.FromRole(r, false)).ToList();
             }
 

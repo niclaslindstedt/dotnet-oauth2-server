@@ -29,7 +29,7 @@ namespace Etimo.Id.Api.Users
 
             if (includeChildren)
             {
-                dto.applications = user.Applications.Select(a =>
+                dto.applications = user.Applications?.Select(a =>
                     ApplicationResponseDto.FromApplication(a, false)).ToList();
             }
 
