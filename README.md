@@ -1,6 +1,6 @@
 # Etimo ID
 
-Etimo ID is an [OAuth2](https://tools.ietf.org/html/rfc6749#section-5.2) compliant api that aims to be a simple-to-use implementation of OAuth2.
+Etimo ID is a basic implementation of [OAuth2](https://tools.ietf.org/html/rfc6749#section-5.2), without all the bloat.
 
 At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) will also be implemented.
 
@@ -20,8 +20,8 @@ dotnet tool install --global dotnet-user-secrets
 This project uses `dotnet user-secrets`, which means you need to setup the following secrets in the `Etimo.Id.Api` project:
 
 ```
-JwtSettings:Secret
-ConnectionStrings:EtimoId
+dotnet user-secrets set JwtSettings:Secret STRONGSECRET
+dotnet user-secrets set ConnectionStrings:EtimoId CONNECTIONSTRING
 ```
 
 * The STRONGSECRET should be at least 32 characters long.
@@ -43,15 +43,20 @@ Run etimo-id by typing `dotnet run --project Etimo.Id.Api`
 
 Or by using the `./scripts/run.ps1` script.
 
+The project is served from https://localhost:5011
+
 ### Creating your first users
 
 When starting etimo-id for the first time, a pre-seeded user and application is added:
 
-The user has username `admin` with password `etimo`, while the client has the client_id `11111111-1111-1111-1111-111111111111` and password `etimo`.
+```
+username: admin
+password: etimo
+client_id: 11111111-1111-1111-1111-111111111111
+client_secret: etimo
+```
 
-The system seeds a default application called `etimo-default` with an `admin` role that lets you setup the system.
-
-You should delete these accounts when you have added your own admin accounts/applications.
+Use this user to setup the system. When you are done setting up, you should delete this user.
 
 ## Commit style
 
