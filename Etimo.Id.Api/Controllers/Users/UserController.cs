@@ -3,7 +3,6 @@ using Etimo.Id.Api.Applications;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Roles;
-using Etimo.Id.Api.Scopes;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
@@ -202,7 +201,7 @@ namespace Etimo.Id.Api.Users
         [HttpDelete]
         [Route("/users/{userId:guid}/roles/{roleId:guid}")]
         [Authorize(Policy = UserScopes.Write)]
-        public async Task<IActionResult> DeleteApplicationRelationAsync([FromRoute] Guid userId, [FromRoute] Guid roleId)
+        public async Task<IActionResult> DeleteRoleRelationAsync([FromRoute] Guid userId, [FromRoute] Guid roleId)
         {
             List<Role> roles;
             if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())

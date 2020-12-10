@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,14 +24,14 @@ namespace Etimo.Id.Service
             _scopeRepository = scopeRepository;
         }
 
-        public async Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId)
+        public async Task<List<Scope>> AddScopeRelationAsync(Guid roleId, Guid scopeId)
         {
             var role = await _findRoleService.FindAsync(roleId);
 
             return await AddScopeRelationAsync(role, scopeId);
         }
 
-        public async Task<Role> AddScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId)
+        public async Task<List<Scope>> AddScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId)
         {
             var role = await _findRoleService.FindAsync(roleId);
             if (role.Application.UserId != userId)
@@ -41,7 +42,7 @@ namespace Etimo.Id.Service
             return await AddScopeRelationAsync(role, scopeId);
         }
 
-        private async Task<Role> AddScopeRelationAsync(Role role, Guid scopeId)
+        private async Task<List<Scope>> AddScopeRelationAsync(Role role, Guid scopeId)
         {
             if (!role.Scopes.Any(s => s.ScopeId == scopeId))
             {
@@ -55,7 +56,7 @@ namespace Etimo.Id.Service
                 await _roleRepository.SaveAsync();
             }
 
-            return role;
+            return role.Scopes.ToList();
         }
     }
 }

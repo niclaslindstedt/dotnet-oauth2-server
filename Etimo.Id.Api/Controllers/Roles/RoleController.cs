@@ -151,6 +151,26 @@ namespace Etimo.Id.Api.Roles
             return Ok(updated);
         }
 
+        [HttpPut]
+        [Route("/roles/{roleId:guid}/scopes/{scopeId:guid}")]
+        [Authorize(Policy = RoleScopes.Write)]
+        public async Task<IActionResult> AddScopeRelationAsync([FromRoute] Guid roleId, [FromRoute] Guid scopeId)
+        {
+            List<Scope> scopes;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                scopes = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId);
+            }
+            else
+            {
+                scopes = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId, this.GetUserId());
+            }
+
+            var added = scopes.Select(s => ScopeResponseDto.FromScope(s, false));
+
+            return Ok(added);
+        }
+
         [HttpDelete]
         [Route("/roles/{roleId:guid}")]
         [Authorize(Policy = RoleScopes.Write)]
@@ -168,44 +188,24 @@ namespace Etimo.Id.Api.Roles
             return NoContent();
         }
 
-        [HttpPut]
-        [Route("/roles/{roleId:guid}/scopes/{scopeId:guid}")]
-        [Authorize(Policy = RoleScopes.Write)]
-        public async Task<IActionResult> AddScopeRelationAsync([FromRoute] Guid roleId, [FromRoute] Guid scopeId)
-        {
-            Role role;
-            if (this.UserHasScope(RoleScopes.Admin))
-            {
-                role = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId);
-            }
-            else
-            {
-                role = await _addRoleScopeRelationService.AddScopeRelationAsync(roleId, scopeId, this.GetUserId());
-            }
-
-            var added = RoleResponseDto.FromRole(role);
-
-            return Ok(added);
-        }
-
         [HttpDelete]
         [Route("/roles/{roleId:guid}/scopes/{scopeId:guid}")]
         [Authorize(Policy = RoleScopes.Write)]
         public async Task<IActionResult> DeleteScopeRelationAsync([FromRoute] Guid roleId, [FromRoute] Guid scopeId)
         {
-            Role role;
+            List<Scope> scopes;
             if (this.UserHasScope(RoleScopes.Admin))
             {
-                role = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId);
+                scopes = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId);
             }
             else
             {
-                role = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId, this.GetUserId());
+                scopes = await _deleteRoleScopeRelationService.DeleteScopeRelationAsync(roleId, scopeId, this.GetUserId());
             }
 
-            var added = RoleResponseDto.FromRole(role);
+            var remaining = scopes.Select(s => ScopeResponseDto.FromScope(s, false));
 
-            return Ok(added);
+            return Ok(remaining);
         }
     }
 }
