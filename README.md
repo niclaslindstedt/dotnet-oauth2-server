@@ -8,7 +8,7 @@ At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-
 
 You need [.NET 5](https://dotnet.microsoft.com/download/dotnet/5.0) and [Docker Desktop](https://www.docker.com/products/docker-desktop) (or just Docker if you're running Linux).
 
-You also need to install `dotnet-ef`:
+You also need to install `dotnet-ef` and `dotnet-user-secrets`:
 
 ```
 dotnet tool install --global dotnet-ef
@@ -41,7 +41,7 @@ You can access the database GUI from https://localhost:8011
 
 Run etimo-id by typing `dotnet run --project Etimo.Id.Api`
 
-Or by using the `./scripts/run.ps1` script.
+Or by using the `run.ps1` script.
 
 The project is served from https://localhost:5011
 
@@ -57,6 +57,8 @@ client_secret: etimo
 ```
 
 Use this user to setup the system. When you are done setting up, you should delete this user.
+
+If you want to remove the database and start over, use the `delete-database.ps1` script.
 
 ## Commit style
 
