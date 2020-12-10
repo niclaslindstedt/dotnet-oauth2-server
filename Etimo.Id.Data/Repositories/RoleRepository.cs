@@ -27,6 +27,11 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Roles.Where(r => r.Application.UserId == userId).ToListAsync();
         }
 
+        public Task<List<Role>> GetByApplicationId(int applicationId)
+        {
+            return _dbContext.Roles.Where(r => r.ApplicationId == applicationId).ToListAsync();
+        }
+
         public Task<Role> FindAsync(Guid roleId)
         {
             return _dbContext.Roles.FindAsync(roleId).AsTask();

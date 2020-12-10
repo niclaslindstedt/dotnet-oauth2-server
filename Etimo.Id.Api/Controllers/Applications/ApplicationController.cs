@@ -1,6 +1,8 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Api.Roles;
+using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Scopes;
@@ -22,6 +24,7 @@ namespace Etimo.Id.Api.Applications
         private readonly IFindApplicationService _findApplicationService;
         private readonly IGenerateClientSecretService _generateClientSecretService;
         private readonly IGetApplicationsService _getApplicationsService;
+        private readonly IGetRolesService _getRolesService;
         private readonly IUpdateApplicationService _updateApplicationService;
 
         public ApplicationController(
@@ -32,6 +35,7 @@ namespace Etimo.Id.Api.Applications
             IFindApplicationService findApplicationService,
             IGenerateClientSecretService generateClientSecretService,
             IGetApplicationsService getApplicationsService,
+            IGetRolesService getRolesService,
             IUpdateApplicationService updateApplicationService)
         {
             _siteSettings = siteSettings;
@@ -41,6 +45,7 @@ namespace Etimo.Id.Api.Applications
             _findApplicationService = findApplicationService;
             _generateClientSecretService = generateClientSecretService;
             _getApplicationsService = getApplicationsService;
+            _getRolesService = getRolesService;
             _updateApplicationService = updateApplicationService;
         }
 
@@ -80,6 +85,26 @@ namespace Etimo.Id.Api.Applications
             }
 
             var found = ApplicationResponseDto.FromApplication(application);
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/applications/{applicationId:int}/roles")]
+        [Authorize(Policy = CombinedScopes.ReadApplicationRole)]
+        public async Task<IActionResult> GetRolesAsync([FromRoute] int applicationId)
+        {
+            List<Role> roles;
+            if (this.UserHasScope(ApplicationScopes.Admin))
+            {
+                roles = await _getRolesService.GetByApplicationId(applicationId);
+            }
+            else
+            {
+                roles = await _getRolesService.GetByApplicationId(applicationId, this.GetUserId());
+            }
+
+            var found = roles.Select(r => RoleResponseDto.FromRole(r, false));
 
             return Ok(found);
         }
