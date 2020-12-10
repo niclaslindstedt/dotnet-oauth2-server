@@ -51,6 +51,11 @@ namespace Etimo.Id.Data.Repositories
             return _dbContext.Users.AnyAsync();
         }
 
+        public Task<bool> AnyAsync(Guid userId)
+        {
+            return _dbContext.Users.AnyAsync(u => u.UserId == userId);
+        }
+
         public Task<bool> AnyByUsernameAsync(string username)
         {
             return _dbContext.Users.AnyAsync(u => u.Username == username);

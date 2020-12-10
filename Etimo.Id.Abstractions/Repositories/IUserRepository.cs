@@ -14,6 +14,7 @@ namespace Etimo.Id.Abstractions
         void Delete(User user);
         Task<int> SaveAsync();
         Task<bool> AnyAsync();
+        Task<bool> AnyAsync(Guid userId);
         Task<bool> AnyByUsernameAsync(string username);
     }
 }
