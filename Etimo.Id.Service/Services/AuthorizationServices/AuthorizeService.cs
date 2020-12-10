@@ -13,7 +13,7 @@ namespace Etimo.Id.Service
     public class AuthorizeService : IAuthorizeService
     {
         private readonly IFindApplicationService _findApplicationService;
-        private readonly IUserService _userService;
+        private readonly IAuthenticateUserService _authenticateUserService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IPasswordGenerator _passwordGenerator;
         private readonly OAuth2Settings _settings;
@@ -24,13 +24,13 @@ namespace Etimo.Id.Service
 
         public AuthorizeService(
             IFindApplicationService findApplicationService,
-            IUserService userService,
+            IAuthenticateUserService authenticateUserService,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
             _findApplicationService = findApplicationService;
-            _userService = userService;
+            _authenticateUserService = authenticateUserService;
             _authorizationCodeRepository = authorizationCodeRepository;
             _passwordGenerator = passwordGenerator;
             _settings = settings;
@@ -84,7 +84,7 @@ namespace Etimo.Id.Service
 
         private async Task AuthenticateUserAsync()
         {
-            _user = await _userService.AuthenticateAsync(_request.Username, _request.Password);
+            _user = await _authenticateUserService.AuthenticateAsync(_request.Username, _request.Password);
         }
 
         private async Task GenerateAuthorizationCodeAsync()

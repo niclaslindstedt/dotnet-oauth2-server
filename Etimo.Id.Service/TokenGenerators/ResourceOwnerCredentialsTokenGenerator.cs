@@ -10,7 +10,7 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ResourceOwnerCredentialsTokenGenerator : IResourceOwnerCredentialsTokenGenerator
     {
-        private readonly IUserService _userService;
+        private readonly IAuthenticateUserService _authenticateUserService;
         private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
@@ -20,12 +20,12 @@ namespace Etimo.Id.Service.TokenGenerators
         private Application _application;
 
         public ResourceOwnerCredentialsTokenGenerator(
-            IUserService userService,
+            IAuthenticateUserService authenticateUserService,
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory)
         {
-            _userService = userService;
+            _authenticateUserService = authenticateUserService;
             _authenticateClientService = applicationService;
             _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
@@ -56,7 +56,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid resource owner credentials.");
             }
 
-            _user = await _userService.AuthenticateAsync(request.Username, request.Password);
+            _user = await _authenticateUserService.AuthenticateAsync(request.Username, request.Password);
             _application = await _authenticateClientService.AuthenticateAsync(request.ClientId, request.ClientSecret);
         }
 

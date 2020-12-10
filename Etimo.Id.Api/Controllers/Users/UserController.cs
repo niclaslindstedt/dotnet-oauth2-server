@@ -3,7 +3,6 @@ using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Scopes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +17,26 @@ namespace Etimo.Id.Api.Users
     public class UserController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IUserService _userService;
+        private readonly IAddUserService _addUserService;
+        private readonly IDeleteUserService _deleteUserService;
+        private readonly IFindUserService _findUserService;
+        private readonly IGetUsersService _getUsersService;
+        private readonly IUpdateUserService _updateUserService;
 
         public UserController(
             SiteSettings siteSettings,
-            IUserService userService)
+            IAddUserService addUserService,
+            IDeleteUserService deleteUserService,
+            IFindUserService findUserService,
+            IGetUsersService getUsersService,
+            IUpdateUserService updateUserService)
         {
             _siteSettings = siteSettings;
-            _userService = userService;
+            _addUserService = addUserService;
+            _deleteUserService = deleteUserService;
+            _findUserService = findUserService;
+            _getUsersService = getUsersService;
+            _updateUserService = updateUserService;
         }
 
         [HttpGet]
@@ -36,11 +47,11 @@ namespace Etimo.Id.Api.Users
             List<User> users;
             if (this.UserHasScope(UserScopes.Admin))
             {
-                users = await _userService.GetAllAsync();
+                users = await _getUsersService.GetAllAsync();
             }
             else
             {
-                var user = await _userService.FindAsync(this.GetUserId());
+                var user = await _findUserService.FindAsync(this.GetUserId());
                 users = new List<User> {user};
             }
 
@@ -57,11 +68,11 @@ namespace Etimo.Id.Api.Users
             User user;
             if (this.UserHasScope(UserScopes.Admin))
             {
-                user = await _userService.FindAsync(userId);
+                user = await _findUserService.FindAsync(userId);
             }
             else
             {
-                user = await _userService.FindAsync(this.GetUserId());
+                user = await _findUserService.FindAsync(this.GetUserId());
             }
 
             var found = UserResponseDto.FromUser(user);
@@ -75,7 +86,7 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = UserScopes.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
-            var user = await _userService.AddAsync(createDto.ToUser());
+            var user = await _addUserService.AddAsync(createDto.ToUser());
             var created = UserResponseDto.FromUser(user);
 
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", created);
@@ -90,11 +101,11 @@ namespace Etimo.Id.Api.Users
             User user;
             if (this.UserHasScope(UserScopes.Admin))
             {
-                user = await _userService.UpdateAsync(dto.ToUser(userId));
+                user = await _updateUserService.UpdateAsync(dto.ToUser(userId));
             }
             else
             {
-                user = await _userService.UpdateAsync(dto.ToUser(userId), this.GetUserId());
+                user = await _updateUserService.UpdateAsync(dto.ToUser(userId), this.GetUserId());
             }
 
             var updated = UserResponseDto.FromUser(user);
@@ -107,7 +118,7 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = UserScopes.Admin)]
         public async Task<IActionResult> DeleteAsync([FromRoute] Guid userId)
         {
-            await _userService.DeleteAsync(userId);
+            await _deleteUserService.DeleteAsync(userId);
 
             return NoContent();
         }
