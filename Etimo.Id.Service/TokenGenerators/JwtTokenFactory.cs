@@ -29,7 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
             var expiresAt = DateTime.UtcNow.AddMinutes(_settings.LifetimeMinutes);
             var tokenId = Guid.NewGuid();
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 // https://tools.ietf.org/html/rfc7519#section-4.1
                 new Claim(JwtRegisteredClaimNames.Iss, _settings.Issuer),
@@ -45,8 +45,9 @@ namespace Etimo.Id.Service.TokenGenerators
             };
 
             // https://tools.ietf.org/html/rfc8693#section-4.2
-            if (request.Scope != null) {
-                new Claim("scope", request.Scope);
+            if (request.Scope != null)
+            {
+                claims.Add(new Claim("scope", request.Scope));
             }
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
