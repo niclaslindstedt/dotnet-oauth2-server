@@ -111,6 +111,7 @@ namespace Etimo.Id.Api
             // AuthorizationServices
             services.AddTransient<IValidateTokenService, ValidateTokenService>();
             services.AddTransient<IAuthorizeService, AuthorizeService>();
+            services.AddTransient<IGenerateTokenService, GenerateTokenService>();
 
             // RoleServices
             services.AddTransient<IAddRoleScopeRelationService, AddRoleScopeRelationService>();
@@ -129,7 +130,6 @@ namespace Etimo.Id.Api
             services.AddTransient<IUpdateScopeService, UpdateScopeService>();
 
             // Services
-            services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
 
             // Token Generators

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
 {
-    public class TokenService : ITokenService
+    public class GenerateTokenService : IGenerateTokenService
     {
         private readonly IAuthorizationCodeTokenGenerator _authorizationCodeTokenGenerator;
         private readonly IClientCredentialsTokenGenerator _clientCredentialsTokenGenerator;
         private readonly IResourceOwnerCredentialsTokenGenerator _resourceOwnerCredentialsTokenGenerator;
         private readonly IRefreshTokenGenerator _refreshTokenGenerator;
 
-        public TokenService(
+        public GenerateTokenService(
             IAuthorizationCodeTokenGenerator authorizationCodeTokenGenerator,
             IClientCredentialsTokenGenerator clientCredentialsTokenGenerator,
             IResourceOwnerCredentialsTokenGenerator resourceOwnerCredentialsTokenGenerator,

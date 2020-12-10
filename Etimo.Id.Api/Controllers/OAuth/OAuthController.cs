@@ -17,16 +17,16 @@ namespace Etimo.Id.Api.OAuth
     {
         private readonly IAuthorizeService _authorizeService;
         private readonly IValidateTokenService _validateTokenService;
-        private readonly ITokenService _tokenService;
+        private readonly IGenerateTokenService _generateTokenService;
 
         public OAuthController(
             IAuthorizeService authorizeService,
             IValidateTokenService validateTokenService,
-            ITokenService tokenService)
+            IGenerateTokenService generateTokenService)
         {
             _authorizeService = authorizeService;
             _validateTokenService = validateTokenService;
-            _tokenService = tokenService;
+            _generateTokenService = generateTokenService;
         }
 
         [HttpGet]
@@ -93,7 +93,7 @@ namespace Etimo.Id.Api.OAuth
                 request.ClientSecret = clientSecret;
             }
 
-            var token = await _tokenService.GenerateTokenAsync(request);
+            var token = await _generateTokenService.GenerateTokenAsync(request);
 
             return Ok(AccessTokenResponseDto.FromJwtToken(token));
         }
