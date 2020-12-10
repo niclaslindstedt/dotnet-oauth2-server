@@ -24,6 +24,7 @@ namespace Etimo.Id.Api.Roles
         private readonly IDeleteRoleService _deleteRoleService;
         private readonly IFindRoleService _findRoleService;
         private readonly IGetRolesService _getRolesService;
+        private readonly IGetScopesService _getScopesService;
         private readonly IUpdateRoleService _updateRoleService;
 
         public RoleController(
@@ -34,6 +35,7 @@ namespace Etimo.Id.Api.Roles
             IDeleteRoleService deleteRoleService,
             IFindRoleService findRoleService,
             IGetRolesService getRolesService,
+            IGetScopesService getScopesService,
             IUpdateRoleService updateRoleService)
         {
             _siteSettings = siteSettings;
@@ -43,6 +45,7 @@ namespace Etimo.Id.Api.Roles
             _deleteRoleService = deleteRoleService;
             _findRoleService = findRoleService;
             _getRolesService = getRolesService;
+            _getScopesService = getScopesService;
             _updateRoleService = updateRoleService;
         }
 
@@ -82,6 +85,26 @@ namespace Etimo.Id.Api.Roles
             }
 
             var found = RoleResponseDto.FromRole(role);
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/roles/{roleId:guid}/scopes")]
+        [Authorize(Policy = CombinedScopes.ReadRoleScope)]
+        public async Task<IActionResult> GetScopesAsync([FromRoute] Guid roleId)
+        {
+            List<Scope> scopes;
+            if (this.UserHasScope(RoleScopes.Admin))
+            {
+                scopes = await _getScopesService.GetByRoleIdAsync(roleId);
+            }
+            else
+            {
+                scopes = await _getScopesService.GetByRoleIdAsync(roleId, this.GetUserId());
+            }
+
+            var found = scopes.Select(s => ScopeResponseDto.FromScope(s, false));
 
             return Ok(found);
         }

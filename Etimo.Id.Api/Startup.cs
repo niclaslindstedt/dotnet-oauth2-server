@@ -88,7 +88,8 @@ namespace Etimo.Id.Api
                 AddScopePolicies(config, InbuiltScopes.All);
                 AddCombinedScopePolicies(config, new Dictionary<string, string[]>
                 {
-                    { CombinedScopes.ReadApplicationRole, new string[] { ApplicationScopes.Read, RoleScopes.Read } }
+                    { CombinedScopes.ReadApplicationRole, new string[] { ApplicationScopes.Read, RoleScopes.Read } },
+                    { CombinedScopes.ReadRoleScope, new string[] { RoleScopes.Read, ScopeScopes.Read } }
                 });
             });
 

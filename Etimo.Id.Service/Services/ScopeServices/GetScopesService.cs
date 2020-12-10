@@ -9,13 +9,16 @@ namespace Etimo.Id.Service
 {
     public class GetScopesService : IGetScopesService
     {
+        private readonly IFindRoleService _findRoleService;
         private readonly IScopeRepository _scopeRepository;
         private readonly IApplicationRepository _applicationRepository;
 
         public GetScopesService(
+            IFindRoleService findRoleService,
             IScopeRepository scopeRepository,
             IApplicationRepository applicationRepository)
         {
+            _findRoleService = findRoleService;
             _scopeRepository = scopeRepository;
             _applicationRepository = applicationRepository;
         }
@@ -30,6 +33,20 @@ namespace Etimo.Id.Service
             var applications = await _applicationRepository.GetByUserIdAsync(clientId);
 
             return applications.SelectMany(a => a.Scopes).ToList();
+        }
+
+        public async Task<List<Scope>> GetByRoleIdAsync(Guid roleId)
+        {
+            var role = await _findRoleService.FindAsync(roleId);
+
+            return role.Scopes.ToList();
+        }
+
+        public async Task<List<Scope>> GetByRoleIdAsync(Guid roleId, Guid userId)
+        {
+            var role = await _findRoleService.FindAsync(roleId, userId);
+
+            return role.Scopes.ToList();
         }
     }
 }

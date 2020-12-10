@@ -9,5 +9,7 @@ namespace Etimo.Id.Abstractions
     {
         Task<List<Scope>> GetAllAsync();
         Task<List<Scope>> GetByClientIdAsync(Guid clientId);
+        Task<List<Scope>> GetByRoleIdAsync(Guid roleId);
+        Task<List<Scope>> GetByRoleIdAsync(Guid roleId, Guid userId);
     }
 }
