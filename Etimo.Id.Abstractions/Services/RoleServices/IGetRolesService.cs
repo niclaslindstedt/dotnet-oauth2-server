@@ -11,5 +11,7 @@ namespace Etimo.Id.Abstractions
         Task<List<Role>> GetByUserIdAsync(Guid userId);
         Task<List<Role>> GetByApplicationId(int applicationId);
         Task<List<Role>> GetByApplicationId(int applicationId, Guid userId);
+        Task<List<Role>> GetByScopeIdAsync(Guid scopeId);
+        Task<List<Role>> GetByScopeIdAsync(Guid scopeId, Guid userId);
     }
 }

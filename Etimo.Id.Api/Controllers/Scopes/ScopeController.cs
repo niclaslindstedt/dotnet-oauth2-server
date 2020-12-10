@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Api.Roles;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Scopes;
@@ -20,6 +21,7 @@ namespace Etimo.Id.Api.Scopes
         private readonly IAddScopeService _addScopeService;
         private readonly IDeleteScopeService _deleteScopeService;
         private readonly IFindScopeService _findScopeService;
+        private readonly IGetRolesService _getRolesService;
         private readonly IGetScopesService _getScopesService;
         private readonly IUpdateScopeService _updateScopeService;
 
@@ -28,6 +30,7 @@ namespace Etimo.Id.Api.Scopes
             IAddScopeService addScopeService,
             IDeleteScopeService deleteScopeService,
             IFindScopeService findScopeService,
+            IGetRolesService getRolesService,
             IGetScopesService getScopesService,
             IUpdateScopeService updateScopeService)
         {
@@ -35,6 +38,7 @@ namespace Etimo.Id.Api.Scopes
             _addScopeService = addScopeService;
             _deleteScopeService = deleteScopeService;
             _findScopeService = findScopeService;
+            _getRolesService = getRolesService;
             _getScopesService = getScopesService;
             _updateScopeService = updateScopeService;
         }
@@ -75,6 +79,26 @@ namespace Etimo.Id.Api.Scopes
             }
 
             var found = ScopeResponseDto.FromScope(scope);
+
+            return Ok(found);
+        }
+
+        [HttpGet]
+        [Route("/scopes/{scopeId:guid}/roles")]
+        [Authorize(Policy = CombinedScopes.ReadRoleScope)]
+        public async Task<IActionResult> FindRolesAsync([FromRoute] Guid scopeId)
+        {
+            List<Role> roles;
+            if (this.UserHasScope(ScopeScopes.Admin))
+            {
+                roles = await _getRolesService.GetByScopeIdAsync(scopeId);
+            }
+            else
+            {
+                roles = await _getRolesService.GetByScopeIdAsync(scopeId, this.GetUserId());
+            }
+
+            var found = roles.Select(r => RoleResponseDto.FromRole(r, false));
 
             return Ok(found);
         }
