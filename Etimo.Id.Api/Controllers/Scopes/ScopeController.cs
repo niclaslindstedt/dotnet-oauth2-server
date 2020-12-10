@@ -17,14 +17,26 @@ namespace Etimo.Id.Api.Scopes
     public class ScopeController : Controller
     {
         private readonly SiteSettings _siteSettings;
-        private readonly IScopeService _scopeService;
+        private readonly IAddScopeService _addScopeService;
+        private readonly IDeleteScopeService _deleteScopeService;
+        private readonly IFindScopeService _findScopeService;
+        private readonly IGetScopesService _getScopesService;
+        private readonly IUpdateScopeService _updateScopeService;
 
         public ScopeController(
             SiteSettings siteSettings,
-            IScopeService scopeService)
+            IAddScopeService addScopeService,
+            IDeleteScopeService deleteScopeService,
+            IFindScopeService findScopeService,
+            IGetScopesService getScopesService,
+            IUpdateScopeService updateScopeService)
         {
             _siteSettings = siteSettings;
-            _scopeService = scopeService;
+            _addScopeService = addScopeService;
+            _deleteScopeService = deleteScopeService;
+            _findScopeService = findScopeService;
+            _getScopesService = getScopesService;
+            _updateScopeService = updateScopeService;
         }
 
         [HttpGet]
@@ -35,11 +47,11 @@ namespace Etimo.Id.Api.Scopes
             List<Scope> scopes;
             if (this.UserHasScope(ScopeScopes.Admin))
             {
-                scopes = await _scopeService.GetAllAsync();
+                scopes = await _getScopesService.GetAllAsync();
             }
             else
             {
-                scopes = await _scopeService.GetByClientIdAsync(this.GetClientId());
+                scopes = await _getScopesService.GetByClientIdAsync(this.GetClientId());
             }
 
             var found = scopes.Select(ScopeResponseDto.FromScope);
@@ -55,11 +67,11 @@ namespace Etimo.Id.Api.Scopes
             Scope scope;
             if (this.UserHasScope(ScopeScopes.Admin))
             {
-                scope = await _scopeService.FindAsync(scopeId);
+                scope = await _findScopeService.FindAsync(scopeId);
             }
             else
             {
-                scope = await _scopeService.FindAsync(scopeId, this.GetUserId());
+                scope = await _findScopeService.FindAsync(scopeId, this.GetUserId());
             }
 
             var found = ScopeResponseDto.FromScope(scope);
@@ -76,11 +88,11 @@ namespace Etimo.Id.Api.Scopes
             Scope scope;
             if (this.UserHasScope(ScopeScopes.Admin))
             {
-                scope = await _scopeService.AddAsync(dto.ToScope());
+                scope = await _addScopeService.AddAsync(dto.ToScope());
             }
             else
             {
-                scope = await _scopeService.AddAsync(dto.ToScope(), this.GetUserId());
+                scope = await _addScopeService.AddAsync(dto.ToScope(), this.GetUserId());
             }
 
             var created = ScopeResponseDto.FromScope(scope);
@@ -97,11 +109,11 @@ namespace Etimo.Id.Api.Scopes
             Scope scope;
             if (this.UserHasScope(ScopeScopes.Admin))
             {
-                scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId));
+                scope = await _updateScopeService.UpdateAsync(dto.ToScope(scopeId));
             }
             else
             {
-                scope = await _scopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
+                scope = await _updateScopeService.UpdateAsync(dto.ToScope(scopeId), this.GetUserId());
             }
 
             var updated = ScopeResponseDto.FromScope(scope);
@@ -116,11 +128,11 @@ namespace Etimo.Id.Api.Scopes
         {
             if (this.UserHasScope(ScopeScopes.Admin))
             {
-                await _scopeService.DeleteAsync(scopeId);
+                await _deleteScopeService.DeleteAsync(scopeId);
             }
             else
             {
-                await _scopeService.DeleteAsync(scopeId, this.GetUserId());
+                await _deleteScopeService.DeleteAsync(scopeId, this.GetUserId());
             }
 
             return NoContent();

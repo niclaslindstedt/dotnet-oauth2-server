@@ -121,8 +121,14 @@ namespace Etimo.Id.Api
             services.AddTransient<IGetRolesService, GetRolesService>();
             services.AddTransient<IUpdateRoleService, UpdateRoleService>();
 
+            // ScopeServices
+            services.AddTransient<IAddScopeService, AddScopeService>();
+            services.AddTransient<IDeleteScopeService, DeleteScopeService>();
+            services.AddTransient<IFindScopeService, FindScopeService>();
+            services.AddTransient<IGetScopesService, GetScopesService>();
+            services.AddTransient<IUpdateScopeService, UpdateScopeService>();
+
             // Services
-            services.AddTransient<IScopeService, ScopeService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IUserService, UserService>();
 
