@@ -176,6 +176,7 @@ namespace Etimo.Id.Api
         public void Configure(IApplicationBuilder app)
         {
             app.UseErrorMiddleware();
+            app.UseRateLimiter();
 
             if (Environment.IsDevelopment())
             {
@@ -205,7 +206,6 @@ namespace Etimo.Id.Api
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseBruteForceProtection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
