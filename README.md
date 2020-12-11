@@ -47,7 +47,7 @@ The project is served from https://localhost:5011
 
 ### Creating your first users
 
-When starting etimo-id for the first time, a pre-seeded user and application is added:
+When starting etimo-id for the first time, a default user and application is added:
 
 ```
 username: admin
@@ -62,7 +62,7 @@ If you want to remove the database and start over, use the `delete-database.ps1`
 
 ## Commit style
 
-This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) in this project.
+This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for its commit messages.
 
 ### Valid commit types
 
