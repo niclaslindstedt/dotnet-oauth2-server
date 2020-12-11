@@ -1,3 +1,4 @@
+using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Builder;
