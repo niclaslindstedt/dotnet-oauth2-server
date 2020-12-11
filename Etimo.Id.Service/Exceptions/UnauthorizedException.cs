@@ -5,7 +5,7 @@ namespace Etimo.Id.Service.Exceptions
         /// <summary>
         /// Used when trying to access protected data without being authenticated.
         /// </summary>
-        public UnauthorizedException(string message = null, string errorCode = "unauthorized")
+        public UnauthorizedException(string message = "You have to authenticate to do that.", string errorCode = "unauthorized")
             : base(message, errorCode)
         {
         }

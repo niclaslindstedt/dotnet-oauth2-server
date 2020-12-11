@@ -87,7 +87,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var found = UserResponseDto.FromUser(user);
@@ -107,7 +107,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var found = applications.Select(a => ApplicationResponseDto.FromApplication(a, false));
@@ -127,7 +127,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var found = roles.Select(a => RoleResponseDto.FromRole(a, false));
@@ -160,7 +160,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var updated = UserResponseDto.FromUser(user);
@@ -180,7 +180,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var added = roles.Select(r => RoleResponseDto.FromRole(r, false));
@@ -210,7 +210,7 @@ namespace Etimo.Id.Api.Users
             }
             else
             {
-                throw new ForbiddenException("You cannot access that user.");
+                throw new ForbiddenException();
             }
 
             var remaining = roles.Select(r => RoleResponseDto.FromRole(r, false));

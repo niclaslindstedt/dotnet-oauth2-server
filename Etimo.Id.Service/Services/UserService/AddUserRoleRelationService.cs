@@ -32,7 +32,7 @@ namespace Etimo.Id.Service
                 var role = await _roleRepository.FindAsync(roleId);
                 if (role == null || role.Application.UserId != userId)
                 {
-                    throw new NotFoundException("Role not found.");
+                    throw new NotFoundException();
                 }
 
                 user.Roles.Add(role);

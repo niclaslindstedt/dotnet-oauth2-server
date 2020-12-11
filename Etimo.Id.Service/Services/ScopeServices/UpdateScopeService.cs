@@ -22,6 +22,10 @@ namespace Etimo.Id.Service
         public async Task<Scope> UpdateAsync(Scope updatedScope)
         {
             var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
+            if (scope == null)
+            {
+                throw new BadRequestException("Scope does not exist.");
+            }
 
             return await UpdateAsync(scope, updatedScope);
         }
@@ -31,7 +35,7 @@ namespace Etimo.Id.Service
             var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
             if (scope?.Application?.UserId != userId)
             {
-                throw new ForbiddenException("The application does not belong to you.");
+                throw new ForbiddenException();
             }
 
             return await UpdateAsync(scope, updatedScope);
@@ -39,11 +43,6 @@ namespace Etimo.Id.Service
 
         private async Task<Scope> UpdateAsync(Scope scope, Scope updatedScope)
         {
-            if (scope == null)
-            {
-                throw new BadRequestException("Scope does not exist.");
-            }
-
             if (updatedScope.ApplicationId != scope.ApplicationId)
             {
                 throw new BadRequestException("Cannot change application of a scope.");

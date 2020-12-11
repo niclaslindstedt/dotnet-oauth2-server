@@ -23,7 +23,7 @@ namespace Etimo.Id.Service
         {
             if (!await _userRepository.AnyAsync(userId))
             {
-                throw new BadRequestException("User does not exist.");
+                throw new ForbiddenException();
             }
 
             application.UserId = userId;

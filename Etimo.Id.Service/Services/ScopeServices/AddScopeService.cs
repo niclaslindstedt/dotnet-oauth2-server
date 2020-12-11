@@ -24,6 +24,10 @@ namespace Etimo.Id.Service
         public async Task<Scope> AddAsync(Scope scope)
         {
             var application = await _applicationRepository.FindAsync(scope.ApplicationId);
+            if (application == null)
+            {
+                throw new BadRequestException("Application does not exist.");
+            }
 
             return await AddAsync(scope, application);
         }
@@ -33,7 +37,7 @@ namespace Etimo.Id.Service
             var application = await _applicationRepository.FindAsync(scope.ApplicationId);
             if (application?.UserId != userId)
             {
-                throw new ForbiddenException("The application does not belong to you.");
+                throw new ForbiddenException();
             }
 
             return await AddAsync(scope, application);
@@ -41,11 +45,6 @@ namespace Etimo.Id.Service
 
         private async Task<Scope> AddAsync(Scope scope, Application application)
         {
-            if (application == null)
-            {
-                throw new BadRequestException("Application does not exist.");
-            }
-
             if (application.Scopes.Any(s => s.Name == scope.Name))
             {
                 throw new ConflictException("Scope name already exists.");

@@ -19,7 +19,7 @@ namespace Etimo.Id.Service
             var accessToken = await _accessTokenRepository.FindAsync(accessTokenId);
             if (accessToken == null || accessToken.Disabled)
             {
-                throw new UnauthorizedException("Access token has been disabled.");
+                throw new UnauthorizedException("Access token has been disabled, please authenticate again.");
             }
         }
     }

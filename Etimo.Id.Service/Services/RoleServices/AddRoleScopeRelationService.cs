@@ -36,7 +36,7 @@ namespace Etimo.Id.Service
             var role = await _findRoleService.FindAsync(roleId);
             if (role.Application.UserId != userId)
             {
-                throw new ForbiddenException("Role does not belong to you.");
+                throw new ForbiddenException();
             }
 
             return await AddScopeRelationAsync(role, scopeId);
@@ -49,7 +49,7 @@ namespace Etimo.Id.Service
                 var scope = await _scopeRepository.FindAsync(scopeId);
                 if (scope == null)
                 {
-                    throw new BadRequestException("Scope not found.");
+                    throw new NotFoundException();
                 }
 
                 role.Scopes.Add(scope);

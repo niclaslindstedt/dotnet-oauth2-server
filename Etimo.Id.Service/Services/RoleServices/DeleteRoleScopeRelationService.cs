@@ -36,7 +36,7 @@ namespace Etimo.Id.Service
             var role = await _findRoleService.FindAsync(roleId);
             if (role.Application.UserId != userId)
             {
-                throw new ForbiddenException("Role does not belong to you.");
+                throw new ForbiddenException();
             }
 
             return await DeleteScopeRelationAsync(role, scopeId);

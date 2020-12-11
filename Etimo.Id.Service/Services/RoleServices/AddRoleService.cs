@@ -23,6 +23,10 @@ namespace Etimo.Id.Service
         public async Task<Role> AddAsync(Role role)
         {
             var application = await _applicationRepository.FindAsync(role.ApplicationId);
+            if (application == null)
+            {
+                throw new BadRequestException("The application does not exist.");
+            }
 
             return await AddAsync(role, application);
         }
@@ -32,7 +36,7 @@ namespace Etimo.Id.Service
             var application = await _applicationRepository.FindAsync(role.ApplicationId);
             if (application?.UserId != userId)
             {
-                throw new ForbiddenException("Application does not belong to you.");
+                throw new ForbiddenException();
             }
 
             return await AddAsync(role, application);
@@ -40,11 +44,6 @@ namespace Etimo.Id.Service
 
         private async Task<Role> AddAsync(Role role, Application application)
         {
-            if (application == null)
-            {
-                throw new BadRequestException("The application does not exist.");
-            }
-
             if (application.Roles.Any(r => r.Name == role.Name))
             {
                 throw new ConflictException("A role with that name already exists in this application.");
