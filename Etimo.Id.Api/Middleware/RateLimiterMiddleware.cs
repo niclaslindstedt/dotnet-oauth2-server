@@ -78,7 +78,6 @@ namespace Etimo.Id.Api.Middleware
                     ruleContext = new RateLimiterRuleContext(rule);
                 }
                 ruleContext.Context = rateLimiterContext;
-                ruleContext.CallWindowSeconds = rule.CallWindowSeconds;
                 rateLimiterContext.Rules.Add(ruleContext);
             }
 
@@ -104,7 +103,7 @@ namespace Etimo.Id.Api.Middleware
                 var cacheKey = $"{ruleContext.Name}:{rateLimiterContext.IpNumber}";
                 _cache.SetStringAsync(cacheKey, value, new DistributedCacheEntryOptions
                 {
-                    SlidingExpiration = TimeSpan.FromSeconds(ruleContext.CallWindowSeconds)
+                    AbsoluteExpiration = ruleContext.WindowExpiration
                 });
             }
 
