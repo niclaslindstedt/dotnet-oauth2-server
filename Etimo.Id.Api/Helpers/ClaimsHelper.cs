@@ -29,7 +29,7 @@ namespace Etimo.Id.Api.Helpers
         /// </summary>
         public static bool UserHasRole(this Controller controller, string role)
         {
-            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role);
+            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Role);
 
             return claimRoles.Any(r => r.Value == role);
         }
@@ -39,7 +39,7 @@ namespace Etimo.Id.Api.Helpers
         /// </summary>
         public static bool UserHasScope(this Controller controller, string scope)
         {
-            var claimScopes = controller.Request.HttpContext.User.Claims.Where(c => c.Type == "scope");
+            var claimScopes = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Scope);
 
             // The caller must either have the scope claim or be an admin.
             return claimScopes.Any(r => r.Value == scope) || controller.UserHasRole(RoleNames.Admin);
@@ -50,7 +50,7 @@ namespace Etimo.Id.Api.Helpers
         /// </summary>
         public static string UserRole(this Controller controller)
         {
-            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role).ToList();
+            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Role).ToList();
 
             foreach (var role in RoleNames.InPrivilegeOrder())
             {

@@ -43,7 +43,7 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             await ValidateRequestAsync(request);
             var refreshToken = GenerateRefreshToken();
-            var jwtToken = CreateJwtToken();
+            var jwtToken = await CreateJwtTokenAsync();
 
             jwtToken.RefreshToken = refreshToken.RefreshTokenId;
             refreshToken.AccessTokenId = jwtToken.TokenId;
@@ -132,7 +132,7 @@ namespace Etimo.Id.Service.TokenGenerators
             return GenerateRefreshToken(_refreshToken.ApplicationId, _refreshToken.RedirectUri, _refreshToken.UserId, _scope);
         }
 
-        private JwtToken CreateJwtToken()
+        private Task<JwtToken> CreateJwtTokenAsync()
         {
             var jwtRequest = new JwtTokenRequest
             {
@@ -141,7 +141,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 Scope = _scope
             };
 
-            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
         }
 
         private async Task SaveAsync()

@@ -47,7 +47,7 @@ namespace Etimo.Id.Service.TokenGenerators
         public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request)
         {
             await ValidateRequestAsync(request);
-            CreateJwtToken();
+            await CreateJwtTokenAsync();
             GenerateRefreshToken();
 
             _code.Used = true;
@@ -112,7 +112,7 @@ namespace Etimo.Id.Service.TokenGenerators
             }
         }
 
-        private void CreateJwtToken()
+        private async Task CreateJwtTokenAsync()
         {
             var jwtRequest = new JwtTokenRequest
             {
@@ -121,7 +121,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 Scope = _code.Scope
             };
 
-            _jwtToken = _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            _jwtToken = await _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
         }
 
         private void GenerateRefreshToken()

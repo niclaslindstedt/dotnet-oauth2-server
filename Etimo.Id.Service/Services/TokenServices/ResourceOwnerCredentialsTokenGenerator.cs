@@ -34,7 +34,7 @@ namespace Etimo.Id.Service.TokenGenerators
         public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
             await ValidateRequestAsync(request);
-            var jwtToken = CreateJwtToken();
+            var jwtToken = await CreateJwtTokenAsync();
             var accessToken = jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
             await _accessTokenRepository.SaveAsync();
@@ -60,7 +60,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _application = await _authenticateClientService.AuthenticateAsync(request.ClientId, request.ClientSecret);
         }
 
-        private JwtToken CreateJwtToken()
+        private Task<JwtToken> CreateJwtTokenAsync()
         {
             var jwtRequest = new JwtTokenRequest
             {
@@ -68,7 +68,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 Subject = _user.UserId.ToString()
             };
 
-            return _jwtTokenFactory.CreateJwtToken(jwtRequest);
+            return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
         }
     }
 }

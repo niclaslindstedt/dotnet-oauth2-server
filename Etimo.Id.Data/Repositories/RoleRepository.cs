@@ -24,7 +24,7 @@ namespace Etimo.Id.Data.Repositories
 
         public Task<List<Role>> GetByUserIdAsync(Guid userId)
         {
-            return _dbContext.Roles.Where(r => r.Application.UserId == userId).ToListAsync();
+            return _dbContext.Roles.Where(r => r.Users.Any(u => u.UserId == userId)).ToListAsync();
         }
 
         public Task<List<Role>> GetByApplicationId(int applicationId)

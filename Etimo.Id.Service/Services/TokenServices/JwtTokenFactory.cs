@@ -11,19 +11,24 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Etimo.Id.Service.TokenGenerators
 {
     public class JwtTokenFactory : IJwtTokenFactory
     {
+        private readonly IGetRolesService _getRolesService;
         private readonly JwtSettings _settings;
 
-        public JwtTokenFactory(JwtSettings settings)
+        public JwtTokenFactory(
+            IGetRolesService getRolesService,
+            JwtSettings settings)
         {
+            _getRolesService = getRolesService;
             _settings = settings;
         }
 
-        public JwtToken CreateJwtToken(IJwtTokenRequest request)
+        public async Task<JwtToken> CreateJwtTokenAsync(IJwtTokenRequest request)
         {
             var audiences = CompileAudiences(request.Audience);
             var expiresAt = DateTime.UtcNow.AddMinutes(_settings.LifetimeMinutes);
@@ -39,15 +44,16 @@ namespace Etimo.Id.Service.TokenGenerators
                 new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
-                // https://tools.ietf.org/html/rfc7519#section-4.2
-                new Claim(ClaimTypes.Role, RoleNames.User),
-                new Claim(ClaimTypes.Role, RoleNames.Admin)
             };
+
+            // https://tools.ietf.org/html/rfc7519#section-4.2
+            var roles = await _getRolesService.GetByUserIdAsync(new Guid(request.Subject));
+            roles.ForEach(role => claims.Add(new Claim(CustomClaimTypes.Role, role.Name)));
 
             // https://tools.ietf.org/html/rfc8693#section-4.2
             if (request.Scope != null)
             {
-                claims.Add(new Claim("scope", request.Scope));
+                claims.Add(new Claim(CustomClaimTypes.Scope, request.Scope));
             }
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
