@@ -1,4 +1,3 @@
-using Etimo.Id.Service.Constants;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 
@@ -22,8 +21,7 @@ namespace Etimo.Id.Api.Security
                     }
                 }
 
-                // The caller must either have the scope claims or be an admin.
-                return hasAllClaims || context.User.IsInRole(RoleNames.Admin);
+                return hasAllClaims;
             }).Build();
         }
     }

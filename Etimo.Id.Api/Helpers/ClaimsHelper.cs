@@ -1,9 +1,9 @@
 using Etimo.Id.Service.Constants;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System;
 using System.Linq;
 using System.Security.Claims;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace Etimo.Id.Api.Helpers
 {
@@ -25,16 +25,6 @@ namespace Etimo.Id.Api.Helpers
         }
 
         /// <summary>
-        /// Checks if the caller has a specific role.
-        /// </summary>
-        public static bool UserHasRole(this Controller controller, string role)
-        {
-            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Role);
-
-            return claimRoles.Any(r => r.Value == role);
-        }
-
-        /// <summary>
         /// Checks if the caller has been granted a specific scope.
         /// </summary>
         public static bool UserHasScope(this Controller controller, string scope)
@@ -42,25 +32,7 @@ namespace Etimo.Id.Api.Helpers
             var claimScopes = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Scope);
 
             // The caller must either have the scope claim or be an admin.
-            return claimScopes.Any(r => r.Value == scope) || controller.UserHasRole(RoleNames.Admin);
-        }
-
-        /// <summary>
-        /// Returns the highest privileged role the requester has.
-        /// </summary>
-        public static string UserRole(this Controller controller)
-        {
-            var claimRoles = controller.Request.HttpContext.User.Claims.Where(c => c.Type == CustomClaimTypes.Role).ToList();
-
-            foreach (var role in RoleNames.InPrivilegeOrder())
-            {
-                if (claimRoles.Any(r => r.Value == RoleNames.Admin))
-                {
-                    return role;
-                }
-            }
-
-            return null;
+            return claimScopes.Any(r => r.Value == scope);
         }
 
         /// <summary>
