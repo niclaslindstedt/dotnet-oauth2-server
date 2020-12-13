@@ -40,6 +40,7 @@ namespace Etimo.Id.Service
         {
             await ValidateRequestAsync(request);
             await AuthenticateUserAsync();
+            VerifyScopesAreValid();
             await GenerateAuthorizationCodeAsync();
 
             return GenerateAuthorizationUrl();
@@ -86,6 +87,21 @@ namespace Etimo.Id.Service
         {
             _user = await _authenticateUserService.AuthenticateAsync(_request);
         }
+
+        private void VerifyScopesAreValid()
+        {
+            var requestedScopes = _request.Scope.Split(" ");
+            var availableScopes = _user.Roles
+                .SelectMany(r => r.Scopes)
+                .Select(s => s.Name)
+                .ToList();
+
+            if (!requestedScopes.All(s => availableScopes.Contains(s)))
+            {
+                throw new ForbiddenException("You do not have access to that scope.");
+            }
+        }
+
 
         private async Task GenerateAuthorizationCodeAsync()
         {
