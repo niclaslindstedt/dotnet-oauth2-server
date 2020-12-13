@@ -55,6 +55,11 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 claims.Add(new Claim(CustomClaimTypes.Scope, request.Scope));
             }
+            else {
+                var scopes = roles.SelectMany(r => r.Scopes).ToList();
+                var uniqueScopes = scopes.Select(s => s.Name).Distinct();
+                claims.Add(new Claim(CustomClaimTypes.Scope, string.Join(" ", uniqueScopes)));
+            }
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
             var key = new SymmetricSecurityKey(secretBytes);
