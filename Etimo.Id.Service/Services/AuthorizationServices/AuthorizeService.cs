@@ -90,6 +90,10 @@ namespace Etimo.Id.Service
 
         private void VerifyScopesAreValid()
         {
+            if (_request.Scope == null) {
+                return;
+            }
+
             var requestedScopes = _request.Scope.Split(" ");
             var availableScopes = _user.Roles
                 .SelectMany(r => r.Scopes)
