@@ -1,5 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using System.Threading.Tasks;
 
@@ -18,17 +19,20 @@ namespace Etimo.Id.Service
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        public Task<User> AuthenticateAsync(IAuthenticationRequest request)
+            => AuthenticateAsync(request.Username, request.Password, request.State);
+
+        public async Task<User> AuthenticateAsync(string username, string password, string state = null)
         {
             var user = await _userRepository.FindByUsernameAsync(username);
             if (user == null)
             {
-                throw new InvalidGrantException("Invalid user credentials.");
+                throw new InvalidGrantException("Invalid user credentials.", state);
             }
 
             if (!_passwordHasher.Verify(password, user.Password))
             {
-                throw new InvalidGrantException("Invalid user credentials.");
+                throw new InvalidGrantException("Invalid user credentials.", state);
             }
 
             return user;

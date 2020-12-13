@@ -84,7 +84,7 @@ namespace Etimo.Id.Service
 
         private async Task AuthenticateUserAsync()
         {
-            _user = await _authenticateUserService.AuthenticateAsync(_request.Username, _request.Password);
+            _user = await _authenticateUserService.AuthenticateAsync(_request);
         }
 
         private async Task GenerateAuthorizationCodeAsync()

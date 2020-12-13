@@ -1,3 +1,4 @@
+using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,7 +49,12 @@ namespace Etimo.Id.Api.Errors
 
                 context.Response.StatusCode = response.GetStatusCode();
                 context.Response.Headers.Add("Content-Type", "application/json");
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(response, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance,
+                    IgnoreNullValues = true
+                }));
             }
         }
     }
