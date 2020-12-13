@@ -11,6 +11,7 @@ namespace Etimo.Id.Data
 
         public DbSet<AccessToken> AccessTokens { get; set; }
         public DbSet<Application> Applications { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<AuthorizationCode> AuthorizationCodes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -31,6 +32,11 @@ namespace Etimo.Id.Data
 
             var accessToken = modelBuilder.Entity<AccessToken>();
             accessToken.HasKey(at => at.AccessTokenId);
+
+            var auditLog = modelBuilder.Entity<AuditLog>();
+            auditLog.HasKey(al => al.AuditLogId);
+            auditLog.HasOne(al => al.User);
+            auditLog.HasOne(al => al.Application);
 
             var authorizationCode = modelBuilder.Entity<AuthorizationCode>();
             authorizationCode.HasKey(ac => ac.Code);

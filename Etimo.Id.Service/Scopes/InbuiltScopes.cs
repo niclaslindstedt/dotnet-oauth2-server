@@ -5,10 +5,11 @@ namespace Etimo.Id.Service.Scopes
 {
     public class InbuiltScopes
     {
-        public static List<string> All => Application.Concat(Role).Concat(Scope).Concat(User).ToList();
+        public static List<string> All => Application.Concat(AuditLog).Concat(Role).Concat(Scope).Concat(User).ToList();
 
         public static List<string> Read => new List<string> {
             ApplicationScopes.Read,
+            AuditLogScopes.Read,
             RoleScopes.Read,
             ScopeScopes.Read,
             UserScopes.Read
@@ -23,6 +24,7 @@ namespace Etimo.Id.Service.Scopes
 
         public static List<string> Admin => new List<string> {
             ApplicationScopes.Admin,
+            AuditLogScopes.Admin,
             RoleScopes.Admin,
             ScopeScopes.Admin,
             UserScopes.Admin
@@ -32,6 +34,11 @@ namespace Etimo.Id.Service.Scopes
             ApplicationScopes.Read,
             ApplicationScopes.Write,
             ApplicationScopes.Admin
+        };
+
+        public static List<string> AuditLog => new List<string> {
+            AuditLogScopes.Read,
+            AuditLogScopes.Admin
         };
 
         public static List<string> Role => new List<string> {

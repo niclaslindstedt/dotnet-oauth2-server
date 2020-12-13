@@ -10,6 +10,7 @@ namespace Etimo.Id.Data
     {
         DbSet<AccessToken> AccessTokens { get; }
         DbSet<Application> Applications { get; }
+        DbSet<AuditLog> AuditLogs { get; }
         DbSet<AuthorizationCode> AuthorizationCodes { get; }
         DbSet<RefreshToken> RefreshTokens { get; }
         DbSet<Role> Roles { get; }

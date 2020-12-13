@@ -72,7 +72,7 @@ namespace Etimo.Id.Data
             var scopes = new List<Scope>();
 
             var resources = new List<string> {
-                "application","scope", "role", "user"
+                "application","auditlog","scope", "role", "user"
             };
 
             foreach (var resource in resources) {

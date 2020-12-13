@@ -115,6 +115,10 @@ namespace Etimo.Id.Api
             services.AddTransient<IGetApplicationsService, GetApplicationsService>();
             services.AddTransient<IUpdateApplicationService, UpdateApplicationService>();
 
+            // AuditLogServices
+            services.AddTransient<IFindAuditLogService, FindAuditLogService>();
+            services.AddTransient<IGetAuditLogsService, GetAuditLogsService>();
+
             // AuthorizationServices
             services.AddTransient<IValidateTokenService, ValidateTokenService>();
             services.AddTransient<IAuthorizeService, AuthorizeService>();
@@ -156,6 +160,7 @@ namespace Etimo.Id.Api
             // Repositories
             services.AddTransient<IApplicationRepository, ApplicationRepository>();
             services.AddTransient<IAccessTokenRepository, AccessTokenRepository>();
+            services.AddTransient<IAuditLogRepository, AuditLogRepository>();
             services.AddTransient<IAuthorizationCodeRepository, AuthorizationCodeRepository>();
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
