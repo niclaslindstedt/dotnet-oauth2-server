@@ -57,7 +57,7 @@ namespace Etimo.Id.Service
             var application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (application == null)
             {
-                throw new InvalidClientException("No application with that client ID could be found.");
+                throw new InvalidClientException("No application with that client ID could be found.", request.State);
             }
 
             // Make sure the provided scopes actually exists within this application.
@@ -69,7 +69,7 @@ namespace Etimo.Id.Service
                     var allScopes = InbuiltScopes.All.Concat(application.Scopes.Select(s => s.Name));
                     if (!allScopes.Contains(scope))
                     {
-                        throw new InvalidScopeException("The provided scope is invalid.");
+                        throw new InvalidScopeException("The provided scope is invalid.", request.State);
                     }
                 }
             }
@@ -78,7 +78,7 @@ namespace Etimo.Id.Service
             var redirectUri = _request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)
             {
-                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.", request.State);
             }
         }
 
