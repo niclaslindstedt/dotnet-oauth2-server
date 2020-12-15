@@ -1,0 +1,48 @@
+@startuml Authorization Code Flow
+
+title Authorization Code Flow
+footer RFC 6749 - The OAuth 2.0 Authorization Framework. (Based on Section 4.1, Figure 3).
+
+actor "Resource Owner" order 10
+box "Browser or app" #LightBlue
+participant "User-Agent" order 20
+end box
+box "API (split or combined)" #LightYellow
+participant "Client" order 30
+participant "Authorization Server" order 40
+end box
+
+"Resource Owner" ->> "Client" : ✋ Attempt to fetch protected content
+activate "Client"
+"Client" ->>o "Client" : Store information\nabout request\n(state, return_uri)
+"Client" -->> "User-Agent" : 302 redirect
+deactivate "Client"
+
+group OAuth 2.0 Authorization Code Flow
+"User-Agent" -> "Authorization Server" : GET /authorize
+activate "Authorization Server"
+"Authorization Server" -->>o "Authorization Server" : Generate\nredirect_uri
+"Authorization Server" --> "User-Agent": Login form
+deactivate "Authorization Server"
+activate "User-Agent"
+"Resource Owner" <-> "User-Agent" : 🖊 Username & Password
+"User-Agent" -> "Authorization Server": POST /authorize
+deactivate "User-Agent"
+"Authorization Server" -->> "User-Agent" : 302 redirect
+"User-Agent" -> "Client" : GET {redirect_uri}
+activate "Client"
+"Client" ->>o "Client" : Verify {state}
+"Client" -> "Authorization Server" : POST /token
+activate "Authorization Server"
+"Authorization Server" ->>o "Authorization Server" : Authorize
+"Authorization Server" -> "Client" : Access token\n& refresh token
+deactivate "Authorization Server"
+end
+
+"Client" ->o "Client" : Store\nrefresh token
+"Client" -->> "User-Agent" : 🍪 Access token\n302 redirect
+deactivate "Client"
+"User-Agent" -> "Client" : Fetch {return_uri}
+"Client" -> "Resource Owner" : 🔒 Protected content
+
+@enduml
