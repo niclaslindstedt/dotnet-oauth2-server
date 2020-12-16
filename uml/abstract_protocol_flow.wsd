@@ -1,0 +1,20 @@
+@startuml Abstract Protocol Flow
+
+title Abstract Protocol Flow
+footer RFC 6749 - The OAuth 2.0 Authorization Framework. Section 1.2, Figure 1.
+
+actor "Resource Owner" order 1
+participant "Client" order 2
+participant "Resource Server" order 3
+participant "Authorization Server" order 4
+
+"Client" -> "Resource Owner" : Authorization Request
+"Resource Owner" --> "Client" : Authorization Grant
+
+"Client" -> "Authorization Server" : Authorization Grant
+"Authorization Server" --> "Client" : Access Token
+
+"Client" -> "Resource Server" : Access Token
+"Resource Server" --> "Client" : Protected Resource
+
+@enduml

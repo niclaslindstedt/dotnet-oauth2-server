@@ -1,0 +1,23 @@
+@startuml Refreshing an Expired Access Token
+
+title Refreshing an Expired Access Token
+footer RFC 6749 - The OAuth 2.0 Authorization Framework. Section 1.5, Figure 2.
+
+participant "Client" order 1
+box "API (split or combined)" #LightYellow
+participant "Resource Server" order 2
+participant "Authorization Server" order 3
+end box
+
+"Client" -> "Authorization Server" : Authorization Grant
+"Authorization Server" --> "Client" : Access Token & Refresh Token
+
+"Client" -> "Resource Server" : Access Token
+"Resource Server" --> "Client" : Protected Resource
+"Client" ->x "Resource Server" : Access Token
+"Resource Server" --> "Client" : Invalid Token Error
+
+"Client" -> "Authorization Server" : Refresh Token
+"Authorization Server" --> "Client" : Access Token & Refresh Token
+
+@enduml
