@@ -8,11 +8,12 @@ At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-
 
 You need [.NET 5](https://dotnet.microsoft.com/download/dotnet/5.0) and [Docker Desktop](https://www.docker.com/products/docker-desktop) (or just Docker if you're running Linux).
 
-You also need to install `dotnet-ef` and `dotnet-user-secrets`:
+You also need to install a few tools:
 
 ```
 dotnet tool install --global dotnet-ef
 dotnet tool install --global dotnet-user-secrets
+dotnet tool install --global dotnet-script
 ```
 
 ## Secrets
@@ -27,7 +28,7 @@ dotnet user-secrets set ConnectionStrings:EtimoId CONNECTIONSTRING
 * The STRONGSECRET should be at least 32 characters long.
 * The CONNECTIONSTRING should be the connection string to your database.
 
-To setup some default values you can use while developing, use the `setup-secrets.ps1` script.
+To setup some default values you can use while developing, use the `setup-secrets.csx` script.
 
 You should **REALLY** change the Secret value in your production environment.
 
@@ -41,7 +42,7 @@ You can access the database GUI from https://localhost:8011
 
 Run etimo-id by typing `dotnet run --project Etimo.Id.Api`
 
-Or by using the `run.ps1` script.
+Or by using the `run.csx` script.
 
 The project is served from https://localhost:5011
 
@@ -58,7 +59,7 @@ client_secret: etimo
 
 Use this user to setup the system. When you are done setting up, you should delete this user.
 
-If you want to remove the database and start over, use the `delete-database.ps1` script.
+If you want to remove the database and start over, use the `delete-database.csx` script.
 
 ## Commit style
 
@@ -75,6 +76,6 @@ feat | New feature
 fix | Bug fix
 refactor | Code refactoring
 repo | Updates to e.g. git hooks
-script | Updates to scripts in repository
+scripts | Updates to scripts in repository
 test | Write and refactor tests; no code change
 wip | Work in progress -- use in feature branches where you squash merge
