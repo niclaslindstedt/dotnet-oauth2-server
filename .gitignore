@@ -3,6 +3,7 @@
 **/bin/
 **/node_modules/
 **/nupkg/
+**/packages/
 *.DotSettings.user
 appsettings.json
 package-lock.json
