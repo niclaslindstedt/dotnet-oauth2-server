@@ -7,6 +7,7 @@ using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Scopes;
 using Etimo.Id.Service.Settings;
 using Etimo.Id.Service.TokenGenerators;
@@ -72,6 +73,7 @@ namespace Etimo.Id.Api
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        ValidateActor = true,
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
@@ -79,7 +81,13 @@ namespace Etimo.Id.Api
                         ValidIssuer = jwtSettings.Issuer,
                         ValidAudience = jwtSettings.Issuer,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                        ClockSkew = TimeSpan.Zero
+                        ClockSkew = TimeSpan.Zero,
+                        NameClaimType = CustomClaimTypes.Name,
+                        RoleClaimType = CustomClaimTypes.Role,
+                        RequireAudience = true,
+                        RequireExpirationTime = true,
+                        RequireSignedTokens = true,
+                        IgnoreTrailingSlashWhenValidatingAudience = true
                     };
                 });
 

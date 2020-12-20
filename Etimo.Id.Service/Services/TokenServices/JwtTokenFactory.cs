@@ -43,12 +43,12 @@ namespace Etimo.Id.Service.TokenGenerators
                 new Claim(JwtRegisteredClaimNames.Exp, GetUnixTime(expiresAt).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new Claim(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
-                new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, tokenId.ToString())
             };
 
             // https://tools.ietf.org/html/rfc7519#section-4.2
             var roles = await _getRolesService.GetByUserIdAsync(new Guid(request.Subject));
-            roles.ForEach(role => claims.Add(new Claim(CustomClaimTypes.Role, role.Name)));
+            roles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role.Name)));
 
             // https://tools.ietf.org/html/rfc8693#section-4.2
             if (request.Scope != null)
