@@ -21,6 +21,7 @@ namespace Etimo.Id.Service
         private IAuthorizationRequest _request;
         private AuthorizationCode _code;
         private User _user;
+        private string _allScopes;
 
         public AuthorizeService(
             IFindApplicationService findApplicationService,
@@ -38,7 +39,9 @@ namespace Etimo.Id.Service
 
         public async Task<string> AuthorizeAsync(IAuthorizationRequest request)
         {
-            await ValidateRequestAsync(request);
+            _request = request;
+
+            await ValidateRequestAsync();
             await AuthenticateUserAsync();
             VerifyScopesAreValid();
             await GenerateAuthorizationCodeAsync();
@@ -46,10 +49,8 @@ namespace Etimo.Id.Service
             return GenerateAuthorizationUrl();
         }
 
-        private async Task ValidateRequestAsync(IAuthorizationRequest request)
+        private async Task ValidateRequestAsync()
         {
-            _request = request;
-
             if (_request.ResponseType != "code")
             {
                 throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
@@ -58,28 +59,29 @@ namespace Etimo.Id.Service
             var application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (application == null)
             {
-                throw new InvalidClientException("No application with that client ID could be found.", request.State);
+                throw new InvalidClientException("No application with that client ID could be found.", _request.State);
             }
 
             // Make sure the provided scopes actually exists within this application.
+            var allScopes = InbuiltScopes.All.Concat(application.Scopes.Select(s => s.Name));
             if (_request.Scope != null)
             {
                 var scopes = _request.Scope.Split(" ");
                 foreach (var scope in scopes)
                 {
-                    var allScopes = InbuiltScopes.All.Concat(application.Scopes.Select(s => s.Name));
                     if (!allScopes.Contains(scope))
                     {
-                        throw new InvalidScopeException("The provided scope is invalid.", request.State);
+                        throw new InvalidScopeException("The provided scope is invalid.", _request.State);
                     }
                 }
             }
+            _allScopes = string.Join(" ", allScopes);
 
             // Make sure the provided redirect uri is identical to the registered redirect uri.
             var redirectUri = _request.RedirectUri ?? application.RedirectUri;
             if (redirectUri != application.RedirectUri)
             {
-                throw new InvalidGrantException("The provided redirect URI does not match the one on record.", request.State);
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.", _request.State);
             }
         }
 
@@ -116,7 +118,7 @@ namespace Etimo.Id.Service
                 ClientId = _request.ClientId,
                 UserId = _user.UserId,
                 RedirectUri = _request.RedirectUri,
-                Scope = _request.Scope
+                Scope = _request.Scope ?? _allScopes
             };
             _authorizationCodeRepository.Add(_code);
             await _authorizationCodeRepository.SaveAsync();
