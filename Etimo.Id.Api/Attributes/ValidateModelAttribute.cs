@@ -1,4 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Etimo.Id.Api.Attributes
@@ -9,7 +10,9 @@ namespace Etimo.Id.Api.Attributes
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult(context.ModelState);
+                var errorMessages = context.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+
+                throw new InvalidRequestException(string.Join(" ", errorMessages));
             }
         }
     }

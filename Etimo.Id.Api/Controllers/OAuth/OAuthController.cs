@@ -75,6 +75,12 @@ namespace Etimo.Id.Api.OAuth
         {
             var request = form.ToTokenRequest();
 
+            // https://tools.ietf.org/html/rfc6749#section-5.2
+            if (Request.IsBasicAuthentication() && request.ClientSecret != null)
+            {
+                throw new InvalidRequestException("You cannot include multiple credentials (i.e. basic auth and credentials in body).");
+            }
+
             // This is likely a public client trying to create a token through the authorization code flow
             if (request.GrantType == GrantTypes.AuthorizationCode && !Request.IsBasicAuthentication())
             {
@@ -86,7 +92,7 @@ namespace Etimo.Id.Api.OAuth
                 var (clientId, clientSecret) = Request.GetCredentialsFromAuthorizationHeader();
                 if (!Regex.IsMatch(clientSecret, CharacterSetPatterns.UNICODECHARNOCRLF))
                 {
-                    throw new InvalidClientException("client_secret contains illegal characters.");
+                    throw new InvalidRequestException("client_secret contains illegal characters.");
                 }
 
                 request.ClientId = ParseClientId(clientId);

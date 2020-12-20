@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -101,6 +102,11 @@ namespace Etimo.Id.Api
                     { CombinedScopes.ReadUserApplication, new string[] { UserScopes.Read, ApplicationScopes.Read } },
                     { CombinedScopes.ReadUserRole, new string[] { UserScopes.Read, RoleScopes.Read } }
                 });
+            });
+
+            services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.SuppressModelStateInvalidFilter = true;
             });
 
             Log.Logger = new LoggerConfiguration()
