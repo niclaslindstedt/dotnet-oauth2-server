@@ -14,6 +14,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
+        private readonly IRequestContext _requestContext;
 
         private IResourceOwnerPasswordCredentialsTokenRequest _request;
         private User _user;
@@ -23,17 +24,22 @@ namespace Etimo.Id.Service.TokenGenerators
             IAuthenticateUserService authenticateUserService,
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
-            IJwtTokenFactory jwtTokenFactory)
+            IJwtTokenFactory jwtTokenFactory,
+            IRequestContext requestContext)
         {
             _authenticateUserService = authenticateUserService;
             _authenticateClientService = applicationService;
             _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
+            _requestContext = requestContext;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
         {
-            await ValidateRequestAsync(request);
+            _request = request;
+
+            await ValidateRequestAsync();
+            UpdateContext();
             var jwtToken = await CreateJwtTokenAsync();
             var accessToken = jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
@@ -42,9 +48,14 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
-        private async Task ValidateRequestAsync(IResourceOwnerPasswordCredentialsTokenRequest request)
+        private void UpdateContext()
         {
-            _request = request;
+            _requestContext.ClientId = _request.ClientId;
+            _requestContext.Username = _request.Username;
+        }
+
+        private async Task ValidateRequestAsync()
+        {
 
             if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
             {
@@ -56,8 +67,8 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid resource owner credentials.");
             }
 
-            _user = await _authenticateUserService.AuthenticateAsync(request.Username, request.Password);
-            _application = await _authenticateClientService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+            _user = await _authenticateUserService.AuthenticateAsync(_request.Username, _request.Password);
+            _application = await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
         }
 
         private Task<JwtToken> CreateJwtTokenAsync()

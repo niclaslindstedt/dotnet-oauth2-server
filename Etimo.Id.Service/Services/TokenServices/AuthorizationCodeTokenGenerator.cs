@@ -18,6 +18,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
+        private readonly IRequestContext _requestContext;
 
         private IAuthorizationCodeTokenRequest _request;
         private JwtToken _jwtToken;
@@ -33,7 +34,8 @@ namespace Etimo.Id.Service.TokenGenerators
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokenRepository accessTokenRepository,
             IRefreshTokenRepository refreshTokenRepository,
-            IJwtTokenFactory jwtTokenFactory)
+            IJwtTokenFactory jwtTokenFactory,
+            IRequestContext requestContext)
         {
             _authenticateClientService = authenticateClientService;
             _findApplicationService = applicationService;
@@ -42,11 +44,15 @@ namespace Etimo.Id.Service.TokenGenerators
             _accessTokenRepository = accessTokenRepository;
             _refreshTokenRepository = refreshTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
+            _requestContext = requestContext;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request)
         {
-            await ValidateRequestAsync(request);
+            _request = request;
+
+            UpdateContext();
+            await ValidateRequestAsync();
             await CreateJwtTokenAsync();
             GenerateRefreshToken();
 
@@ -62,9 +68,13 @@ namespace Etimo.Id.Service.TokenGenerators
             return _jwtToken;
         }
 
-        private async Task ValidateRequestAsync(IAuthorizationCodeTokenRequest request)
+        private void UpdateContext()
         {
-            _request = request;
+            _requestContext.ClientId = _request.ClientId;
+        }
+
+        private async Task ValidateRequestAsync()
+        {
 
             if (_request.ClientId == Guid.Empty)
             {
@@ -99,13 +109,13 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid client id.");
             }
 
-            _application = await _findApplicationService.FindByClientIdAsync(request.ClientId);
+            _application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (_application.Type == ClientTypes.Confidential)
             {
-                await _authenticateClientService.AuthenticateAsync(request.ClientId, request.ClientSecret);
+                await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
             }
 
-            _redirectUri = request.RedirectUri ?? _application.RedirectUri;
+            _redirectUri = _request.RedirectUri ?? _application.RedirectUri;
             if (_redirectUri != _application.RedirectUri)
             {
                 throw new InvalidGrantException("The provided redirect URI does not match the one on record.");

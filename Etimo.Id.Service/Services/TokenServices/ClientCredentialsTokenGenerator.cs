@@ -14,6 +14,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IJwtTokenFactory _jwtTokenFactory;
+        private readonly IRequestContext _requestContext;
 
         private IClientCredentialsTokenRequest _request;
         private Application _application;
@@ -21,16 +22,21 @@ namespace Etimo.Id.Service.TokenGenerators
         public ClientCredentialsTokenGenerator(
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
-            IJwtTokenFactory jwtTokenFactory)
+            IJwtTokenFactory jwtTokenFactory,
+            IRequestContext requestContext)
         {
             _authenticateClientService = applicationService;
             _accessTokenRepository = accessTokenRepository;
             _jwtTokenFactory = jwtTokenFactory;
+            _requestContext = requestContext;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(IClientCredentialsTokenRequest request)
         {
-            await ValidateRequestAsync(request);
+            _request = request;
+
+            UpdateContext();
+            await ValidateRequestAsync();
             var jwtToken = await CreateJwtTokenAsync();
             var accessToken = jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
@@ -39,10 +45,13 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
-        private async Task ValidateRequestAsync(IClientCredentialsTokenRequest request)
+        private void UpdateContext()
         {
-            _request = request;
+            _requestContext.ClientId = _request.ClientId;
+        }
 
+        private async Task ValidateRequestAsync()
+        {
             if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
             {
                 throw new InvalidClientException("Invalid client credentials.");

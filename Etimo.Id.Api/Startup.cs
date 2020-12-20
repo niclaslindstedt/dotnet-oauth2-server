@@ -105,6 +105,7 @@ namespace Etimo.Id.Api
             var passwordHasher = new BCryptPasswordHasher(cryptologySettings);
             services.AddSingleton<IPasswordHasher>(passwordHasher);
             services.AddTransient<IPasswordGenerator, PasswordGeneratorAdapter>();
+            services.AddRequestContext();
 
             // ApplicationServices
             services.AddTransient<IAddApplicationService, AddApplicationService>();
@@ -213,6 +214,7 @@ namespace Etimo.Id.Api
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseRequestContext();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -1,4 +1,5 @@
 using Etimo.Id.Service.Constants;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System;
@@ -12,6 +13,11 @@ namespace Etimo.Id.Api.Helpers
         public static string GetUserClaim(this Controller controller, string claim)
         {
             return controller.Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == claim)?.Value;
+        }
+
+        public static string GetUserClaim(this HttpRequest request, string claim)
+        {
+            return request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == claim)?.Value;
         }
 
         /// <summary>
