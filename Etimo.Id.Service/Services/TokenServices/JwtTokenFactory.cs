@@ -51,15 +51,17 @@ namespace Etimo.Id.Service.TokenGenerators
             roles.ForEach(role => claims.Add(new Claim(ClaimTypes.Role, role.Name)));
 
             // https://tools.ietf.org/html/rfc8693#section-4.2
+            string scopes;
             if (request.Scope != null)
             {
-                claims.Add(new Claim(CustomClaimTypes.Scope, request.Scope));
+                scopes = request.Scope;
             }
             else {
-                var scopes = roles.SelectMany(r => r.Scopes).ToList();
-                var uniqueScopes = scopes.Select(s => s.Name).Distinct();
-                claims.Add(new Claim(CustomClaimTypes.Scope, string.Join(" ", uniqueScopes)));
+                var roleScopes = roles.SelectMany(r => r.Scopes).ToList();
+                var uniqueScopes = roleScopes.Select(s => s.Name).Distinct();
+                scopes = string.Join(" ", uniqueScopes);
             }
+            claims.Add(new Claim(CustomClaimTypes.Scope, scopes));
 
             var secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
             var key = new SymmetricSecurityKey(secretBytes);
@@ -77,7 +79,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 TokenType = TokenTypes.Bearer,
                 ExpiresIn = GetSecondsUntil(expiresAt),
                 ExpiresAt = expiresAt,
-                Scope = request.Scope
+                Scope = scopes
             };
         }
 
