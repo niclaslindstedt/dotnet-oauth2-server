@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("dotnet", $"ef migrations remove --project Etimo.Id.Data --startup-project Etimo.Id.Api");
+Run("dotnet", $"ef migrations remove --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api");

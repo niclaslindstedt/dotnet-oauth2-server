@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("dotnet", $"run --project Etimo.Id.Api");
+Run("dotnet", $"run --project src/Etimo.Id.Api");

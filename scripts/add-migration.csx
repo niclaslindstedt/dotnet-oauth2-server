@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("dotnet", $"ef migrations add {Args[0]} --project Etimo.Id.Data --startup-project Etimo.Id.Api");
+Run("dotnet", $"ef migrations add {Args[0]} --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api");
