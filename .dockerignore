@@ -1,0 +1,11 @@
+**/.vscode/
+**/bin/
+**/obj/
+**/scripts/
+**/out/
+**/packages/
+**/uml/
+.dockerignore
+.git*
+Dockerfile
+docker-compose*.yml

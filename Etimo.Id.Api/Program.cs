@@ -2,6 +2,7 @@ using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -38,13 +39,13 @@ namespace Etimo.Id.Api
 
                     {
                         opt.AddServerHeader = false;
-                        opt.ConfigureHttpsDefaults(s =>
+                        opt.ConfigureHttpsDefaults(o =>
                         {
-                            s.SslProtocols = GetProtocols(siteSettings);
+                            o.SslProtocols = GetProtocols(siteSettings);
                         });
                     })
                     .UseStartup<Startup>()
-                    .UseUrls(siteSettings.ListenUri)
+                    .UseUrls(GetUrls(siteSettings))
                     .Build();
 
                 SeedDatabaseAsync(host).Wait();
@@ -93,6 +94,17 @@ namespace Etimo.Id.Api
             }
 
             return tlsVersions;
+        }
+
+        private static string GetUrls(SiteSettings siteSettings)
+        {
+            var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            if (!string.IsNullOrEmpty(urls))
+            {
+                return urls;
+            }
+
+            return siteSettings.ListenUri;
         }
 
         private static async Task SeedDatabaseAsync(IWebHost host)

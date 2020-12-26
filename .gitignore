@@ -3,6 +3,7 @@
 **/bin/
 **/node_modules/
 **/nupkg/
+**/out/
 **/packages/
 *.DotSettings.user
 appsettings.json
