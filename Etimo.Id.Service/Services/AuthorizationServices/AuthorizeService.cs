@@ -6,6 +6,7 @@ using Etimo.Id.Service.Scopes;
 using Etimo.Id.Service.Settings;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Service
@@ -127,8 +128,10 @@ namespace Etimo.Id.Service
         private string GenerateAuthorizationUrl()
         {
             var delimiter = _code.RedirectUri.Contains("?") ? "&" : "?";
+            var sb = new StringBuilder($"{_code.RedirectUri}{delimiter}code={_code.Code}&");
+            if (_request.State != null) { sb.Append($"state={_request.State}&"); }
 
-            return $"{_code.RedirectUri}{delimiter}code={_code.Code}&state={_request.State}";
+            return sb.ToString().TrimEnd('&');
         }
     }
 }
