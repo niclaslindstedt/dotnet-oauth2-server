@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Etimo.Id.Service\Etimo.Id.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Watch Include="**\*.json" />
+  </ItemGroup>
+
 </Project>

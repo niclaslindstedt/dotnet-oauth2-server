@@ -1,6 +1,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as base
 WORKDIR /app
-COPY etimo-id.sln .
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        procps \
+    && rm -rf /var/lib/apt/lists/*
+COPY etimo-id.sln Directory.Build.props nuget.config ./
 COPY src/Etimo.Id.Abstractions/*.csproj ./src/Etimo.Id.Abstractions/
 COPY src/Etimo.Id.Api/*.csproj ./src/Etimo.Id.Api/
 COPY src/Etimo.Id.Data/*.csproj ./src/Etimo.Id.Data/
@@ -9,6 +13,11 @@ COPY src/Etimo.Id.Entities.Abstractions/*.csproj ./src/Etimo.Id.Entities.Abstrac
 COPY src/Etimo.Id.Service/*.csproj ./src/Etimo.Id.Service/
 RUN dotnet restore
 COPY . .
+
+FROM base as dev
+VOLUME /app/src
+ENV DOTNET_USE_POLLING_FILE_WATCHER 1
+CMD dotnet watch --project ./src/Etimo.Id.Api run --no-restore
 
 FROM base as build
 RUN dotnet build \
