@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  etimo-id:
+    build:
+      target: dev
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 5011:5011
