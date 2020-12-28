@@ -1,0 +1,19 @@
+version: '3.7'
+
+volumes:
+  db-data:
+    driver: local
+
+services:
+  etimo-id:
+    build:
+      target: prod
+    environment:
+      ASPNETCORE_URLS: https://+:443
+      ASPNETCORE_Kestrel__Certificates__Default__Password: etimo
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /etc/ssl/certs/localhost.pfx
+    volumes:
+      - ./src/Etimo.Id.Api/appsettings.json:/app/appsettings.json
+      - ./dev-cert.pfx:/etc/ssl/certs/localhost.pfx
+    ports:
+      - 5011:443

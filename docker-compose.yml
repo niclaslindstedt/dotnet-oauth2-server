@@ -9,20 +9,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: prod
     container_name: etimo-id-api
     environment:
-      ASPNETCORE_URLS: https://+:443
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_Kestrel__Certificates__Default__Password: etimo
-      ASPNETCORE_Kestrel__Certificates__Default__Path: /etc/ssl/certs/localhost.pfx
       JwtSettings__Secret: 6f2fb51a-9374-493b-be16-4439ed3212eb
       ConnectionStrings__EtimoId: Server=postgres;Port=5432;Database=root;User Id=root;Password=root;
-    volumes:
-      - ./src/Etimo.Id.Api/appsettings.json:/app/appsettings.json
-      - ./dev-cert.pfx:/etc/ssl/certs/localhost.pfx
-    ports:
-      - 5011:443
 
   postgres:
     image: postgres
