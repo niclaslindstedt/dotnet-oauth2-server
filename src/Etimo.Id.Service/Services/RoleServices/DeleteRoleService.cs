@@ -16,20 +16,14 @@ namespace Etimo.Id.Service
 
         public async Task DeleteAsync(Guid roleId)
         {
-            var role = await _roleRepository.FindAsync(roleId);
-            if (role != null)
-            {
-                await DeleteAsync(role);
-            }
+            Role role = await _roleRepository.FindAsync(roleId);
+            if (role != null) { await DeleteAsync(role); }
         }
 
         public async Task DeleteAsync(Guid roleId, Guid userId)
         {
-            var role = await _roleRepository.FindAsync(roleId);
-            if (role?.Application?.UserId == userId)
-            {
-                await DeleteAsync(role);
-            }
+            Role role = await _roleRepository.FindAsync(roleId);
+            if (role?.Application?.UserId == userId) { await DeleteAsync(role); }
         }
 
         private async Task DeleteAsync(Role role)

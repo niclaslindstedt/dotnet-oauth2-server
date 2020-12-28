@@ -8,20 +8,18 @@ namespace Etimo.Id.Service
 {
     public class UpdateApplicationService : IUpdateApplicationService
     {
+        private readonly IApplicationRepository  _applicationRepository;
         private readonly IFindApplicationService _findApplicationService;
-        private readonly IApplicationRepository _applicationRepository;
 
-        public UpdateApplicationService(
-            IFindApplicationService findApplicationService,
-            IApplicationRepository applicationRepository)
+        public UpdateApplicationService(IFindApplicationService findApplicationService, IApplicationRepository applicationRepository)
         {
             _findApplicationService = findApplicationService;
-            _applicationRepository = applicationRepository;
+            _applicationRepository  = applicationRepository;
         }
 
         public async Task<Application> UpdateAsync(Application updatedApplication, Guid userId)
         {
-            var application = await _findApplicationService.FindAsync(updatedApplication.ApplicationId, userId);
+            Application application = await _findApplicationService.FindAsync(updatedApplication.ApplicationId, userId);
 
             // If the application is going public, we don't want a secret laying around.
             if (updatedApplication.Type == ClientTypes.Confidential && updatedApplication.Type == ClientTypes.Public)

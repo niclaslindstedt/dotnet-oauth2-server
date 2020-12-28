@@ -6,7 +6,6 @@ namespace Etimo.Id.Abstractions
 {
     public interface IFindRoleService
     {
-
         Task<Role> FindAsync(Guid roleId);
         Task<Role> FindAsync(Guid roleId, Guid userId);
     }

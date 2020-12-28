@@ -7,19 +7,17 @@ namespace Etimo.Id.Service
     public class UpdateUserService : IUpdateUserService
     {
         private readonly IFindUserService _findUserService;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository  _userRepository;
 
-        public UpdateUserService(
-            IFindUserService findUserService,
-            IUserRepository userRepository)
+        public UpdateUserService(IFindUserService findUserService, IUserRepository userRepository)
         {
             _findUserService = findUserService;
-            _userRepository = userRepository;
+            _userRepository  = userRepository;
         }
 
         public async Task<User> UpdateAsync(User updatedUser)
         {
-            var user = await _findUserService.FindAsync(updatedUser.UserId);
+            User user = await _findUserService.FindAsync(updatedUser.UserId);
 
             user.Update(updatedUser);
             await _userRepository.SaveAsync();

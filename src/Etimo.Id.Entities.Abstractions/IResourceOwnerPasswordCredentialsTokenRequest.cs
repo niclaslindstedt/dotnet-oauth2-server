@@ -4,9 +4,9 @@ namespace Etimo.Id.Entities.Abstractions
 {
     public interface IResourceOwnerPasswordCredentialsTokenRequest
     {
-        Guid ClientId { get; }
+        Guid   ClientId     { get; }
         string ClientSecret { get; }
-        string Username { get; }
-        string Password { get; }
+        string Username     { get; }
+        string Password     { get; }
     }
 }

@@ -17,29 +17,21 @@ namespace Etimo.Id.Service
 
         public async Task<Application> FindAsync(int applicationId)
         {
-            var application = await _applicationRepository.FindAsync(applicationId);
-            if (application == null)
-            {
-                throw new NotFoundException();
-            }
+            Application application = await _applicationRepository.FindAsync(applicationId);
+            if (application == null) { throw new NotFoundException(); }
 
             return application;
         }
 
         public async Task<Application> FindAsync(int applicationId, Guid userId)
         {
-            var application = await _applicationRepository.FindAsync(applicationId);
-            if (application?.UserId != userId)
-            {
-                throw new NotFoundException();
-            }
+            Application application = await _applicationRepository.FindAsync(applicationId);
+            if (application?.UserId != userId) { throw new NotFoundException(); }
 
             return application;
         }
 
         public Task<Application> FindByClientIdAsync(Guid clientId)
-        {
-            return _applicationRepository.FindByClientIdAsync(clientId);
-        }
+            => _applicationRepository.FindByClientIdAsync(clientId);
     }
 }

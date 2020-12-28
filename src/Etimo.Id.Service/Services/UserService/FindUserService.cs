@@ -17,11 +17,8 @@ namespace Etimo.Id.Service
 
         public async ValueTask<User> FindAsync(Guid userId)
         {
-            var user = await _userRepository.FindAsync(userId);
-            if (user == null)
-            {
-                throw new NotFoundException();
-            }
+            User user = await _userRepository.FindAsync(userId);
+            if (user == null) { throw new NotFoundException(); }
 
             return user;
         }

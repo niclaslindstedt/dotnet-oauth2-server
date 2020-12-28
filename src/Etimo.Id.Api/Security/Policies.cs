@@ -1,28 +1,30 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Etimo.Id.Api.Security
 {
     public class Policies
     {
         public static AuthorizationPolicy ScopePolicy(params string[] scopes)
-        {
-            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireAssertion(context =>
-            {
-                var hasAllClaims = true;
-                foreach (var scope in scopes)
-                {
-                    var claim = context.User.FindFirst("scope");
-                    var hasThisClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
-                    if (!hasThisClaim)
+            => new AuthorizationPolicyBuilder().RequireAuthenticatedUser()
+                .RequireAssertion(
+                    context =>
                     {
-                        hasAllClaims = false;
-                        break;
-                    }
-                }
+                        var hasAllClaims = true;
+                        foreach (string scope in scopes)
+                        {
+                            Claim? claim        = context.User.FindFirst("scope");
+                            bool   hasThisClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
+                            if (!hasThisClaim)
+                            {
+                                hasAllClaims = false;
+                                break;
+                            }
+                        }
 
-                return hasAllClaims;
-            }).Build();
-        }
+                        return hasAllClaims;
+                    })
+                .Build();
     }
 }

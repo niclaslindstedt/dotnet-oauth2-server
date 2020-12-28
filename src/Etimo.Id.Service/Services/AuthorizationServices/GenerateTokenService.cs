@@ -9,10 +9,10 @@ namespace Etimo.Id.Service
 {
     public class GenerateTokenService : IGenerateTokenService
     {
-        private readonly IAuthorizationCodeTokenGenerator _authorizationCodeTokenGenerator;
-        private readonly IClientCredentialsTokenGenerator _clientCredentialsTokenGenerator;
+        private readonly IAuthorizationCodeTokenGenerator        _authorizationCodeTokenGenerator;
+        private readonly IClientCredentialsTokenGenerator        _clientCredentialsTokenGenerator;
+        private readonly IRefreshTokenGenerator                  _refreshTokenGenerator;
         private readonly IResourceOwnerCredentialsTokenGenerator _resourceOwnerCredentialsTokenGenerator;
-        private readonly IRefreshTokenGenerator _refreshTokenGenerator;
 
         public GenerateTokenService(
             IAuthorizationCodeTokenGenerator authorizationCodeTokenGenerator,
@@ -20,22 +20,20 @@ namespace Etimo.Id.Service
             IResourceOwnerCredentialsTokenGenerator resourceOwnerCredentialsTokenGenerator,
             IRefreshTokenGenerator refreshTokenGenerator)
         {
-            _authorizationCodeTokenGenerator = authorizationCodeTokenGenerator;
-            _clientCredentialsTokenGenerator = clientCredentialsTokenGenerator;
+            _authorizationCodeTokenGenerator        = authorizationCodeTokenGenerator;
+            _clientCredentialsTokenGenerator        = clientCredentialsTokenGenerator;
             _resourceOwnerCredentialsTokenGenerator = resourceOwnerCredentialsTokenGenerator;
-            _refreshTokenGenerator = refreshTokenGenerator;
+            _refreshTokenGenerator                  = refreshTokenGenerator;
         }
 
         public Task<JwtToken> GenerateTokenAsync(ITokenRequest request)
-        {
-            return request.GrantType switch
+            => request.GrantType switch
             {
                 GrantTypes.AuthorizationCode => _authorizationCodeTokenGenerator.GenerateTokenAsync(request),
                 GrantTypes.ClientCredentials => _clientCredentialsTokenGenerator.GenerateTokenAsync(request),
-                GrantTypes.Password => _resourceOwnerCredentialsTokenGenerator.GenerateTokenAsync(request),
-                GrantTypes.RefreshToken => _refreshTokenGenerator.GenerateTokenAsync(request),
-                _ => throw new UnsupportedGrantTypeException("Grant type not supported.")
+                GrantTypes.Password          => _resourceOwnerCredentialsTokenGenerator.GenerateTokenAsync(request),
+                GrantTypes.RefreshToken      => _refreshTokenGenerator.GenerateTokenAsync(request),
+                _                            => throw new UnsupportedGrantTypeException("Grant type not supported."),
             };
-        }
     }
 }

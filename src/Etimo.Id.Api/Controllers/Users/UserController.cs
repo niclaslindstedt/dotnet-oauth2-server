@@ -19,16 +19,16 @@ namespace Etimo.Id.Api.Users
     [ApiController]
     public class UserController : Controller
     {
-        private readonly SiteSettings _siteSettings;
-        private readonly IAddUserRoleRelationService _addUserRoleRelationService;
-        private readonly IAddUserService _addUserService;
+        private readonly IAddUserRoleRelationService    _addUserRoleRelationService;
+        private readonly IAddUserService                _addUserService;
         private readonly IDeleteUserRoleRelationService _deleteUserRoleRelationService;
-        private readonly IDeleteUserService _deleteUserService;
-        private readonly IFindUserService _findUserService;
-        private readonly IGetApplicationsService _getApplicationsService;
-        private readonly IGetRolesService _getRolesService;
-        private readonly IGetUsersService _getUsersService;
-        private readonly IUpdateUserService _updateUserService;
+        private readonly IDeleteUserService             _deleteUserService;
+        private readonly IFindUserService               _findUserService;
+        private readonly IGetApplicationsService        _getApplicationsService;
+        private readonly IGetRolesService               _getRolesService;
+        private readonly IGetUsersService               _getUsersService;
+        private readonly SiteSettings                   _siteSettings;
+        private readonly IUpdateUserService             _updateUserService;
 
         public UserController(
             SiteSettings siteSettings,
@@ -42,16 +42,16 @@ namespace Etimo.Id.Api.Users
             IGetUsersService getUsersService,
             IUpdateUserService updateUserService)
         {
-            _siteSettings = siteSettings;
-            _addUserRoleRelationService = addUserRoleRelationService;
-            _addUserService = addUserService;
+            _siteSettings                  = siteSettings;
+            _addUserRoleRelationService    = addUserRoleRelationService;
+            _addUserService                = addUserService;
             _deleteUserRoleRelationService = deleteUserRoleRelationService;
-            _deleteUserService = deleteUserService;
-            _findUserService = findUserService;
-            _getApplicationsService = getApplicationsService;
-            _getRolesService = getRolesService;
-            _getUsersService = getUsersService;
-            _updateUserService = updateUserService;
+            _deleteUserService             = deleteUserService;
+            _findUserService               = findUserService;
+            _getApplicationsService        = getApplicationsService;
+            _getRolesService               = getRolesService;
+            _getUsersService               = getUsersService;
+            _updateUserService             = updateUserService;
         }
 
         [HttpGet]
@@ -60,17 +60,14 @@ namespace Etimo.Id.Api.Users
         public async Task<IActionResult> GetAsync()
         {
             List<User> users;
-            if (this.UserHasScope(UserScopes.Admin))
-            {
-                users = await _getUsersService.GetAllAsync();
-            }
+            if (this.UserHasScope(UserScopes.Admin)) { users = await _getUsersService.GetAllAsync(); }
             else
             {
-                var user = await _findUserService.FindAsync(this.GetUserId());
-                users = new List<User> {user};
+                User user = await _findUserService.FindAsync(this.GetUserId());
+                users = new List<User> { user };
             }
 
-            var found = users.Select(UserResponseDto.FromUser);
+            IEnumerable<UserResponseDto> found = users.Select(UserResponseDto.FromUser);
 
             return Ok(found);
         }
@@ -81,14 +78,8 @@ namespace Etimo.Id.Api.Users
         public async Task<IActionResult> FindAsync([FromRoute] Guid userId)
         {
             User user;
-            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId())
-            {
-                user = await _findUserService.FindAsync(userId);
-            }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId()) { user = await _findUserService.FindAsync(userId); }
+            else { throw new ForbiddenException(); }
 
             var found = UserResponseDto.FromUser(user);
 
@@ -105,12 +96,9 @@ namespace Etimo.Id.Api.Users
             {
                 applications = await _getApplicationsService.GetByUserIdAsync(userId);
             }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            else { throw new ForbiddenException(); }
 
-            var found = applications.Select(a => ApplicationResponseDto.FromApplication(a, false));
+            IEnumerable<ApplicationResponseDto> found = applications.Select(a => ApplicationResponseDto.FromApplication(a, false));
 
             return Ok(found);
         }
@@ -125,12 +113,9 @@ namespace Etimo.Id.Api.Users
             {
                 roles = await _getRolesService.GetByUserIdAsync(userId);
             }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            else { throw new ForbiddenException(); }
 
-            var found = roles.Select(a => RoleResponseDto.FromRole(a, false));
+            IEnumerable<RoleResponseDto> found = roles.Select(a => RoleResponseDto.FromRole(a, false));
 
             return Ok(found);
         }
@@ -141,8 +126,8 @@ namespace Etimo.Id.Api.Users
         [Authorize(Policy = UserScopes.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] UserRequestDto createDto)
         {
-            var user = await _addUserService.AddAsync(createDto.ToUser());
-            var created = UserResponseDto.FromUser(user);
+            User user    = await _addUserService.AddAsync(createDto.ToUser());
+            var  created = UserResponseDto.FromUser(user);
 
             return Created($"{_siteSettings.ListenUri}/users/{user.UserId}", created);
         }
@@ -158,10 +143,7 @@ namespace Etimo.Id.Api.Users
             {
                 user = await _updateUserService.UpdateAsync(dto.ToUser(userId));
             }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            else { throw new ForbiddenException(); }
 
             var updated = UserResponseDto.FromUser(user);
 
@@ -178,12 +160,9 @@ namespace Etimo.Id.Api.Users
             {
                 roles = await _addUserRoleRelationService.AddRoleRelationAsync(userId, roleId);
             }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            else { throw new ForbiddenException(); }
 
-            var added = roles.Select(r => RoleResponseDto.FromRole(r, false));
+            IEnumerable<RoleResponseDto> added = roles.Select(r => RoleResponseDto.FromRole(r, false));
 
             return Ok(added);
         }
@@ -208,12 +187,9 @@ namespace Etimo.Id.Api.Users
             {
                 roles = await _deleteUserRoleRelationService.DeleteRoleRelationAsync(userId, roleId);
             }
-            else
-            {
-                throw new ForbiddenException();
-            }
+            else { throw new ForbiddenException(); }
 
-            var remaining = roles.Select(r => RoleResponseDto.FromRole(r, false));
+            IEnumerable<RoleResponseDto> remaining = roles.Select(r => RoleResponseDto.FromRole(r, false));
 
             return Ok(remaining);
         }

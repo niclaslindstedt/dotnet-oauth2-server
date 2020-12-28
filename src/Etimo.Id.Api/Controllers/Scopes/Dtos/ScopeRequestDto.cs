@@ -10,7 +10,8 @@ namespace Etimo.Id.Api.Scopes
     public class ScopeRequestDto
     {
         [Required]
-        [MinLength(2), MaxLength(32)]
+        [MinLength(2)]
+        [MaxLength(32)]
         [NqsChar]
         public string name { get; set; }
 
@@ -25,15 +26,12 @@ namespace Etimo.Id.Api.Scopes
         {
             var scope = new Scope
             {
-                Name = name,
-                Description = description,
-                ApplicationId = application_id ?? default
+                Name          = name,
+                Description   = description,
+                ApplicationId = application_id ?? default,
             };
 
-            if (scopeId != null)
-            {
-                scope.ScopeId = scopeId.Value;
-            }
+            if (scopeId != null) { scope.ScopeId = scopeId.Value; }
 
             return scope;
         }

@@ -4,8 +4,8 @@ namespace Etimo.Id.Entities.Abstractions
 {
     public interface IJwtTokenRequest
     {
-        string Subject { get; }
+        string       Subject  { get; }
         List<string> Audience { get; }
-        string Scope { get; }
+        string       Scope    { get; }
     }
 }

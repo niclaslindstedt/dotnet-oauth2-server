@@ -25,35 +25,28 @@ namespace Etimo.Id.Api.Middleware
         {
             if (context.User.Identity.IsAuthenticated)
             {
-                var userId = context.Request.GetUserClaim(ClaimTypes.NameIdentifier);
-                if (userId != null)
-                {
-                    requestContext.UserId = new Guid(userId);
-                }
+                string userId = context.Request.GetUserClaim(ClaimTypes.NameIdentifier);
+                if (userId != null) { requestContext.UserId = new Guid(userId); }
 
-                var scope = context.Request.GetUserClaim(CustomClaimTypes.Scope);
-                if (scope != null)
-                {
-                    requestContext.Scopes = scope.Split(" ").ToList();
-                }
+                string scope = context.Request.GetUserClaim(CustomClaimTypes.Scope);
+                if (scope != null) { requestContext.Scopes = scope.Split(" ").ToList(); }
             }
 
             await _next(context);
         }
     }
 
+
     public static class RequestContextMiddlewareExtensions
     {
         public static IServiceCollection AddRequestContext(this IServiceCollection services)
         {
             services.AddScoped<IRequestContext, RequestContext>();
-            
+
             return services;
         }
 
         public static IApplicationBuilder UseRequestContext(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<RequestContextMiddleware>();
-        }
+            => builder.UseMiddleware<RequestContextMiddleware>();
     }
 }

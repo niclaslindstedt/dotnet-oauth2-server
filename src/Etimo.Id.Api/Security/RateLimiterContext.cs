@@ -9,27 +9,25 @@ namespace Etimo.Id.Api.Security
     {
         public RateLimiterContext(string cacheString)
         {
-            var rules = JsonSerializer.Deserialize<string[]>(cacheString);
-            foreach (var ruleString in rules)
+            string[]? rules = JsonSerializer.Deserialize<string[]>(cacheString);
+            foreach (string ruleString in rules)
             {
                 var rule = new RateLimiterRuleContext(ruleString);
                 Rules.Add(rule);
             }
         }
 
-        public RateLimiterContext()
-        {
-        }
+        public RateLimiterContext() { }
+
+        public List<RateLimiterRuleContext> Rules        { get; set; } = new();
+        public string                       IpNumber     { get; set; }
+        public int                          ResponseTime { get; set; }
 
         public override string ToString()
         {
-            var result = JsonSerializer.Serialize(Rules.Select(r => r.ToString()));
+            string result = JsonSerializer.Serialize(Rules.Select(r => r.ToString()));
             Console.WriteLine(result);
             return result;
         }
-
-        public List<RateLimiterRuleContext> Rules { get; set; } = new List<RateLimiterRuleContext>();
-        public string IpNumber { get; set; }
-        public int ResponseTime { get; set; }
     }
 }

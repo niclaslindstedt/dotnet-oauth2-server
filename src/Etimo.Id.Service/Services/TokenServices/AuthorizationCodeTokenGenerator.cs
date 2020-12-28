@@ -11,21 +11,21 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class AuthorizationCodeTokenGenerator : IAuthorizationCodeTokenGenerator
     {
-        private readonly IAuthenticateClientService _authenticateClientService;
-        private readonly IFindApplicationService _findApplicationService;
-        private readonly IRefreshTokenGenerator _refreshTokenGenerator;
+        private readonly IAccessTokenRepository       _accessTokenRepository;
+        private readonly IAuthenticateClientService   _authenticateClientService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
-        private readonly IAccessTokenRepository _accessTokenRepository;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IJwtTokenFactory _jwtTokenFactory;
-        private readonly IRequestContext _requestContext;
+        private readonly IFindApplicationService      _findApplicationService;
+        private readonly IJwtTokenFactory             _jwtTokenFactory;
+        private readonly IRefreshTokenGenerator       _refreshTokenGenerator;
+        private readonly IRefreshTokenRepository      _refreshTokenRepository;
+        private readonly IRequestContext              _requestContext;
+        private          Application                  _application;
+        private          AuthorizationCode            _code;
+        private          JwtToken                     _jwtToken;
+        private          string                       _redirectUri;
+        private          RefreshToken                 _refreshToken;
 
         private IAuthorizationCodeTokenRequest _request;
-        private JwtToken _jwtToken;
-        private RefreshToken _refreshToken;
-        private AuthorizationCode _code;
-        private Application _application;
-        private string _redirectUri;
 
         public AuthorizationCodeTokenGenerator(
             IAuthenticateClientService authenticateClientService,
@@ -37,14 +37,14 @@ namespace Etimo.Id.Service.TokenGenerators
             IJwtTokenFactory jwtTokenFactory,
             IRequestContext requestContext)
         {
-            _authenticateClientService = authenticateClientService;
-            _findApplicationService = applicationService;
-            _refreshTokenGenerator = refreshTokenGenerator;
+            _authenticateClientService   = authenticateClientService;
+            _findApplicationService      = applicationService;
+            _refreshTokenGenerator       = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
-            _accessTokenRepository = accessTokenRepository;
-            _refreshTokenRepository = refreshTokenRepository;
-            _jwtTokenFactory = jwtTokenFactory;
-            _requestContext = requestContext;
+            _accessTokenRepository       = accessTokenRepository;
+            _refreshTokenRepository      = refreshTokenRepository;
+            _jwtTokenFactory             = jwtTokenFactory;
+            _requestContext              = requestContext;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(IAuthorizationCodeTokenRequest request)
@@ -56,8 +56,8 @@ namespace Etimo.Id.Service.TokenGenerators
             await CreateJwtTokenAsync();
             GenerateRefreshToken();
 
-            _code.Used = true;
-            _code.AccessTokenId = _jwtToken.TokenId;
+            _code.Used             = true;
+            _code.AccessTokenId    = _jwtToken.TokenId;
             _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
 
             var accessToken = _jwtToken.ToAccessToken();
@@ -69,28 +69,16 @@ namespace Etimo.Id.Service.TokenGenerators
         }
 
         private void UpdateContext()
-        {
-            _requestContext.ClientId = _request.ClientId;
-        }
+            => _requestContext.ClientId = _request.ClientId;
 
         private async Task ValidateRequestAsync()
         {
+            if (_request.ClientId == Guid.Empty) { throw new InvalidClientException("Invalid client credentials."); }
 
-            if (_request.ClientId == Guid.Empty)
-            {
-                throw new InvalidClientException("Invalid client credentials.");
-            }
-
-            if (_request.Code == null)
-            {
-                throw new InvalidGrantException("Invalid authorization code.");
-            }
+            if (_request.Code == null) { throw new InvalidGrantException("Invalid authorization code."); }
 
             _code = await _authorizationCodeRepository.FindAsync(_request.Code);
-            if (_code?.UserId == null || _code.IsExpired)
-            {
-                throw new InvalidGrantException("Invalid authorization code.");
-            }
+            if (_code?.UserId == null || _code.IsExpired) { throw new InvalidGrantException("Invalid authorization code."); }
 
             // If someone tries to use the same authorization code twice, disable the access token.
             if (_code.Used)
@@ -104,10 +92,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Invalid authorization code.");
             }
 
-            if (_code.ClientId != _request.ClientId)
-            {
-                throw new InvalidGrantException("Invalid client id.");
-            }
+            if (_code.ClientId != _request.ClientId) { throw new InvalidGrantException("Invalid client id."); }
 
             _application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (_application.Type == ClientTypes.Confidential)
@@ -127,8 +112,8 @@ namespace Etimo.Id.Service.TokenGenerators
             var jwtRequest = new JwtTokenRequest
             {
                 Audience = new List<string> { _code.ClientId.ToString() },
-                Subject = _code.UserId?.ToString(),
-                Scope = _code.Scope
+                Subject  = _code.UserId?.ToString(),
+                Scope    = _code.Scope,
             };
 
             _jwtToken = await _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
@@ -143,7 +128,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 _code.Scope);
 
             _refreshToken.AccessTokenId = _jwtToken.TokenId;
-            _refreshToken.Code = _code.Code;
+            _refreshToken.Code          = _code.Code;
         }
 
         private async Task SaveAsync()

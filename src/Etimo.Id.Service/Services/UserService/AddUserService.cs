@@ -7,12 +7,10 @@ namespace Etimo.Id.Service
 {
     public class AddUserService : IAddUserService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IUserRepository _userRepository;
 
-        public AddUserService(
-            IUserRepository userRepository,
-            IPasswordHasher passwordHasher)
+        public AddUserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -20,10 +18,7 @@ namespace Etimo.Id.Service
 
         public async Task<User> AddAsync(User user)
         {
-            if (await _userRepository.AnyByUsernameAsync(user.Username))
-            {
-                throw new ConflictException("Username already exists.");
-            }
+            if (await _userRepository.AnyByUsernameAsync(user.Username)) { throw new ConflictException("Username already exists."); }
 
             // We assume the password is not encrypted at this point.
             user.Password = _passwordHasher.Hash(user.Password);

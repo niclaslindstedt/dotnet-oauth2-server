@@ -2,7 +2,6 @@ using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,33 +16,26 @@ namespace Etimo.Id.Api
     {
         public static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false)
-                .Build();
+            IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json", false).Build();
 
             var siteSettings = new SiteSettings();
             config.GetSection("SiteSettings").Bind(siteSettings);
 
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+            Log.Logger = new LoggerConfiguration().Enrich.FromLogContext().WriteTo.Console().CreateLogger();
 
             try
             {
                 Log.Information("Starting up");
 
-                var host = WebHost.CreateDefaultBuilder(args)
+                IWebHost host = WebHost.CreateDefaultBuilder(args)
                     .UseSerilog()
-                    .UseKestrel(opt =>
+                    .UseKestrel(
+                        opt =>
 
-                    {
-                        opt.AddServerHeader = false;
-                        opt.ConfigureHttpsDefaults(o =>
                         {
-                            o.SslProtocols = GetProtocols(siteSettings);
-                        });
-                    })
+                            opt.AddServerHeader = false;
+                            opt.ConfigureHttpsDefaults(o => { o.SslProtocols = GetProtocols(siteSettings); });
+                        })
                     .UseStartup<Startup>()
                     .UseUrls(GetUrls(siteSettings))
                     .Build();
@@ -52,76 +44,48 @@ namespace Etimo.Id.Api
 
                 host.Run();
             }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Application start-up failed");
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
+            catch (Exception ex) { Log.Fatal(ex, "Application start-up failed"); }
+            finally { Log.CloseAndFlush(); }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        public static IHostBuilder CreateHostBuilder(string[] args)
+            => Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
 
         private static SslProtocols GetProtocols(SiteSettings settings)
         {
-            var tlsVersions = SslProtocols.None;
+            SslProtocols tlsVersions = SslProtocols.None;
 
-            if (settings.TlsVersions.Contains("1.0"))
-            {
-                tlsVersions |= SslProtocols.Tls;
-            }
+            if (settings.TlsVersions.Contains("1.0")) { tlsVersions |= SslProtocols.Tls; }
 
-            if (settings.TlsVersions.Contains("1.1"))
-            {
-                tlsVersions |= SslProtocols.Tls11;
-            }
+            if (settings.TlsVersions.Contains("1.1")) { tlsVersions |= SslProtocols.Tls11; }
 
-            if (settings.TlsVersions.Contains("1.2"))
-            {
-                tlsVersions |= SslProtocols.Tls12;
-            }
+            if (settings.TlsVersions.Contains("1.2")) { tlsVersions |= SslProtocols.Tls12; }
 
-            if (settings.TlsVersions.Contains("1.3"))
-            {
-                tlsVersions |= SslProtocols.Tls13;
-            }
+            if (settings.TlsVersions.Contains("1.3")) { tlsVersions |= SslProtocols.Tls13; }
 
             return tlsVersions;
         }
 
         private static string GetUrls(SiteSettings siteSettings)
         {
-            var urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
-            if (!string.IsNullOrEmpty(urls))
-            {
-                return urls;
-            }
+            string? urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            if (!string.IsNullOrEmpty(urls)) { return urls; }
 
             return siteSettings.ListenUri;
         }
 
         private static async Task SeedDatabaseAsync(IWebHost host)
         {
-            using (var scope = host.Services.CreateScope())
+            using (IServiceScope scope = host.Services.CreateScope())
             {
-                var services = scope.ServiceProvider;
+                IServiceProvider services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<IEtimoIdDbContext>();
+                    IEtimoIdDbContext context = services.GetRequiredService<IEtimoIdDbContext>();
 
                     await Seeder.SeedAsync(context, services);
                 }
-                catch (Exception)
-                {
-                    Log.Error("An error occurred while seeding the database");
-                }
+                catch (Exception) { Log.Error("An error occurred while seeding the database"); }
             }
         }
     }

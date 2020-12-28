@@ -16,13 +16,9 @@ namespace Etimo.Id.Service
         }
 
         public Task<List<AuditLog>> GetAllAsync()
-        {
-            return _auditLogRepository.GetAllAsync();
-        }
+            => _auditLogRepository.GetAllAsync();
 
         public Task<List<AuditLog>> GetByUserIdAsync(Guid userId)
-        {
-            return _auditLogRepository.GetByUserIdAsync(userId);
-        }
+            => _auditLogRepository.GetByUserIdAsync(userId);
     }
 }

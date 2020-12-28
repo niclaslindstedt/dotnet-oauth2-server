@@ -18,41 +18,26 @@ namespace Etimo.Id.Data.Repositories
         }
 
         public Task<List<AuditLog>> GetAllAsync()
-        {
-            return _dbContext.AuditLogs.ToListAsync();
-        }
+            => _dbContext.AuditLogs.ToListAsync();
 
         public Task<List<AuditLog>> GetByUserIdAsync(Guid userId)
-        {
-            return _dbContext.AuditLogs.Where(a => a.UserId == userId).ToListAsync();
-        }
+            => _dbContext.AuditLogs.Where(a => a.UserId == userId).ToListAsync();
 
         public Task<List<AuditLog>> GetByApplicationIdAsync(int applicationId)
-        {
-            return _dbContext.AuditLogs.Where(a => a.ApplicationId == applicationId).ToListAsync();
-        }
+            => _dbContext.AuditLogs.Where(a => a.ApplicationId == applicationId).ToListAsync();
 
         public Task<AuditLog> FindAsync(int auditLogId)
-        {
-            return _dbContext.AuditLogs.FindAsync(auditLogId).AsTask();
-        }
+            => _dbContext.AuditLogs.FindAsync(auditLogId).AsTask();
 
         public void Add(AuditLog token)
-        {
-            _dbContext.AuditLogs.Add(token);
-        }
+            => _dbContext.AuditLogs.Add(token);
 
         public void Delete(AuditLog token)
         {
-            if (token != null)
-            {
-                _dbContext.AuditLogs.Remove(token);
-            }
+            if (token != null) { _dbContext.AuditLogs.Remove(token); }
         }
 
         public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
+            => _dbContext.SaveChangesAsync();
     }
 }

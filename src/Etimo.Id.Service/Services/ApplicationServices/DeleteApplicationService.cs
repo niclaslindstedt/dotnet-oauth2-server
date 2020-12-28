@@ -16,17 +16,14 @@ namespace Etimo.Id.Service
 
         public async Task DeleteAsync(int applicationId)
         {
-            var application = await _applicationRepository.FindAsync(applicationId);
+            Application application = await _applicationRepository.FindAsync(applicationId);
             await DeleteAsync(application);
         }
 
         public async Task DeleteAsync(int applicationId, Guid userId)
         {
-            var application = await _applicationRepository.FindAsync(applicationId);
-            if (application?.UserId == userId)
-            {
-                await DeleteAsync(application);
-            }
+            Application application = await _applicationRepository.FindAsync(applicationId);
+            if (application?.UserId == userId) { await DeleteAsync(application); }
         }
 
         private async Task DeleteAsync(Application application)

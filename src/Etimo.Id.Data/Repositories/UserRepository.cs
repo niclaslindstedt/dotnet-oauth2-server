@@ -17,48 +17,30 @@ namespace Etimo.Id.Data.Repositories
         }
 
         public Task<List<User>> GetAllAsync()
-        {
-            return _dbContext.Users.ToListAsync();
-        }
+            => _dbContext.Users.ToListAsync();
 
         public Task<User> FindAsync(Guid userId)
-        {
-            return _dbContext.Users.FindAsync(userId).AsTask();
-        }
+            => _dbContext.Users.FindAsync(userId).AsTask();
 
         public Task<User> FindByUsernameAsync(string username)
-        {
-            return _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
-        }
+            => _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
 
         public void Add(User user)
-        {
-            _dbContext.Users.Add(user);
-        }
+            => _dbContext.Users.Add(user);
 
         public void Delete(User user)
-        {
-            _dbContext.Users.Remove(user);
-        }
+            => _dbContext.Users.Remove(user);
 
         public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
+            => _dbContext.SaveChangesAsync();
 
         public Task<bool> AnyAsync()
-        {
-            return _dbContext.Users.AnyAsync();
-        }
+            => _dbContext.Users.AnyAsync();
 
         public Task<bool> AnyAsync(Guid userId)
-        {
-            return _dbContext.Users.AnyAsync(u => u.UserId == userId);
-        }
+            => _dbContext.Users.AnyAsync(u => u.UserId == userId);
 
         public Task<bool> AnyByUsernameAsync(string username)
-        {
-            return _dbContext.Users.AnyAsync(u => u.Username == username);
-        }
+            => _dbContext.Users.AnyAsync(u => u.Username == username);
     }
 }

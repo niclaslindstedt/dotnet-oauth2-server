@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Principal;
 
 namespace Etimo.Id.Api.Helpers
 {
@@ -6,7 +7,7 @@ namespace Etimo.Id.Api.Helpers
     {
         public static bool UserIsAuthenticated(this Controller controller)
         {
-            var identity = controller.User?.Identity;
+            IIdentity? identity = controller.User?.Identity;
 
             return identity != null && identity.IsAuthenticated;
         }

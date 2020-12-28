@@ -8,6 +8,10 @@ namespace Etimo.Id.Abstractions
     public interface IDeleteRoleScopeRelationService
     {
         Task<List<Scope>> DeleteScopeRelationAsync(Guid roleId, Guid scopeId);
-        Task<List<Scope>> DeleteScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId);
+
+        Task<List<Scope>> DeleteScopeRelationAsync(
+            Guid roleId,
+            Guid scopeId,
+            Guid userId);
     }
 }

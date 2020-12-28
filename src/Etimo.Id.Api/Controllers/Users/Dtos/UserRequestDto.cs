@@ -22,13 +22,10 @@ namespace Etimo.Id.Api.Users
             var user = new User
             {
                 Username = username,
-                Password = password
+                Password = password,
             };
 
-            if (userId != null)
-            {
-                user.UserId = userId.Value;
-            }
+            if (userId != null) { user.UserId = userId.Value; }
 
             return user;
         }

@@ -1,5 +1,6 @@
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Linq;
 using System.Text;
@@ -9,25 +10,21 @@ namespace Etimo.Id.Api.Helpers
     public static class BasicAuthenticationHelper
     {
         /// <summary>
-        /// Checks the request headers for basic authentication.
+        ///     Checks the request headers for basic authentication.
         /// </summary>
         /// <param name="request">The HTTP request in question.</param>
         /// <returns>True if the request is using basic authentication, false if not.</returns>
         public static bool IsBasicAuthentication(this HttpRequest request)
         {
-            if (!request.Headers.ContainsKey("Authorization"))
-            {
-                return false;
-            }
+            if (!request.Headers.ContainsKey("Authorization")) { return false; }
 
-            var header = request.Headers["Authorization"];
-            var type = header.First().Split(' ')[0].ToLowerInvariant();
+            StringValues header = request.Headers["Authorization"];
+            string       type   = header.First().Split(' ')[0].ToLowerInvariant();
             return type == "basic";
-
         }
 
         /// <summary>
-        /// Returns basic authentication credentials from Authorization header.
+        ///     Returns basic authentication credentials from Authorization header.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -35,17 +32,14 @@ namespace Etimo.Id.Api.Helpers
         {
             try
             {
-                var header = request.Headers["Authorization"];
-                var parts = header.First().Split(' ');
-                var authBytes = Convert.FromBase64String(parts[1]);
-                var authString = Encoding.UTF8.GetString(authBytes);
-                var authParts = authString.Split(':');
+                StringValues header     = request.Headers["Authorization"];
+                string[]     parts      = header.First().Split(' ');
+                byte[]       authBytes  = Convert.FromBase64String(parts[1]);
+                string       authString = Encoding.UTF8.GetString(authBytes);
+                string[]     authParts  = authString.Split(':');
                 return new Tuple<string, string>(authParts[0], authParts[1]);
             }
-            catch
-            {
-                throw new InvalidRequestException("Invalid basic authentication syntax.");
-            }
+            catch { throw new InvalidRequestException("Invalid basic authentication syntax."); }
         }
     }
 }

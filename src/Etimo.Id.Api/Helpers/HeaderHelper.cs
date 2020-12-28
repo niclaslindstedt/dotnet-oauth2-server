@@ -7,7 +7,7 @@ namespace Etimo.Id.Api.Helpers
     public static class HeaderHelper
     {
         /// <summary>
-        /// Gets the SuperAdminKey value from the headers.
+        ///     Gets the SuperAdminKey value from the headers.
         /// </summary>
         public static string SuperAdminKeyHeader(this Controller controller)
         {

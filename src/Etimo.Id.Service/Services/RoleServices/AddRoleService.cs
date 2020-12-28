@@ -9,35 +9,27 @@ namespace Etimo.Id.Service
 {
     public class AddRoleService : IAddRoleService
     {
-        private readonly IRoleRepository _roleRepository;
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IRoleRepository        _roleRepository;
 
-        public AddRoleService(
-            IRoleRepository roleRepository,
-            IApplicationRepository applicationRepository)
+        public AddRoleService(IRoleRepository roleRepository, IApplicationRepository applicationRepository)
         {
-            _roleRepository = roleRepository;
+            _roleRepository        = roleRepository;
             _applicationRepository = applicationRepository;
         }
 
         public async Task<Role> AddAsync(Role role)
         {
-            var application = await _applicationRepository.FindAsync(role.ApplicationId);
-            if (application == null)
-            {
-                throw new BadRequestException("The application does not exist.");
-            }
+            Application application = await _applicationRepository.FindAsync(role.ApplicationId);
+            if (application == null) { throw new BadRequestException("The application does not exist."); }
 
             return await AddAsync(role, application);
         }
 
         public async Task<Role> AddAsync(Role role, Guid userId)
         {
-            var application = await _applicationRepository.FindAsync(role.ApplicationId);
-            if (application?.UserId != userId)
-            {
-                throw new ForbiddenException();
-            }
+            Application application = await _applicationRepository.FindAsync(role.ApplicationId);
+            if (application?.UserId != userId) { throw new ForbiddenException(); }
 
             return await AddAsync(role, application);
         }

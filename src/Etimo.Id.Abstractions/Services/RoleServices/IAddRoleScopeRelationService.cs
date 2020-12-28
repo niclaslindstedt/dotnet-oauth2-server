@@ -8,6 +8,10 @@ namespace Etimo.Id.Abstractions
     public interface IAddRoleScopeRelationService
     {
         Task<List<Scope>> AddScopeRelationAsync(Guid roleId, Guid scopeId);
-        Task<List<Scope>> AddScopeRelationAsync(Guid roleId, Guid scopeId, Guid userId);
+
+        Task<List<Scope>> AddScopeRelationAsync(
+            Guid roleId,
+            Guid scopeId,
+            Guid userId);
     }
 }

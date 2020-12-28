@@ -14,18 +14,12 @@ namespace Etimo.Id.Data.Repositories
         }
 
         public Task<RefreshToken> FindAsync(string refreshToken)
-        {
-            return _dbContext.RefreshTokens.FindAsync(refreshToken).AsTask();
-        }
+            => _dbContext.RefreshTokens.FindAsync(refreshToken).AsTask();
 
         public void Add(RefreshToken refreshToken)
-        {
-            _dbContext.RefreshTokens.Add(refreshToken);
-        }
+            => _dbContext.RefreshTokens.Add(refreshToken);
 
         public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
+            => _dbContext.SaveChangesAsync();
     }
 }

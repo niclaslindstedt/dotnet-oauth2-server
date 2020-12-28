@@ -5,8 +5,8 @@ using PasswordSettings = Etimo.Id.Service.Settings.PasswordSettings;
 namespace Etimo.Id.Service.Utilities
 {
     /// <summary>
-    /// Generates random passwords with different settings to meet the OWASP requirements
-    /// Uses PasswordGenerator NuGet: https://github.com/prjseal/PasswordGenerator
+    ///     Generates random passwords with different settings to meet the OWASP requirements
+    ///     Uses PasswordGenerator NuGet: https://github.com/prjseal/PasswordGenerator
     /// </summary>
     public class PasswordGeneratorAdapter : IPasswordGenerator
     {
@@ -21,25 +21,13 @@ namespace Etimo.Id.Service.Utilities
         {
             IPassword password = new Password();
 
-            if (_settings.IncludeLowercase)
-            {
-                password = password.IncludeLowercase();
-            }
+            if (_settings.IncludeLowercase) { password = password.IncludeLowercase(); }
 
-            if (_settings.IncludeUppercase)
-            {
-                password = password.IncludeUppercase();
-            }
+            if (_settings.IncludeUppercase) { password = password.IncludeUppercase(); }
 
-            if (_settings.IncludeNumeric)
-            {
-                password = password.IncludeNumeric();
-            }
+            if (_settings.IncludeNumeric) { password = password.IncludeNumeric(); }
 
-            if (_settings.IncludeSpecial)
-            {
-                password = password.IncludeSpecial();
-            }
+            if (_settings.IncludeSpecial) { password = password.IncludeSpecial(); }
 
             return password.LengthRequired(length).Next();
         }

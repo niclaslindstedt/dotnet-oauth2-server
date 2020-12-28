@@ -34,19 +34,16 @@ namespace Etimo.Id.Api
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
-            Environment = environment;
+            Environment   = environment;
         }
 
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment Environment { get; }
+        public IConfiguration      Configuration { get; }
+        public IWebHostEnvironment Environment   { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "etimo-id", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "etimo-id", Version = "v1" }); });
 
             services.UseEtimoIdData();
 
@@ -68,51 +65,50 @@ namespace Etimo.Id.Api
             services.AddSingleton(jwtSettings);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                .AddJwtBearer(
+                    options =>
                     {
-                        ValidateActor = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                        ClockSkew = TimeSpan.Zero,
-                        NameClaimType = CustomClaimTypes.Name,
-                        RoleClaimType = CustomClaimTypes.Role,
-                        RequireAudience = true,
-                        RequireExpirationTime = true,
-                        RequireSignedTokens = true,
-                        IgnoreTrailingSlashWhenValidatingAudience = true
-                    };
-                });
+                        options.RequireHttpsMetadata = false;
+                        options.SaveToken            = true;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateActor            = true,
+                            ValidateIssuer           = true,
+                            ValidateAudience         = true,
+                            ValidateLifetime         = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer              = jwtSettings.Issuer,
+                            ValidAudience            = jwtSettings.Issuer,
+                            IssuerSigningKey =
+                                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
+                            ClockSkew                                 = TimeSpan.Zero,
+                            NameClaimType                             = CustomClaimTypes.Name,
+                            RoleClaimType                             = CustomClaimTypes.Role,
+                            RequireAudience                           = true,
+                            RequireExpirationTime                     = true,
+                            RequireSignedTokens                       = true,
+                            IgnoreTrailingSlashWhenValidatingAudience = true,
+                        };
+                    });
 
-            services.AddAuthorization(config =>
-            {
-                AddScopePolicies(config, InbuiltScopes.All);
-                AddCombinedScopePolicies(config, new Dictionary<string, string[]>
+            services.AddAuthorization(
+                config =>
                 {
-                    { CombinedScopes.ReadApplicationRole, new string[] { ApplicationScopes.Read, RoleScopes.Read } },
-                    { CombinedScopes.ReadRoleScope, new string[] { RoleScopes.Read, ScopeScopes.Read } },
-                    { CombinedScopes.ReadUserApplication, new string[] { UserScopes.Read, ApplicationScopes.Read } },
-                    { CombinedScopes.ReadUserRole, new string[] { UserScopes.Read, RoleScopes.Read } }
+                    AddScopePolicies(config, InbuiltScopes.All);
+                    AddCombinedScopePolicies(
+                        config,
+                        new Dictionary<string, string[]>
+                        {
+                            { CombinedScopes.ReadApplicationRole, new[] { ApplicationScopes.Read, RoleScopes.Read } },
+                            { CombinedScopes.ReadRoleScope, new[] { RoleScopes.Read, ScopeScopes.Read } },
+                            { CombinedScopes.ReadUserApplication, new[] { UserScopes.Read, ApplicationScopes.Read } },
+                            { CombinedScopes.ReadUserRole, new[] { UserScopes.Read, RoleScopes.Read } },
+                        });
                 });
-            });
 
-            services.Configure<ApiBehaviorOptions>(opt =>
-            {
-                opt.SuppressModelStateInvalidFilter = true;
-            });
+            services.Configure<ApiBehaviorOptions>(opt => { opt.SuppressModelStateInvalidFilter = true; });
 
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+            Log.Logger = new LoggerConfiguration().Enrich.FromLogContext().WriteTo.Console().CreateLogger();
 
             services.AddSingleton(Log.Logger);
 
@@ -184,11 +180,12 @@ namespace Etimo.Id.Api
 
             services.AddDistributedMemoryCache();
             services.AddControllersWithViews()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
-                    options.JsonSerializerOptions.IgnoreNullValues = true;
-                })
+                .AddJsonOptions(
+                    options =>
+                    {
+                        options.JsonSerializerOptions.PropertyNamingPolicy = SnakeCaseNamingPolicy.Instance;
+                        options.JsonSerializerOptions.IgnoreNullValues     = true;
+                    })
                 .AddRazorRuntimeCompilation();
         }
 
@@ -198,14 +195,8 @@ namespace Etimo.Id.Api
             app.UseErrorMiddleware();
             app.UseRateLimiter();
 
-            if (Environment.IsDevelopment())
-            {
-                ApplyDevelopmentSettings(app);
-            }
-            else
-            {
-                ApplyProductionSettings(app);
-            }
+            if (Environment.IsDevelopment()) { ApplyDevelopmentSettings(app); }
+            else { ApplyProductionSettings(app); }
 
             ApplyCommonSettings(app);
         }
@@ -217,9 +208,7 @@ namespace Etimo.Id.Api
         }
 
         private static void ApplyProductionSettings(IApplicationBuilder app)
-        {
-            app.UseHsts();
-        }
+            => app.UseHsts();
 
         private static void ApplyCommonSettings(IApplicationBuilder app)
         {
@@ -229,23 +218,17 @@ namespace Etimo.Id.Api
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseRequestContext();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 
         private static void AddScopePolicies(AuthorizationOptions config, List<string> policies)
         {
-            foreach (var policy in policies)
-            {
-                config.AddPolicy(policy, Policies.ScopePolicy(policy));
-            }
+            foreach (string policy in policies) { config.AddPolicy(policy, Policies.ScopePolicy(policy)); }
         }
 
         private static void AddCombinedScopePolicies(AuthorizationOptions config, Dictionary<string, string[]> policies)
         {
-            foreach (var policy in policies)
+            foreach (KeyValuePair<string, string[]> policy in policies)
             {
                 config.AddPolicy(policy.Key, Policies.ScopePolicy(policy.Value));
             }

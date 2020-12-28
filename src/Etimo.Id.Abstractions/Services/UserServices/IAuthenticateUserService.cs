@@ -7,6 +7,10 @@ namespace Etimo.Id.Abstractions
     public interface IAuthenticateUserService
     {
         Task<User> AuthenticateAsync(IAuthenticationRequest request);
-        Task<User> AuthenticateAsync(string username, string password, string state = null);
+
+        Task<User> AuthenticateAsync(
+            string username,
+            string password,
+            string state = null);
     }
 }

@@ -17,20 +17,14 @@ namespace Etimo.Id.Api.Attributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             // Null values shouldn't be validated by this attribute.
-            if (value == null)
+            if (value == null) { return ValidationResult.Success; }
+
+            foreach (object validValue in _validValues)
             {
-                return ValidationResult.Success;
+                if (value.Equals(validValue)) { return ValidationResult.Success; }
             }
 
-            foreach (var validValue in _validValues)
-            {
-                if (value.Equals(validValue))
-                {
-                    return ValidationResult.Success;
-                }
-            }
-
-            var validValues = string.Join(", ", _validValues.Select(v => v.ToString()));
+            var validValues  = string.Join(", ", _validValues.Select(v => v.ToString()));
             var errorMessage = $"The {validationContext.MemberName} field can only have the following values: {validValues}";
 
             return new ValidationResult(errorMessage);

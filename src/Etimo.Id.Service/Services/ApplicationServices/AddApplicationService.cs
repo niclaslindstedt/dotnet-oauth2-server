@@ -8,23 +8,18 @@ namespace Etimo.Id.Service
 {
     public class AddApplicationService : IAddApplicationService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IUserRepository        _userRepository;
 
-        public AddApplicationService(
-            IUserRepository userRepository,
-            IApplicationRepository applicationRepository)
+        public AddApplicationService(IUserRepository userRepository, IApplicationRepository applicationRepository)
         {
-            _userRepository = userRepository;
+            _userRepository        = userRepository;
             _applicationRepository = applicationRepository;
         }
 
         public async Task<Application> AddAsync(Application application, Guid userId)
         {
-            if (!await _userRepository.AnyAsync(userId))
-            {
-                throw new ForbiddenException();
-            }
+            if (!await _userRepository.AnyAsync(userId)) { throw new ForbiddenException(); }
 
             application.UserId = userId;
 

@@ -13,10 +13,7 @@ namespace Etimo.Id.Data
         {
             context.Database.EnsureCreated();
 
-            if (context.Users.Any())
-            {
-                return;
-            }
+            if (context.Users.Any()) { return; }
 
             var passwordHasher = services.GetService(typeof(IPasswordHasher)) as IPasswordHasher;
 
@@ -25,39 +22,37 @@ namespace Etimo.Id.Data
             var adminUserId = new Guid("b7b229a3-c84d-495f-b4ac-da3a4fd0757f");
             var adminUser = new User
             {
-                UserId = adminUserId,
+                UserId   = adminUserId,
                 Username = "admin",
-                Password = passwordHasher.Hash("etimo")
+                Password = passwordHasher.Hash("etimo"),
             };
             context.Users.Add(adminUser);
 
             var adminClientId = new Guid("11111111-1111-1111-1111-111111111111");
-            context.Applications.Add(new Application
-            {
-                ApplicationId = 1,
-                Name = "etimo-default",
-                Description = "Automatically generated.",
-                HomepageUri = "https://localhost:5010",
-                RedirectUri = "https://localhost:5010/oauth2/callback",
-                ClientId = adminClientId,
-                ClientSecret = passwordHasher.Hash("etimo"),
-                UserId = adminUserId,
-                Type = "confidential"
-            });
+            context.Applications.Add(
+                new Application
+                {
+                    ApplicationId = 1,
+                    Name          = "etimo-default",
+                    Description   = "Automatically generated.",
+                    HomepageUri   = "https://localhost:5010",
+                    RedirectUri   = "https://localhost:5010/oauth2/callback",
+                    ClientId      = adminClientId,
+                    ClientSecret  = passwordHasher.Hash("etimo"),
+                    UserId        = adminUserId,
+                    Type          = "confidential",
+                });
 
             var adminRole = new Role
             {
-                Name = "admin",
-                Description = "Automatically generated.",
+                Name          = "admin",
+                Description   = "Automatically generated.",
                 ApplicationId = 1,
-                Users = new List<User> { adminUser }
+                Users         = new List<User> { adminUser },
             };
             context.Roles.Add(adminRole);
 
-            var scopes = GetBuiltInScopes("read")
-                .Concat(GetBuiltInScopes("write"))
-                .Concat(GetBuiltInScopes("admin"))
-                .ToList();
+            var scopes = GetBuiltInScopes("read").Concat(GetBuiltInScopes("write")).Concat(GetBuiltInScopes("admin")).ToList();
             context.Scopes.AddRange(scopes);
 
             adminRole.Scopes = scopes;
@@ -71,16 +66,18 @@ namespace Etimo.Id.Data
         {
             var scopes = new List<Scope>();
 
-            var resources = new List<string> {
-                "application","auditlog","scope", "role", "user"
+            var resources = new List<string>
+            {
+                "application", "auditlog", "scope", "role", "user",
             };
 
-            foreach (var resource in resources) {
+            foreach (string resource in resources)
+            {
                 var scope = new Scope
                 {
                     ApplicationId = 1,
-                    Name = $"{type}:{resource}",
-                    Description = "Built-in scope."
+                    Name          = $"{type}:{resource}",
+                    Description   = "Built-in scope.",
                 };
                 scopes.Add(scope);
             }

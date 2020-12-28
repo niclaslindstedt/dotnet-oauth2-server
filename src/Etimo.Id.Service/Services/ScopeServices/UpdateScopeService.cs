@@ -8,35 +8,27 @@ namespace Etimo.Id.Service
 {
     public class UpdateScopeService : IUpdateScopeService
     {
-        private readonly IScopeRepository _scopeRepository;
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IScopeRepository       _scopeRepository;
 
-        public UpdateScopeService(
-            IScopeRepository scopeRepository,
-            IApplicationRepository applicationRepository)
+        public UpdateScopeService(IScopeRepository scopeRepository, IApplicationRepository applicationRepository)
         {
-            _scopeRepository = scopeRepository;
+            _scopeRepository       = scopeRepository;
             _applicationRepository = applicationRepository;
         }
 
         public async Task<Scope> UpdateAsync(Scope updatedScope)
         {
-            var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
-            if (scope == null)
-            {
-                throw new BadRequestException("Scope does not exist.");
-            }
+            Scope scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
+            if (scope == null) { throw new BadRequestException("Scope does not exist."); }
 
             return await UpdateAsync(scope, updatedScope);
         }
 
         public async Task<Scope> UpdateAsync(Scope updatedScope, Guid userId)
         {
-            var scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
-            if (scope?.Application?.UserId != userId)
-            {
-                throw new ForbiddenException();
-            }
+            Scope scope = await _scopeRepository.FindAsync(updatedScope.ScopeId);
+            if (scope?.Application?.UserId != userId) { throw new ForbiddenException(); }
 
             return await UpdateAsync(scope, updatedScope);
         }

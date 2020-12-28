@@ -9,23 +9,18 @@ namespace Etimo.Id.Service
     public class AuthenticateClientService : IAuthenticateClientService
     {
         private readonly IApplicationRepository _applicationRepository;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly IPasswordHasher        _passwordHasher;
 
-        public AuthenticateClientService(
-            IApplicationRepository applicationRepository,
-            IPasswordHasher passwordHasher)
+        public AuthenticateClientService(IApplicationRepository applicationRepository, IPasswordHasher passwordHasher)
         {
             _applicationRepository = applicationRepository;
-            _passwordHasher = passwordHasher;
+            _passwordHasher        = passwordHasher;
         }
 
         public async Task<Application> AuthenticateAsync(Guid clientId, string clientSecret)
         {
-            var application = await _applicationRepository.FindAsync(clientId);
-            if (application == null)
-            {
-                throw new InvalidGrantException("Invalid client id.");
-            }
+            Application application = await _applicationRepository.FindAsync(clientId);
+            if (application == null) { throw new InvalidGrantException("Invalid client id."); }
 
             if (!_passwordHasher.Verify(clientSecret, application.ClientSecret))
             {

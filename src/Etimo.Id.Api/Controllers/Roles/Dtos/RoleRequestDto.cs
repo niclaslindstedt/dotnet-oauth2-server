@@ -1,8 +1,8 @@
 // ReSharper disable InconsistentNaming
 
-using System;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Etimo.Id.Api.Roles
@@ -26,15 +26,12 @@ namespace Etimo.Id.Api.Roles
         {
             var role = new Role
             {
-                Name = name,
-                Description = description,
-                ApplicationId = application_id ?? default
+                Name          = name,
+                Description   = description,
+                ApplicationId = application_id ?? default,
             };
 
-            if (roleId != null)
-            {
-                role.RoleId = roleId.Value;
-            }
+            if (roleId != null) { role.RoleId = roleId.Value; }
 
             return role;
         }

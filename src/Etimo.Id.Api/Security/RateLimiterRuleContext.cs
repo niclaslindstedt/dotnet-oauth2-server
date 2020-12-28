@@ -9,19 +9,32 @@ namespace Etimo.Id.Api.Security
     {
         public RateLimiterRuleContext(string ruleString)
         {
-            var values = JsonSerializer.Deserialize<string[]>(ruleString);
-            BannedUntil = values[0] != "0" ? DateTime.Parse(values[0]) : null;
+            string[]? values = JsonSerializer.Deserialize<string[]>(ruleString);
+            BannedUntil      = values[0] != "0" ? DateTime.Parse(values[0]) : null;
             WindowExpiration = DateTime.Parse(values[1]);
-            SoftRequests = int.Parse(values[2]);
-            HardRequests = int.Parse(values[3]);
+            SoftRequests     = int.Parse(values[2]);
+            HardRequests     = int.Parse(values[3]);
             HarmlessRequests = int.Parse(values[4]);
         }
 
         public RateLimiterRuleContext(RateLimiterRule rule)
         {
-            Rule = rule;
+            Rule             = rule;
             WindowExpiration = DateTime.UtcNow.AddSeconds(rule.CallWindowSeconds);
         }
+
+        public string             Name             { get => Rule?.Name; }
+        public bool               Banned           { get => BannedUntil != null ? DateTime.UtcNow < BannedUntil : false; }
+        public DateTime?          BannedUntil      { get; set; }
+        public DateTime           WindowExpiration { get; set; }
+        public int                SoftRequests     { get; set; }
+        public int                HardRequests     { get; set; }
+        public int                HarmlessRequests { get; set; }
+        public bool               ExistsInCache    { get; set; }
+        public RateLimiterContext Context          { get; set; }
+        public RateLimiterRule    Rule             { get; set; }
+
+        public int SecondsLeftOnBan { get => Banned ? (int)(BannedUntil.Value - DateTime.UtcNow).TotalSeconds : 0; }
 
         public override string ToString()
         {
@@ -34,18 +47,5 @@ namespace Etimo.Id.Api.Security
 
             return JsonSerializer.Serialize(values);
         }
-
-        public string Name => Rule?.Name;
-        public bool Banned => BannedUntil != null ? DateTime.UtcNow < BannedUntil : false;
-        public DateTime? BannedUntil { get; set; }
-        public DateTime WindowExpiration { get; set; }
-        public int SoftRequests { get; set; }
-        public int HardRequests { get; set; }
-        public int HarmlessRequests { get; set; }
-        public bool ExistsInCache { get; set; }
-        public RateLimiterContext Context { get; set; }
-        public RateLimiterRule Rule { get; set; }
-
-        public int SecondsLeftOnBan => Banned ? (int)((BannedUntil.Value - DateTime.UtcNow).TotalSeconds) : 0;
     }
 }

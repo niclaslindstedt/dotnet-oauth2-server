@@ -6,22 +6,19 @@ namespace Etimo.Id.Api.Errors
     public static class StatusCodeHelper
     {
         public static int GetStatusCode(this Exception ex)
-        {
-            return ex switch
+            => ex switch
             {
-                BadRequestException => 400,
-                UnauthorizedException => 401,
-                ForbiddenException => 403,
-                NotFoundException => 404,
-                ConflictException => 409,
+                BadRequestException      => 400,
+                UnauthorizedException    => 401,
+                ForbiddenException       => 403,
+                NotFoundException        => 404,
+                ConflictException        => 409,
                 TooManyRequestsException => 429,
-                _ => 500
+                _                        => 500,
             };
-        }
 
         public static Uri GetStatusCodeUri(this int statusCode)
-        {
-            return statusCode switch
+            => statusCode switch
             {
                 400 => new Uri("https://tools.ietf.org/html/rfc7231#section-6.5.1"),
                 401 => new Uri("https://tools.ietf.org/html/rfc7235#section-3.1"),
@@ -30,8 +27,7 @@ namespace Etimo.Id.Api.Errors
                 409 => new Uri("https://tools.ietf.org/html/rfc7231#section-6.5.8"),
                 429 => new Uri("https://tools.ietf.org/html/rfc6585#section-4"),
                 500 => new Uri("https://tools.ietf.org/html/rfc7231#section-6.6.1"),
-                _ => null
+                _   => null,
             };
-        }
     }
 }

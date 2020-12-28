@@ -7,30 +7,25 @@ namespace Etimo.Id.Service
 {
     public class DeleteScopeService : IDeleteScopeService
     {
-        private readonly IScopeRepository _scopeRepository;
         private readonly IApplicationRepository _applicationRepository;
+        private readonly IScopeRepository       _scopeRepository;
 
-        public DeleteScopeService(
-            IScopeRepository scopeRepository,
-            IApplicationRepository applicationRepository)
+        public DeleteScopeService(IScopeRepository scopeRepository, IApplicationRepository applicationRepository)
         {
-            _scopeRepository = scopeRepository;
+            _scopeRepository       = scopeRepository;
             _applicationRepository = applicationRepository;
         }
 
         public async Task DeleteAsync(Guid scopeId)
         {
-            var scope = await _scopeRepository.FindAsync(scopeId);
+            Scope scope = await _scopeRepository.FindAsync(scopeId);
             await DeleteAsync(scope);
         }
 
         public async Task DeleteAsync(Guid scopeId, Guid userId)
         {
-            var scope = await _scopeRepository.FindAsync(scopeId);
-            if (scope?.Application.UserId == userId)
-            {
-                await DeleteAsync(scope);
-            }
+            Scope scope = await _scopeRepository.FindAsync(scopeId);
+            if (scope?.Application.UserId == userId) { await DeleteAsync(scope); }
         }
 
         private async Task DeleteAsync(Scope scope)

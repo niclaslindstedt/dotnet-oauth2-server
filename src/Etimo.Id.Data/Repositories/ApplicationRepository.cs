@@ -18,46 +18,29 @@ namespace Etimo.Id.Data.Repositories
         }
 
         public Task<List<Application>> GetAllAsync()
-        {
-            return _dbContext.Applications.ToListAsync();
-        }
+            => _dbContext.Applications.ToListAsync();
 
         public Task<List<Application>> GetByUserIdAsync(Guid userId)
-        {
-            return _dbContext.Applications.Where(a => a.UserId == userId).ToListAsync();
-        }
+            => _dbContext.Applications.Where(a => a.UserId == userId).ToListAsync();
 
         public Task<Application> FindAsync(int applicationId)
-        {
-            return _dbContext.Applications.FindAsync(applicationId).AsTask();
-        }
+            => _dbContext.Applications.FindAsync(applicationId).AsTask();
 
         public Task<Application> FindAsync(Guid clientId)
-        {
-            return _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
-        }
+            => _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
 
         public Task<Application> FindByClientIdAsync(Guid clientId)
-        {
-            return _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
-        }
+            => _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
 
         public void Add(Application application)
-        {
-            _dbContext.Applications.Add(application);
-        }
+            => _dbContext.Applications.Add(application);
 
         public void Delete(Application application)
         {
-            if (application != null)
-            {
-                _dbContext.Applications.Remove(application);
-            }
+            if (application != null) { _dbContext.Applications.Remove(application); }
         }
 
         public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
+            => _dbContext.SaveChangesAsync();
     }
 }

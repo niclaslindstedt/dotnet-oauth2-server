@@ -11,7 +11,11 @@ namespace Etimo.Id.Api.OAuth
     public class AccessTokenRequestForm
     {
         [Required]
-        [ValidValues("password", "client_credentials", "authorization_code", "refresh_token")]
+        [ValidValues(
+            "password",
+            "client_credentials",
+            "authorization_code",
+            "refresh_token")]
         public string grant_type { get; set; }
 
         public Guid? client_id { get; set; }
@@ -35,15 +39,21 @@ namespace Etimo.Id.Api.OAuth
         public string scope { get; set; }
 
         public TokenRequest ToTokenRequest()
-        {
-            return grant_type switch
+            => grant_type switch
             {
-                "password" => new ResourceOwnerPasswordCredentialsTokenRequest(grant_type, username, password, scope),
+                "password" => new ResourceOwnerPasswordCredentialsTokenRequest(
+                    grant_type,
+                    username,
+                    password,
+                    scope),
                 "client_credentials" => new ClientCredentialsTokenRequest(grant_type, scope),
-                "authorization_code" => new AuthorizationCodeTokenRequest(grant_type, code, redirect_uri, client_id ?? Guid.Empty),
+                "authorization_code" => new AuthorizationCodeTokenRequest(
+                    grant_type,
+                    code,
+                    redirect_uri,
+                    client_id ?? Guid.Empty),
                 "refresh_token" => new RefreshTokenRequest(grant_type, refresh_token, scope),
-                _ => throw new UnsupportedGrantTypeException("Invalid grant type.")
+                _               => throw new UnsupportedGrantTypeException("Invalid grant type."),
             };
-        }
     }
 }

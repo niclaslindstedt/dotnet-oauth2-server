@@ -5,11 +5,10 @@ namespace Etimo.Id.Service.Exceptions
 {
     public abstract class ErrorCodeException : Exception
     {
-        public string ErrorCode { get; set; }
-        public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
-        public string State { get; set; }
-
-        protected ErrorCodeException(string message, string errorCode, Exception exception)
+        protected ErrorCodeException(
+            string message,
+            string errorCode,
+            Exception exception)
             : base(message, exception)
         {
             ErrorCode = errorCode;
@@ -20,5 +19,9 @@ namespace Etimo.Id.Service.Exceptions
         {
             ErrorCode = errorCode;
         }
+
+        public string                     ErrorCode { get; set; }
+        public Dictionary<string, string> Headers   { get; set; } = new();
+        public string                     State     { get; set; }
     }
 }

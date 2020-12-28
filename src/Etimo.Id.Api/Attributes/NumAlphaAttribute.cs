@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Etimo.Id.Api.Attributes
 {
     /// <summary>
-    /// Allows numeric and alphabetical (a-z) characters.
+    ///     Allows numeric and alphabetical (a-z) characters.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class NumAlphaAttribute : ValidationAttribute
@@ -14,13 +14,10 @@ namespace Etimo.Id.Api.Attributes
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             // Null values shouldn't be validated by this attribute.
-            if (value == null)
-            {
-                return ValidationResult.Success;
-            }
+            if (value == null) { return ValidationResult.Success; }
 
-            var stringValue = value.ToString() ?? string.Empty;
-            var memberName = validationContext.MemberName;
+            string? stringValue = value.ToString() ?? string.Empty;
+            string? memberName  = validationContext.MemberName;
 
             var regex = new Regex(CharacterSetPatterns.NUMALPHA);
             if (!regex.IsMatch(stringValue))

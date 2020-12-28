@@ -11,8 +11,8 @@ namespace Etimo.Id.Service
     public class DeleteUserRoleRelationService : IDeleteUserRoleRelationService
     {
         private readonly IFindUserService _findUserService;
-        private readonly IRoleRepository _roleRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly IRoleRepository  _roleRepository;
+        private readonly IUserRepository  _userRepository;
 
         public DeleteUserRoleRelationService(
             IFindUserService findUserService,
@@ -20,20 +20,17 @@ namespace Etimo.Id.Service
             IUserRepository userRepository)
         {
             _findUserService = findUserService;
-            _roleRepository = roleRepository;
-            _userRepository = userRepository;
+            _roleRepository  = roleRepository;
+            _userRepository  = userRepository;
         }
 
         public async Task<List<Role>> DeleteRoleRelationAsync(Guid userId, Guid roleId)
         {
-            var user = await _findUserService.FindAsync(userId);
+            User user = await _findUserService.FindAsync(userId);
             if (user.Roles.Any(s => s.RoleId == roleId))
             {
-                var role = await _roleRepository.FindAsync(roleId);
-                if (role == null)
-                {
-                    throw new NotFoundException();
-                }
+                Role role = await _roleRepository.FindAsync(roleId);
+                if (role == null) { throw new NotFoundException(); }
 
                 user.Roles.Remove(role);
                 await _userRepository.SaveAsync();

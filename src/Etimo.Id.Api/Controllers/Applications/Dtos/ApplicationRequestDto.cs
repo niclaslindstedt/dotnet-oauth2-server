@@ -10,7 +10,8 @@ namespace Etimo.Id.Api.Applications
     public class ApplicationRequestDto
     {
         [Required]
-        [MinLength(2), MaxLength(32)]
+        [MinLength(2)]
+        [MaxLength(32)]
         [NqsChar]
         public string name { get; set; }
 
@@ -33,17 +34,15 @@ namespace Etimo.Id.Api.Applications
         public Guid? user_id { get; set; }
 
         public Application ToApplication(int? applicationId = null)
-        {
-            return new Application
+            => new()
             {
                 ApplicationId = applicationId ?? default,
-                Name = name,
-                Description = description,
-                Type = type,
-                HomepageUri = homepage_uri,
-                RedirectUri = redirect_uri,
-                UserId = user_id.GetValueOrDefault()
+                Name          = name,
+                Description   = description,
+                Type          = type,
+                HomepageUri   = homepage_uri,
+                RedirectUri   = redirect_uri,
+                UserId        = user_id.GetValueOrDefault(),
             };
-        }
     }
 }

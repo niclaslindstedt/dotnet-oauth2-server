@@ -8,12 +8,10 @@ namespace Etimo.Id.Service
 {
     public class AuthenticateUserService : IAuthenticateUserService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IUserRepository _userRepository;
 
-        public AuthenticateUserService(
-            IUserRepository userRepository,
-            IPasswordHasher passwordHasher)
+        public AuthenticateUserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
@@ -22,18 +20,15 @@ namespace Etimo.Id.Service
         public Task<User> AuthenticateAsync(IAuthenticationRequest request)
             => AuthenticateAsync(request.Username, request.Password, request.State);
 
-        public async Task<User> AuthenticateAsync(string username, string password, string state = null)
+        public async Task<User> AuthenticateAsync(
+            string username,
+            string password,
+            string state = null)
         {
-            var user = await _userRepository.FindByUsernameAsync(username);
-            if (user == null)
-            {
-                throw new InvalidGrantException("Invalid user credentials.", state);
-            }
+            User user = await _userRepository.FindByUsernameAsync(username);
+            if (user == null) { throw new InvalidGrantException("Invalid user credentials.", state); }
 
-            if (!_passwordHasher.Verify(password, user.Password))
-            {
-                throw new InvalidGrantException("Invalid user credentials.", state);
-            }
+            if (!_passwordHasher.Verify(password, user.Password)) { throw new InvalidGrantException("Invalid user credentials.", state); }
 
             return user;
         }

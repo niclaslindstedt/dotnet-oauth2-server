@@ -12,19 +12,16 @@ namespace Etimo.Id.Api.Attributes
         public ValidUriAttribute(bool allowFragment = false, bool allowHttp = false)
         {
             _allowFragment = allowFragment;
-            _allowHttp = allowHttp;
+            _allowHttp     = allowHttp;
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             // Null values shouldn't be validated by this attribute.
-            if (value == null)
-            {
-                return ValidationResult.Success;
-            }
+            if (value == null) { return ValidationResult.Success; }
 
-            var stringValue = value.ToString();
-            var memberName = validationContext.MemberName;
+            var     stringValue = value.ToString();
+            string? memberName  = validationContext.MemberName;
 
             if (!Uri.IsWellFormedUriString(stringValue, UriKind.Absolute))
             {

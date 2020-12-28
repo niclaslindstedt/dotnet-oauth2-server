@@ -16,9 +16,7 @@ namespace Etimo.Id.Api.Applications
         private readonly IFindAuditLogService _findAuditLogService;
         private readonly IGetAuditLogsService _getAuditLogsService;
 
-        public AuditLogController(
-            IFindAuditLogService findAuditLogService,
-            IGetAuditLogsService getAuditLogsService)
+        public AuditLogController(IFindAuditLogService findAuditLogService, IGetAuditLogsService getAuditLogsService)
         {
             _findAuditLogService = findAuditLogService;
             _getAuditLogsService = getAuditLogsService;
@@ -30,16 +28,10 @@ namespace Etimo.Id.Api.Applications
         public async Task<IActionResult> GetAsync()
         {
             List<AuditLog> auditLogs;
-            if (this.UserHasScope(AuditLogScopes.Admin))
-            {
-                auditLogs = await _getAuditLogsService.GetAllAsync();
-            }
-            else
-            {
-                auditLogs = await _getAuditLogsService.GetByUserIdAsync(this.GetUserId());
-            }
+            if (this.UserHasScope(AuditLogScopes.Admin)) { auditLogs = await _getAuditLogsService.GetAllAsync(); }
+            else { auditLogs                                         = await _getAuditLogsService.GetByUserIdAsync(this.GetUserId()); }
 
-            var found = auditLogs.Select(AuditLogResponseDto.FromAuditLog);
+            IEnumerable<AuditLogResponseDto> found = auditLogs.Select(AuditLogResponseDto.FromAuditLog);
 
             return Ok(found);
         }
@@ -50,14 +42,8 @@ namespace Etimo.Id.Api.Applications
         public async Task<IActionResult> FindAsync([FromRoute] int auditLogId)
         {
             AuditLog auditLog;
-            if (this.UserHasScope(AuditLogScopes.Admin))
-            {
-                auditLog = await _findAuditLogService.FindAsync(auditLogId);
-            }
-            else
-            {
-                auditLog = await _findAuditLogService.FindAsync(auditLogId, this.GetUserId());
-            }
+            if (this.UserHasScope(AuditLogScopes.Admin)) { auditLog = await _findAuditLogService.FindAsync(auditLogId); }
+            else { auditLog                                         = await _findAuditLogService.FindAsync(auditLogId, this.GetUserId()); }
 
             var found = AuditLogResponseDto.FromAuditLog(auditLog);
 

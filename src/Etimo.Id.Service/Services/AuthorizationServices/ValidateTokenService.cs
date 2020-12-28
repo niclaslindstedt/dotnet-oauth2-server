@@ -1,4 +1,5 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Entities;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Etimo.Id.Service
 
         public async Task ValidateTokenAsync(Guid accessTokenId)
         {
-            var accessToken = await _accessTokenRepository.FindAsync(accessTokenId);
+            AccessToken accessToken = await _accessTokenRepository.FindAsync(accessTokenId);
             if (accessToken == null || accessToken.Disabled)
             {
                 throw new UnauthorizedException("Access token has been disabled, please authenticate again.");

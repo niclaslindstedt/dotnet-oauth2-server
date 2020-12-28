@@ -15,8 +15,6 @@ namespace Etimo.Id.Service
         }
 
         public Task<List<User>> GetAllAsync()
-        {
-            return _userRepository.GetAllAsync();
-        }
+            => _userRepository.GetAllAsync();
     }
 }

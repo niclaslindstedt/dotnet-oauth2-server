@@ -9,16 +9,17 @@ namespace Etimo.Id.Data
     {
         public static void UseEtimoIdData(this IServiceCollection services)
         {
-            var sp = services.BuildServiceProvider();
-            var config = sp.GetService<IConfiguration>();
-            var env = sp.GetService<IHostEnvironment>();
+            ServiceProvider   sp     = services.BuildServiceProvider();
+            IConfiguration?   config = sp.GetService<IConfiguration>();
+            IHostEnvironment? env    = sp.GetService<IHostEnvironment>();
 
-            var connectionString = config.GetConnectionString("EtimoId");
-            services.AddDbContext<IEtimoIdDbContext, EtimoIdDbContext>(options =>
-            {
-                options.UseNpgsql(connectionString);
-                options.EnableSensitiveDataLogging(env.IsDevelopment());
-            });
+            string connectionString = config.GetConnectionString("EtimoId");
+            services.AddDbContext<IEtimoIdDbContext, EtimoIdDbContext>(
+                options =>
+                {
+                    options.UseNpgsql(connectionString);
+                    options.EnableSensitiveDataLogging(env.IsDevelopment());
+                });
         }
     }
 }

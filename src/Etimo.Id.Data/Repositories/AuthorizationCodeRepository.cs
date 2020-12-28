@@ -14,18 +14,12 @@ namespace Etimo.Id.Data.Repositories
         }
 
         public Task<AuthorizationCode> FindAsync(string code)
-        {
-            return _dbContext.AuthorizationCodes.FindAsync(code).AsTask();
-        }
+            => _dbContext.AuthorizationCodes.FindAsync(code).AsTask();
 
         public void Add(AuthorizationCode code)
-        {
-            _dbContext.AuthorizationCodes.Add(code);
-        }
+            => _dbContext.AuthorizationCodes.Add(code);
 
         public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
+            => _dbContext.SaveChangesAsync();
     }
 }

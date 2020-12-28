@@ -11,13 +11,13 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
     {
+        private readonly IAccessTokenRepository     _accessTokenRepository;
         private readonly IAuthenticateClientService _authenticateClientService;
-        private readonly IAccessTokenRepository _accessTokenRepository;
-        private readonly IJwtTokenFactory _jwtTokenFactory;
-        private readonly IRequestContext _requestContext;
+        private readonly IJwtTokenFactory           _jwtTokenFactory;
+        private readonly IRequestContext            _requestContext;
+        private          Application                _application;
 
         private IClientCredentialsTokenRequest _request;
-        private Application _application;
 
         public ClientCredentialsTokenGenerator(
             IAuthenticateClientService applicationService,
@@ -26,9 +26,9 @@ namespace Etimo.Id.Service.TokenGenerators
             IRequestContext requestContext)
         {
             _authenticateClientService = applicationService;
-            _accessTokenRepository = accessTokenRepository;
-            _jwtTokenFactory = jwtTokenFactory;
-            _requestContext = requestContext;
+            _accessTokenRepository     = accessTokenRepository;
+            _jwtTokenFactory           = jwtTokenFactory;
+            _requestContext            = requestContext;
         }
 
         public async Task<JwtToken> GenerateTokenAsync(IClientCredentialsTokenRequest request)
@@ -37,8 +37,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
             UpdateContext();
             await ValidateRequestAsync();
-            var jwtToken = await CreateJwtTokenAsync();
-            var accessToken = jwtToken.ToAccessToken();
+            JwtToken jwtToken    = await CreateJwtTokenAsync();
+            var      accessToken = jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
             await _accessTokenRepository.SaveAsync();
 
@@ -46,9 +46,7 @@ namespace Etimo.Id.Service.TokenGenerators
         }
 
         private void UpdateContext()
-        {
-            _requestContext.ClientId = _request.ClientId;
-        }
+            => _requestContext.ClientId = _request.ClientId;
 
         private async Task ValidateRequestAsync()
         {
@@ -69,7 +67,7 @@ namespace Etimo.Id.Service.TokenGenerators
             var jwtRequest = new JwtTokenRequest
             {
                 Audience = new List<string> { _request.ClientId.ToString() },
-                Subject = _application.UserId.ToString()
+                Subject  = _application.UserId.ToString(),
             };
 
             return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
