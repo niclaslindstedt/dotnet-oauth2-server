@@ -9,7 +9,7 @@ namespace Etimo.Id.Api.Security
     {
         public RateLimiterRuleContext(string ruleString)
         {
-            string[]? values = JsonSerializer.Deserialize<string[]>(ruleString);
+            string[] values = JsonSerializer.Deserialize<string[]>(ruleString);
             BannedUntil      = values[0] != "0" ? DateTime.Parse(values[0]) : null;
             WindowExpiration = DateTime.Parse(values[1]);
             SoftRequests     = int.Parse(values[2]);

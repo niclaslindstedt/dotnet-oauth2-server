@@ -14,8 +14,8 @@ namespace Etimo.Id.Api.Security
                         var hasAllClaims = true;
                         foreach (string scope in scopes)
                         {
-                            Claim? claim        = context.User.FindFirst("scope");
-                            bool   hasThisClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
+                            Claim claim        = context.User.FindFirst("scope");
+                            bool  hasThisClaim = claim != null && claim.Value.Split(' ').Any(claimScope => claimScope == scope);
                             if (!hasThisClaim)
                             {
                                 hasAllClaims = false;

@@ -61,7 +61,7 @@ namespace Etimo.Id.Api.Errors
     {
         public static IApplicationBuilder UseErrorMiddleware(this IApplicationBuilder builder)
         {
-            object? env = builder.ApplicationServices.GetService(typeof(IWebHostEnvironment));
+            var env = builder.ApplicationServices.GetService(typeof(IWebHostEnvironment)) as IWebHostEnvironment;
 
             return builder.UseMiddleware<ErrorMiddleware>(env);
         }

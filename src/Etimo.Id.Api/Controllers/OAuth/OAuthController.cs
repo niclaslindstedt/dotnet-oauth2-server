@@ -84,7 +84,7 @@ namespace Etimo.Id.Api.OAuth
             // This is likely a public client trying to create a token through the authorization code flow
             if (request.GrantType == GrantTypes.AuthorizationCode && !Request.IsBasicAuthentication())
             {
-                string? clientIdString = form.client_id != null ? form.client_id.ToString() : string.Empty;
+                string clientIdString = form.client_id != null ? form.client_id.ToString() : string.Empty;
                 request.ClientId = ParseClientId(clientIdString);
             }
             else

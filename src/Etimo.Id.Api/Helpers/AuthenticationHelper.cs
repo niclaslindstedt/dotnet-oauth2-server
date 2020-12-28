@@ -7,7 +7,7 @@ namespace Etimo.Id.Api.Helpers
     {
         public static bool UserIsAuthenticated(this Controller controller)
         {
-            IIdentity? identity = controller.User?.Identity;
+            IIdentity identity = controller.User?.Identity;
 
             return identity != null && identity.IsAuthenticated;
         }

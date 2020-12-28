@@ -145,11 +145,11 @@ namespace Etimo.Id.Api.Middleware
     {
         public static IApplicationBuilder UseRateLimiter(this IApplicationBuilder builder)
         {
-            IConfiguration? config              = builder.ApplicationServices.GetService<IConfiguration>();
-            var             rateLimiterSettings = new RateLimiterSettings();
+            IConfiguration config              = builder.ApplicationServices.GetService<IConfiguration>();
+            var            rateLimiterSettings = new RateLimiterSettings();
             config.GetSection("RateLimiterSettings").Bind(rateLimiterSettings);
 
-            IDistributedCache? cache = builder.ApplicationServices.GetService<IDistributedCache>();
+            IDistributedCache cache = builder.ApplicationServices.GetService<IDistributedCache>();
 
             return builder.UseMiddleware<RateLimiterMiddleware>(cache, rateLimiterSettings);
         }

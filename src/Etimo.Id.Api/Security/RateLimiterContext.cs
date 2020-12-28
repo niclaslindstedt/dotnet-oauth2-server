@@ -9,7 +9,7 @@ namespace Etimo.Id.Api.Security
     {
         public RateLimiterContext(string cacheString)
         {
-            string[]? rules = JsonSerializer.Deserialize<string[]>(cacheString);
+            string[] rules = JsonSerializer.Deserialize<string[]>(cacheString);
             foreach (string ruleString in rules)
             {
                 var rule = new RateLimiterRuleContext(ruleString);

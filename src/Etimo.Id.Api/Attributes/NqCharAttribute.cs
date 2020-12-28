@@ -16,8 +16,8 @@ namespace Etimo.Id.Api.Attributes
             // Null values shouldn't be validated by this attribute.
             if (value == null) { return ValidationResult.Success; }
 
-            string? stringValue = value.ToString() ?? string.Empty;
-            string? memberName  = validationContext.MemberName;
+            string stringValue = value.ToString() ?? string.Empty;
+            string memberName  = validationContext.MemberName;
 
             var regex = new Regex(CharacterSetPatterns.NQCHAR);
             if (!regex.IsMatch(stringValue))

@@ -9,9 +9,9 @@ namespace Etimo.Id.Data
     {
         public static void UseEtimoIdData(this IServiceCollection services)
         {
-            ServiceProvider   sp     = services.BuildServiceProvider();
-            IConfiguration?   config = sp.GetService<IConfiguration>();
-            IHostEnvironment? env    = sp.GetService<IHostEnvironment>();
+            ServiceProvider  sp     = services.BuildServiceProvider();
+            IConfiguration   config = sp.GetService<IConfiguration>();
+            IHostEnvironment env    = sp.GetService<IHostEnvironment>();
 
             string connectionString = config.GetConnectionString("EtimoId");
             services.AddDbContext<IEtimoIdDbContext, EtimoIdDbContext>(

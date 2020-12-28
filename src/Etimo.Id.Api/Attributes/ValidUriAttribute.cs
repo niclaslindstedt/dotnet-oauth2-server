@@ -20,8 +20,8 @@ namespace Etimo.Id.Api.Attributes
             // Null values shouldn't be validated by this attribute.
             if (value == null) { return ValidationResult.Success; }
 
-            var     stringValue = value.ToString();
-            string? memberName  = validationContext.MemberName;
+            var    stringValue = value.ToString();
+            string memberName  = validationContext.MemberName;
 
             if (!Uri.IsWellFormedUriString(stringValue, UriKind.Absolute))
             {

@@ -68,7 +68,7 @@ namespace Etimo.Id.Api
 
         private static string GetUrls(SiteSettings siteSettings)
         {
-            string? urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            string urls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
             if (!string.IsNullOrEmpty(urls)) { return urls; }
 
             return siteSettings.ListenUri;
