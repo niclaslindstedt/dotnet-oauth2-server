@@ -77,6 +77,12 @@ Use this user to setup the system. When you are done setting up, you should dele
 
 If you want to remove the database and start over, use the `delete-database.csx` script.
 
+## Formatting
+
+View the `.editorconfig` file for a full list of formatting rules.
+
+To install a pre-commit hook that lints the code before committing, use the `install-hooks.csx` script.
+
 ## Commit style
 
 This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for its commit messages.
