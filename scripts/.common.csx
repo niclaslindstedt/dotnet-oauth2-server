@@ -20,6 +20,25 @@ void Run(string executable, string arguments = null)
     Process.Start(startInfo).WaitForExit();
 }
 
+string RunCatchOutput(string executable, string arguments = null)
+{
+    var process = new Process {
+        StartInfo = new ProcessStartInfo
+        {
+            WorkingDirectory = GetRootPath(),
+            FileName = executable,
+            Arguments = arguments ?? "",
+            RedirectStandardOutput = true
+        }
+    };
+
+    process.Start();
+    string output = process.StandardOutput.ReadToEnd();
+    process.WaitForExit();
+
+    return output;
+}
+
 void AppendToFile(string path, string content)
 {
     var rootDir = GetRootPath();
