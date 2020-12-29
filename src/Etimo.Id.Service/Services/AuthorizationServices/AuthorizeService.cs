@@ -119,10 +119,15 @@ namespace Etimo.Id.Service
         private string GenerateAuthorizationUrl()
         {
             string delimiter = _code.RedirectUri.Contains("?") ? "&" : "?";
-            var    sb        = new StringBuilder($"{_code.RedirectUri}{delimiter}code={_code.Code}&");
-            if (_request.State != null) { sb.Append($"state={_request.State}&"); }
+            string code      = Uri.EscapeDataString(_code.Code);
+            var    sb        = new StringBuilder($"{_code.RedirectUri}{delimiter}code={code}");
+            if (_request.State != null)
+            {
+                string state = Uri.EscapeDataString(_request.State);
+                sb.Append($"&state={state}");
+            }
 
-            return sb.ToString().TrimEnd('&');
+            return sb.ToString();
         }
     }
 }
