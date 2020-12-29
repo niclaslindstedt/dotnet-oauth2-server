@@ -3,7 +3,9 @@ WORKDIR /app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         procps \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -sSL https://aka.ms/getvsdbgsh \
+        | bash /dev/stdin -v latest -l /vsdbg
 COPY etimo-id.sln Directory.Build.props nuget.config ./
 COPY src/Etimo.Id.Abstractions/*.csproj ./src/Etimo.Id.Abstractions/
 COPY src/Etimo.Id.Api/*.csproj ./src/Etimo.Id.Api/
