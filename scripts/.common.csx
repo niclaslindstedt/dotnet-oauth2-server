@@ -19,3 +19,22 @@ void Run(string executable, string arguments = null)
 
     Process.Start(startInfo).WaitForExit();
 }
+
+void AppendToFile(string path, string content)
+{
+    var rootDir = GetRootPath();
+    var fullPath = Path.Combine(rootDir, path);
+
+    StreamWriter sw;
+    if (!File.Exists(path))
+    {
+        sw = File.CreateText(path);
+    }
+    else
+    {
+        sw = File.AppendText(path);
+    }
+
+    sw.Write(content);
+    sw.Dispose();
+}
