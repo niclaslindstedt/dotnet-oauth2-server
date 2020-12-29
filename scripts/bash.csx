@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("docker", "exec -it etimo-id-api /bin/bash");
+Run("docker-compose", "exec etimo-id /bin/bash");
