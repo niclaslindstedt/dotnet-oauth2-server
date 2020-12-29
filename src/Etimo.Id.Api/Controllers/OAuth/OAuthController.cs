@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Constants;
+using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Entities;
 using Etimo.Id.Service.Constants;
@@ -8,6 +9,8 @@ using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -54,15 +57,37 @@ namespace Etimo.Id.Api.OAuth
 
         [HttpPost]
         [Route("/oauth2/authorize")]
-        [ValidateModel]
         public async Task<IActionResult> AuthorizeAsync(
             [FromQuery] AuthorizationCodeRequestQuery query,
             [FromForm] AuthorizationCodeRequestForm form)
         {
-            if (Request.IsBasicAuthentication()) { (form.username, form.password) = Request.GetCredentialsFromAuthorizationHeader(); }
+            string redirectUri;
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    IEnumerable<string> errorMessages = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    throw new InvalidRequestException(string.Join(" ", errorMessages));
+                }
 
-            AuthorizationRequest request     = query.ToAuthorizeRequest(form.username, form.password);
-            string               redirectUri = await _authorizeService.AuthorizeAsync(request);
+                if (Request.IsBasicAuthentication()) { (form.username, form.password) = Request.GetCredentialsFromAuthorizationHeader(); }
+
+                AuthorizationRequest request = query.ToAuthorizeRequest(form.username, form.password);
+                redirectUri = await _authorizeService.AuthorizeAsync(request);
+            }
+            catch (ErrorCodeException ex)
+            {
+                redirectUri =  query.redirect_uri;
+                redirectUri += query.redirect_uri.Contains("?") ? "&" : "?";
+                redirectUri += $"error={Uri.EscapeDataString(ex.ErrorCode)}";
+
+                if (!string.IsNullOrEmpty(ex.Message)) { redirectUri += $"&error_description={Uri.EscapeDataString(ex.Message)}"; }
+
+                var errorUri = ex.GetStatusCode().GetStatusCodeUri().ToString();
+                redirectUri += $"&error_uri={Uri.EscapeDataString(errorUri)}";
+
+                if (query.state != null) { redirectUri += $"&state={Uri.EscapeDataString(query.state)}"; }
+            }
 
             return Redirect(redirectUri);
         }
