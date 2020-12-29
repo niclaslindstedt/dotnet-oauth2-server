@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("docker", $"stop etimo-id-api");
+Run("docker-compose", $"stop etimo-id");
