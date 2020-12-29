@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Etimo.Id.Api/Etimo.Id.Api.csproj",
+                "${workspaceFolder}/src/Etimo.Id.Api/Etimo.Id.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Etimo.Id.Api/Etimo.Id.Api.csproj",
+                "${workspaceFolder}/src/Etimo.Id.Api/Etimo.Id.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/Etimo.Id.Api/Etimo.Id.Api.csproj",
+                "${workspaceFolder}/src/Etimo.Id.Api/Etimo.Id.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

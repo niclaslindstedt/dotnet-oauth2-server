@@ -5,23 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": ".NET Core Run",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Etimo.Id.Api/bin/Debug/net5.0/Etimo.Id.Api.dll",
+            "program": "${workspaceFolder}/artifacts/bin/Etimo.Id.Api/Debug/net5.0/Etimo.Id.Api.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Etimo.Id.Api",
+            "cwd": "${workspaceFolder}/src/Etimo.Id.Api",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
             }
         },
         {
