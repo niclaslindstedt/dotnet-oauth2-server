@@ -56,7 +56,7 @@ You can use the `dev.csx` script to build and run etimo-id in a Docker container
 
 It has debugging enabled, so you can simply attach to the process using the `.NET Core Attach Docker` debugger in VSCode.
 
-This will open a list of processes. Select the one running `/app/artifacts/bin/Etimo.Id.Api/Debug/net5.0/Etimo.Id.Api`.
+This will open a list of processes. Select `Etimo.Id.Api` from the list of processes.
 
 Now you can set breakpoints in the code and debug as usual. It is a bit slower than non-container debugging.
 
