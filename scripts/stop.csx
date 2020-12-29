@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("docker", $"etimo-id-api");
+Run("docker", $"stop etimo-id-api");
