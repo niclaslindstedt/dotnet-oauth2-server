@@ -87,6 +87,8 @@ To install a pre-commit hook that lints the code before committing, use the `ins
 
 This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for its commit messages.
 
+The project uses `husky` + `commitlint` to validate commit messages. Type `npm install` to install these.
+
 ### Valid commit types
 
 Type | Description
