@@ -6,18 +6,15 @@ At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-
 
 ## Prerequisites
 
-You need [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0) and [Docker Desktop](https://www.docker.com/products/docker-desktop) (or just Docker if you're running Linux).
+You need both [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1) and [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
 
-You also need to install a few tools:
+You also need [Docker Desktop](https://www.docker.com/products/docker-desktop) if you plan on running this in Docker.
+
+To install the required dotnet tools, type:
 
 ```
-dotnet tool install --global dotnet-ef
-dotnet tool install --global dotnet-user-secrets
-dotnet tool install --global dotnet-script
-dotnet tool install --global JetBrains.ReSharper.GlobalTools
+dotnet tool restore
 ```
-
-The `JetBrains.ReSharper.GlobalTools` tool is used for code formatting. It requires you to install [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1).
 
 ## Secrets
 

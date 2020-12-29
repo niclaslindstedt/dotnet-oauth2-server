@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "regitlint": {
+      "version": "2.0.8",
+      "commands": [
+        "regitlint"
+      ]
+    },
+    "jetbrains.resharper.globaltools": {
+      "version": "2020.3.1",
+      "commands": [
+        "jb"
+      ]
+    },
+    "dotnet-user-secrets": {
+      "version": "2.2.0",
+      "commands": [
+        "dotnet-user-secrets"
+      ]
+    },
+    "dotnet-ef": {
+      "version": "5.0.1",
+      "commands": [
+        "dotnet-ef"
+      ]
+    },
+    "dotnet-script": {
+      "version": "1.0.1",
+      "commands": [
+        "dotnet-script"
+      ]
+    }
+  }
+}
