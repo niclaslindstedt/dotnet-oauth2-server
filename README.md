@@ -6,7 +6,7 @@ At a later stage, [OpenID Connect](https://openid.net/specs/openid-connect-core-
 
 ## Prerequisites
 
-You need [.NET 5](https://dotnet.microsoft.com/download/dotnet/5.0) and [Docker Desktop](https://www.docker.com/products/docker-desktop) (or just Docker if you're running Linux).
+You need [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0) and [Docker Desktop](https://www.docker.com/products/docker-desktop) (or just Docker if you're running Linux).
 
 You also need to install a few tools:
 
@@ -14,7 +14,10 @@ You also need to install a few tools:
 dotnet tool install --global dotnet-ef
 dotnet tool install --global dotnet-user-secrets
 dotnet tool install --global dotnet-script
+dotnet tool install --global JetBrains.ReSharper.GlobalTools
 ```
+
+The `JetBrains.ReSharper.GlobalTools` tool is used for code formatting. It requires you to install [.NET Core 3.1 SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1).
 
 ## Secrets
 
@@ -43,6 +46,22 @@ You can access the database GUI from https://localhost:8011
 Run etimo-id by typing `dotnet run --project Etimo.Id.Api`
 
 Or by using the `run.csx` script.
+
+The project is served from https://localhost:5011
+
+## Debugging
+
+In VSCode, simply press `F5` to start a debugging session (it should use the `.NET Core Run` debugger).
+
+## Docker
+
+You can use the `dev.csx` script to build and run etimo-id in a Docker container.
+
+It has debugging enabled, so you can simply attach to the process using the `.NET Core Attach Docker` debugger in VSCode.
+
+This will open a list of processes. Select the one running `/app/artifacts/bin/Etimo.Id.Api/Debug/net5.0/Etimo.Id.Api`.
+
+Now you can set breakpoints in the code and debug as usual. It is a bit slower than non-container debugging.
 
 The project is served from https://localhost:5011
 
