@@ -33,6 +33,9 @@ namespace Etimo.Id.Api.Applications
 
         public Guid? user_id { get; set; }
 
+        [Base64]
+        public string logo_base64 { get; set; }
+
         public Application ToApplication(int? applicationId = null)
             => new()
             {
@@ -40,6 +43,7 @@ namespace Etimo.Id.Api.Applications
                 Name          = name,
                 Description   = description,
                 Type          = type,
+                LogoBase64    = logo_base64,
                 HomepageUri   = homepage_uri,
                 RedirectUri   = redirect_uri,
                 UserId        = user_id.GetValueOrDefault(),

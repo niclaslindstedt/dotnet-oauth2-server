@@ -14,6 +14,7 @@ namespace Etimo.Id.Api.Applications
         public string                name           { get; set; }
         public string                description    { get; set; }
         public string                type           { get; set; }
+        public string                logo_base64    { get; set; }
         public string                homepage_uri   { get; set; }
         public string                redirect_uri   { get; set; }
         public Guid                  client_id      { get; set; }
@@ -33,6 +34,7 @@ namespace Etimo.Id.Api.Applications
                 name           = application.Name,
                 description    = application.Description,
                 type           = application.Type,
+                logo_base64    = application.LogoBase64,
                 homepage_uri   = application.HomepageUri,
                 redirect_uri   = application.RedirectUri,
                 client_id      = application.ClientId,

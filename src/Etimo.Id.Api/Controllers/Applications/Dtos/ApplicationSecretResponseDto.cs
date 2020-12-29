@@ -15,6 +15,7 @@ namespace Etimo.Id.Api.Applications
                 name           = application.Name,
                 description    = application.Description,
                 type           = application.Type,
+                logo_base64    = application.LogoBase64,
                 homepage_uri   = application.HomepageUri,
                 redirect_uri   = application.RedirectUri,
                 client_id      = application.ClientId,
