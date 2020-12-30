@@ -13,6 +13,7 @@ namespace Etimo.Id.Service.TokenGenerators
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
         private readonly IAccessTokenRepository     _accessTokenRepository;
+        private readonly IApplicationRepository     _applicationRepository;
         private readonly IAuthenticateClientService _authenticateClientService;
         private readonly IJwtTokenFactory           _jwtTokenFactory;
         private readonly IPasswordGenerator         _passwordGenerator;
@@ -28,6 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
             IAuthenticateClientService applicationService,
             IRefreshTokenRepository refreshTokenRepository,
             IAccessTokenRepository accessTokenRepository,
+            IApplicationRepository applicationRepository,
             IJwtTokenFactory jwtTokenFactory,
             IRequestContext requestContext,
             IPasswordGenerator passwordGenerator,
@@ -36,6 +38,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _authenticateClientService = applicationService;
             _refreshTokenRepository    = refreshTokenRepository;
             _accessTokenRepository     = accessTokenRepository;
+            _applicationRepository     = applicationRepository;
             _jwtTokenFactory           = jwtTokenFactory;
             _requestContext            = requestContext;
             _passwordGenerator         = passwordGenerator;
@@ -48,7 +51,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             UpdateContext();
             await ValidateRequestAsync();
-            RefreshToken refreshToken = GenerateRefreshToken();
+            RefreshToken refreshToken = await GenerateRefreshTokenAsync();
             JwtToken     jwtToken     = await CreateJwtTokenAsync();
 
             jwtToken.RefreshToken      = refreshToken.RefreshTokenId;
@@ -63,17 +66,20 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
-        public RefreshToken GenerateRefreshToken(
+        public async Task<RefreshToken> GenerateRefreshTokenAsync(
             int applicationId,
             string redirectUri,
             Guid userId,
             string scope = null)
         {
+            Application application = await _applicationRepository.FindAsync(applicationId);
+            if (application == null) { throw new InvalidClientException("Application does not exist"); }
+
             var refreshToken = new RefreshToken
             {
                 RefreshTokenId = _passwordGenerator.Generate(_settings.RefreshTokenLength),
                 ApplicationId  = applicationId,
-                ExpirationDate = DateTime.UtcNow.AddDays(_refreshToken.Application.RefreshTokenLifetimeDays),
+                ExpirationDate = DateTime.UtcNow.AddDays(application.RefreshTokenLifetimeDays),
                 RedirectUri    = redirectUri,
                 UserId         = userId,
                 Scope          = scope,
@@ -135,8 +141,8 @@ namespace Etimo.Id.Service.TokenGenerators
             _scope = _request.Scope ?? _refreshToken.Scope;
         }
 
-        private RefreshToken GenerateRefreshToken()
-            => GenerateRefreshToken(
+        private Task<RefreshToken> GenerateRefreshTokenAsync()
+            => GenerateRefreshTokenAsync(
                 _refreshToken.ApplicationId,
                 _refreshToken.RedirectUri,
                 _refreshToken.UserId,

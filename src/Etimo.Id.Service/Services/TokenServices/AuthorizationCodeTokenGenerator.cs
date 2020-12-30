@@ -54,7 +54,7 @@ namespace Etimo.Id.Service.TokenGenerators
             UpdateContext();
             await ValidateRequestAsync();
             await CreateJwtTokenAsync();
-            GenerateRefreshToken();
+            await GenerateRefreshTokenAsync();
 
             _code.Used             = true;
             _code.AccessTokenId    = _jwtToken.TokenId;
@@ -120,9 +120,9 @@ namespace Etimo.Id.Service.TokenGenerators
             _jwtToken = await _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
         }
 
-        private void GenerateRefreshToken()
+        private async Task GenerateRefreshTokenAsync()
         {
-            _refreshToken = _refreshTokenGenerator.GenerateRefreshToken(
+            _refreshToken = await _refreshTokenGenerator.GenerateRefreshTokenAsync(
                 _application.ApplicationId,
                 _redirectUri,
                 _code.UserId.GetValueOrDefault(),

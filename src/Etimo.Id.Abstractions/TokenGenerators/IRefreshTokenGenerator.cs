@@ -9,7 +9,7 @@ namespace Etimo.Id.Abstractions
     {
         Task<JwtToken> GenerateTokenAsync(IRefreshTokenRequest request);
 
-        RefreshToken GenerateRefreshToken(
+        Task<RefreshToken> GenerateRefreshTokenAsync(
             int applicationId,
             string redirectUri,
             Guid userId,
