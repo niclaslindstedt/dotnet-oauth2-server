@@ -73,7 +73,7 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 RefreshTokenId = _passwordGenerator.Generate(_settings.RefreshTokenLength),
                 ApplicationId  = applicationId,
-                ExpirationDate = DateTime.UtcNow.AddDays(_settings.RefreshTokenLifetimeDays),
+                ExpirationDate = DateTime.UtcNow.AddDays(_refreshToken.Application.RefreshTokenLifetimeDays),
                 RedirectUri    = redirectUri,
                 UserId         = userId,
                 Scope          = scope,
@@ -146,9 +146,10 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             var jwtRequest = new JwtTokenRequest
             {
-                Audience = new List<string> { _refreshToken.Application.ClientId.ToString() },
-                Subject  = _refreshToken.UserId.ToString(),
-                Scope    = _scope,
+                Audience        = new List<string> { _refreshToken.Application.ClientId.ToString() },
+                Subject         = _refreshToken.UserId.ToString(),
+                Scope           = _scope,
+                LifetimeMinutes = _refreshToken.Application.AccessTokenLifetimeMinutes,
             };
 
             return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);

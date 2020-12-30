@@ -32,15 +32,19 @@ namespace Etimo.Id.Data
             context.Applications.Add(
                 new Application
                 {
-                    ApplicationId = 1,
-                    Name          = "etimo-default",
-                    Description   = "Automatically generated.",
-                    HomepageUri   = "https://localhost:5010",
-                    RedirectUri   = "https://localhost:5010/oauth2/callback",
-                    ClientId      = adminClientId,
-                    ClientSecret  = passwordHasher.Hash("etimo"),
-                    UserId        = adminUserId,
-                    Type          = "confidential",
+                    ApplicationId                    = 1,
+                    Name                             = "etimo-default",
+                    Description                      = "Automatically generated.",
+                    LogoBase64                       = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgID",
+                    HomepageUri                      = "https://localhost:5010",
+                    RedirectUri                      = "https://localhost:5010/oauth2/callback",
+                    AuthorizationCodeLifetimeSeconds = 15,
+                    AccessTokenLifetimeMinutes       = 15,
+                    RefreshTokenLifetimeDays         = 30,
+                    ClientId                         = adminClientId,
+                    ClientSecret                     = passwordHasher.Hash("etimo"),
+                    UserId                           = adminUserId,
+                    Type                             = "confidential",
                 });
 
             var adminRole = new Role

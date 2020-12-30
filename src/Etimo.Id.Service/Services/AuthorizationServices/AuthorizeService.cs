@@ -20,6 +20,7 @@ namespace Etimo.Id.Service
         private readonly IPasswordGenerator           _passwordGenerator;
         private readonly OAuth2Settings               _settings;
         private          string                       _allScopes;
+        private          Application                  _application;
         private          AuthorizationCode            _code;
 
         private IAuthorizationRequest _request;
@@ -58,14 +59,14 @@ namespace Etimo.Id.Service
                 throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
             }
 
-            Application application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
-            if (application == null)
+            _application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
+            if (_application == null)
             {
                 throw new InvalidClientException("No application with that client ID could be found.", _request.State);
             }
 
             // Make sure the provided scopes actually exists within this application.
-            IEnumerable<string> allScopes = InbuiltScopes.All.Concat(application.Scopes.Select(s => s.Name));
+            IEnumerable<string> allScopes = InbuiltScopes.All.Concat(_application.Scopes.Select(s => s.Name));
             if (_request.Scope != null)
             {
                 string[] scopes = _request.Scope.Split(" ");
@@ -78,8 +79,8 @@ namespace Etimo.Id.Service
             _allScopes = string.Join(" ", allScopes);
 
             // Make sure the provided redirect uri is identical to the registered redirect uri.
-            string redirectUri = _request.RedirectUri ?? application.RedirectUri;
-            if (redirectUri != application.RedirectUri)
+            string redirectUri = _request.RedirectUri ?? _application.RedirectUri;
+            if (redirectUri != _application.RedirectUri)
             {
                 throw new InvalidGrantException("The provided redirect URI does not match the one on record.", _request.State);
             }
@@ -106,7 +107,7 @@ namespace Etimo.Id.Service
             _code = new AuthorizationCode
             {
                 Code           = _passwordGenerator.Generate(_settings.AuthorizationCodeLength),
-                ExpirationDate = DateTime.UtcNow.AddMinutes(_settings.AuthorizationCodeLifetimeMinutes),
+                ExpirationDate = DateTime.UtcNow.AddSeconds(_application.AuthorizationCodeLifetimeSeconds),
                 ClientId       = _request.ClientId,
                 UserId         = _user.UserId,
                 RedirectUri    = _request.RedirectUri,

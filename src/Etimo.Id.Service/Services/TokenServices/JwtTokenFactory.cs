@@ -29,7 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
         public async Task<JwtToken> CreateJwtTokenAsync(IJwtTokenRequest request)
         {
             string   audiences = CompileAudiences(request.Audience);
-            DateTime expiresAt = DateTime.UtcNow.AddMinutes(_settings.LifetimeMinutes);
+            DateTime expiresAt = DateTime.UtcNow.AddMinutes(request.LifetimeMinutes);
             var      tokenId   = Guid.NewGuid();
 
             var claims = new List<Claim>

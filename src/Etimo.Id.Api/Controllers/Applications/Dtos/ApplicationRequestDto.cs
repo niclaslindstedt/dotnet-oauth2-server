@@ -23,6 +23,9 @@ namespace Etimo.Id.Api.Applications
         [ValidValues("public", "confidential")]
         public string type { get; set; }
 
+        [Base64]
+        public string logo_base64 { get; set; }
+
         [Required]
         [ValidUri(allowFragment: true)]
         public string homepage_uri { get; set; }
@@ -31,22 +34,31 @@ namespace Etimo.Id.Api.Applications
         [ValidUri]
         public string redirect_uri { get; set; }
 
-        public Guid? user_id { get; set; }
+        [Range(5, 600)]
+        public int authorization_code_lifetime_seconds { get; set; } = 180;
 
-        [Base64]
-        public string logo_base64 { get; set; }
+        [Range(1, 1440)]
+        public int access_token_lifetime_minutes { get; set; } = 15;
+
+        [Range(1, 90)]
+        public int refresh_token_lifetime_days { get; set; } = 30;
+
+        public Guid? user_id { get; set; }
 
         public Application ToApplication(int? applicationId = null)
             => new()
             {
-                ApplicationId = applicationId ?? default,
-                Name          = name,
-                Description   = description,
-                Type          = type,
-                LogoBase64    = logo_base64,
-                HomepageUri   = homepage_uri,
-                RedirectUri   = redirect_uri,
-                UserId        = user_id.GetValueOrDefault(),
+                ApplicationId                    = applicationId ?? default,
+                Name                             = name,
+                Description                      = description,
+                Type                             = type,
+                LogoBase64                       = logo_base64,
+                HomepageUri                      = homepage_uri,
+                RedirectUri                      = redirect_uri,
+                AuthorizationCodeLifetimeSeconds = authorization_code_lifetime_seconds,
+                AccessTokenLifetimeMinutes       = access_token_lifetime_minutes,
+                RefreshTokenLifetimeDays         = refresh_token_lifetime_days,
+                UserId                           = user_id.GetValueOrDefault(),
             };
     }
 }
