@@ -61,6 +61,11 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
             }
 
+            if (!_application.AllowClientCredentialsGrant)
+            {
+                throw new UnsupportedGrantTypeException("This authorization grant is not allowed for this application.");
+            }
+
             if (!_application.AllowCredentialsInBody && _request.CredentialsInBody)
             {
                 throw new InvalidGrantException("This application does not allow passing credentials in the request body.");

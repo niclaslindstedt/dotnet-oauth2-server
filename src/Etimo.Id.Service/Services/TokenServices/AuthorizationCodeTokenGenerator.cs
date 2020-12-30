@@ -99,6 +99,11 @@ namespace Etimo.Id.Service.TokenGenerators
                 await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
             }
 
+            if (!_application.AllowAuthorizationCodeGrant)
+            {
+                throw new UnsupportedGrantTypeException("This authorization grant is not allowed for this application.");
+            }
+
             if (!_application.AllowCredentialsInBody && _request.CredentialsInBody)
             {
                 throw new InvalidGrantException("This application does not allow passing credentials in the request body.");

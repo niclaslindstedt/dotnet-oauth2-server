@@ -43,25 +43,33 @@ namespace Etimo.Id.Api.Applications
         [Range(1, 90)]
         public int refresh_token_lifetime_days { get; set; } = 30;
 
-        public bool allow_credentials_in_body { get; set; } = false;
+        public bool allow_credentials_in_body                       { get; set; } = false;
+        public bool allow_authorization_code_grant                  { get; set; } = true;
+        public bool allow_client_credentials_grant                  { get; set; } = true;
+        public bool allow_resource_owner_password_credentials_grant { get; set; } = false;
+        public bool allow_implicit_grant                            { get; set; } = false;
 
         public Guid? user_id { get; set; }
 
         public Application ToApplication(int? applicationId = null)
             => new()
             {
-                ApplicationId                    = applicationId ?? default,
-                Name                             = name,
-                Description                      = description,
-                Type                             = type,
-                LogoBase64                       = logo_base64,
-                HomepageUri                      = homepage_uri,
-                RedirectUri                      = redirect_uri,
-                AuthorizationCodeLifetimeSeconds = authorization_code_lifetime_seconds,
-                AccessTokenLifetimeMinutes       = access_token_lifetime_minutes,
-                RefreshTokenLifetimeDays         = refresh_token_lifetime_days,
-                AllowCredentialsInBody           = allow_credentials_in_body,
-                UserId                           = user_id.GetValueOrDefault(),
+                ApplicationId                              = applicationId ?? default,
+                Name                                       = name,
+                Description                                = description,
+                Type                                       = type,
+                LogoBase64                                 = logo_base64,
+                HomepageUri                                = homepage_uri,
+                RedirectUri                                = redirect_uri,
+                AuthorizationCodeLifetimeSeconds           = authorization_code_lifetime_seconds,
+                AccessTokenLifetimeMinutes                 = access_token_lifetime_minutes,
+                RefreshTokenLifetimeDays                   = refresh_token_lifetime_days,
+                AllowCredentialsInBody                     = allow_credentials_in_body,
+                AllowAuthorizationCodeGrant                = allow_authorization_code_grant,
+                AllowClientCredentialsGrant                = allow_client_credentials_grant,
+                AllowResourceOwnerPasswordCredentialsGrant = allow_resource_owner_password_credentials_grant,
+                AllowImplicitGrant                         = allow_implicit_grant,
+                UserId                                     = user_id.GetValueOrDefault(),
             };
     }
 }
