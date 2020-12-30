@@ -21,6 +21,7 @@ namespace Etimo.Id.Api.Applications
                 authorization_code_lifetime_seconds = application.AuthorizationCodeLifetimeSeconds,
                 access_token_lifetime_minutes       = application.AccessTokenLifetimeMinutes,
                 refresh_token_lifetime_days         = application.RefreshTokenLifetimeDays,
+                allow_credentials_in_body           = application.AllowCredentialsInBody,
                 client_id                           = application.ClientId,
                 client_secret                       = application.ClientSecret,
                 user_id                             = application.UserId,

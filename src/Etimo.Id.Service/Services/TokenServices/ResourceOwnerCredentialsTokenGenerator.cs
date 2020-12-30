@@ -68,6 +68,11 @@ namespace Etimo.Id.Service.TokenGenerators
 
             _user        = await _authenticateUserService.AuthenticateAsync(_request.Username, _request.Password);
             _application = await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+
+            if (!_application.AllowCredentialsInBody && _request.CredentialsInBody)
+            {
+                throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
+            }
         }
 
         private Task<JwtToken> CreateJwtTokenAsync()

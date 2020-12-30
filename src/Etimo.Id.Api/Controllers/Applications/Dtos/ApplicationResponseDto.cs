@@ -20,6 +20,7 @@ namespace Etimo.Id.Api.Applications
         public int                   authorization_code_lifetime_seconds { get; set; }
         public int                   access_token_lifetime_minutes       { get; set; }
         public int                   refresh_token_lifetime_days         { get; set; }
+        public bool                  allow_credentials_in_body           { get; set; }
         public Guid                  client_id                           { get; set; }
         public Guid                  user_id                             { get; set; }
         public DateTime              created_date                        { get; set; }
@@ -43,6 +44,7 @@ namespace Etimo.Id.Api.Applications
                 authorization_code_lifetime_seconds = application.AuthorizationCodeLifetimeSeconds,
                 access_token_lifetime_minutes       = application.AccessTokenLifetimeMinutes,
                 refresh_token_lifetime_days         = application.RefreshTokenLifetimeDays,
+                allow_credentials_in_body           = application.AllowCredentialsInBody,
                 client_id                           = application.ClientId,
                 user_id                             = application.UserId,
                 created_date                        = application.CreatedDateTime,

@@ -4,7 +4,6 @@ using Etimo.Id.Api.Constants;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -106,11 +105,12 @@ namespace Etimo.Id.Api.OAuth
                 throw new InvalidRequestException("You cannot include multiple credentials (i.e. basic auth and credentials in body).");
             }
 
-            // This is likely a public client trying to create a token through the authorization code flow
-            if (request.GrantType == GrantTypes.AuthorizationCode && !Request.IsBasicAuthentication())
+            if (!Request.IsBasicAuthentication())
             {
                 string clientIdString = form.client_id != null ? form.client_id.ToString() : string.Empty;
-                request.ClientId = ParseClientId(clientIdString);
+                request.ClientId          = ParseClientId(clientIdString);
+                request.ClientSecret      = form.client_secret;
+                request.CredentialsInBody = form.client_secret != null;
             }
             else
             {

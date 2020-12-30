@@ -9,12 +9,11 @@ namespace Etimo.Id.Entities
         ///     https://tools.ietf.org/html/rfc6749#section-4.1.3
         /// </summary>
         public AuthorizationCodeTokenRequest(
-            string grantType,
             string code,
             string redirectUri,
             Guid clientId)
         {
-            GrantType   = grantType;
+            GrantType   = "authorization_code";
             Code        = code;
             RedirectUri = redirectUri;
             ClientId    = clientId;

@@ -6,9 +6,9 @@ namespace Etimo.Id.Entities
         ///     Client Credentials Grant.
         ///     https://tools.ietf.org/html/rfc6749#section-4.4.2
         /// </summary>
-        public ClientCredentialsTokenRequest(string grantType, string scope)
+        public ClientCredentialsTokenRequest(string scope)
         {
-            GrantType = grantType;
+            GrantType = "client_credentials";
             Scope     = scope;
         }
     }

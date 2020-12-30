@@ -120,7 +120,11 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("Refresh token could not be found.");
             }
 
-            await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            Application application = await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            if (!application.AllowCredentialsInBody && _request.CredentialsInBody)
+            {
+                throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
+            }
 
             // Make sure all requested scopes were requested in the original refresh token.
             if (_request.Scope != null)

@@ -11,21 +11,20 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class AuthorizationCodeTokenGenerator : IAuthorizationCodeTokenGenerator
     {
-        private readonly IAccessTokenRepository       _accessTokenRepository;
-        private readonly IAuthenticateClientService   _authenticateClientService;
-        private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
-        private readonly IFindApplicationService      _findApplicationService;
-        private readonly IJwtTokenFactory             _jwtTokenFactory;
-        private readonly IRefreshTokenGenerator       _refreshTokenGenerator;
-        private readonly IRefreshTokenRepository      _refreshTokenRepository;
-        private readonly IRequestContext              _requestContext;
-        private          Application                  _application;
-        private          AuthorizationCode            _code;
-        private          JwtToken                     _jwtToken;
-        private          string                       _redirectUri;
-        private          RefreshToken                 _refreshToken;
-
-        private IAuthorizationCodeTokenRequest _request;
+        private readonly IAccessTokenRepository         _accessTokenRepository;
+        private readonly IAuthenticateClientService     _authenticateClientService;
+        private readonly IAuthorizationCodeRepository   _authorizationCodeRepository;
+        private readonly IFindApplicationService        _findApplicationService;
+        private readonly IJwtTokenFactory               _jwtTokenFactory;
+        private readonly IRefreshTokenGenerator         _refreshTokenGenerator;
+        private readonly IRefreshTokenRepository        _refreshTokenRepository;
+        private readonly IRequestContext                _requestContext;
+        private          Application                    _application;
+        private          AuthorizationCode              _code;
+        private          JwtToken                       _jwtToken;
+        private          string                         _redirectUri;
+        private          RefreshToken                   _refreshToken;
+        private          IAuthorizationCodeTokenRequest _request;
 
         public AuthorizationCodeTokenGenerator(
             IAuthenticateClientService authenticateClientService,
@@ -98,6 +97,11 @@ namespace Etimo.Id.Service.TokenGenerators
             if (_application.Type == ClientTypes.Confidential)
             {
                 await _authenticateClientService.AuthenticateAsync(_request.ClientId, _request.ClientSecret);
+            }
+
+            if (!_application.AllowCredentialsInBody && _request.CredentialsInBody)
+            {
+                throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
             }
 
             _redirectUri = _request.RedirectUri ?? _application.RedirectUri;

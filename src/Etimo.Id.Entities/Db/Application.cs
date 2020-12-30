@@ -17,6 +17,7 @@ namespace Etimo.Id.Entities
         public int      AuthorizationCodeLifetimeSeconds { get; set; }
         public int      AccessTokenLifetimeMinutes       { get; set; }
         public int      RefreshTokenLifetimeDays         { get; set; }
+        public bool     AllowCredentialsInBody           { get; set; }
         public Guid     UserId                           { get; set; }
         public DateTime CreatedDateTime                  { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime                 { get; set; } = DateTime.UtcNow;
@@ -36,6 +37,7 @@ namespace Etimo.Id.Entities
             AuthorizationCodeLifetimeSeconds = applicationWithUpdates.AuthorizationCodeLifetimeSeconds;
             AccessTokenLifetimeMinutes       = applicationWithUpdates.AccessTokenLifetimeMinutes;
             RefreshTokenLifetimeDays         = applicationWithUpdates.RefreshTokenLifetimeDays;
+            AllowCredentialsInBody           = applicationWithUpdates.AllowCredentialsInBody;
             ModifiedDateTime                 = DateTime.UtcNow;
         }
     }

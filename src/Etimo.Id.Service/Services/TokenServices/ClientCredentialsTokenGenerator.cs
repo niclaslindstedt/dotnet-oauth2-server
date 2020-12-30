@@ -60,6 +60,11 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 throw new UnauthorizedClientException("Public clients cannot use the client credentials grant.");
             }
+
+            if (!_application.AllowCredentialsInBody && _request.CredentialsInBody)
+            {
+                throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
+            }
         }
 
         private Task<JwtToken> CreateJwtTokenAsync()

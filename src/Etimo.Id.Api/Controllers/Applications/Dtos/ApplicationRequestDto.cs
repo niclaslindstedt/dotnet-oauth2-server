@@ -43,6 +43,8 @@ namespace Etimo.Id.Api.Applications
         [Range(1, 90)]
         public int refresh_token_lifetime_days { get; set; } = 30;
 
+        public bool allow_credentials_in_body { get; set; } = false;
+
         public Guid? user_id { get; set; }
 
         public Application ToApplication(int? applicationId = null)
@@ -58,6 +60,7 @@ namespace Etimo.Id.Api.Applications
                 AuthorizationCodeLifetimeSeconds = authorization_code_lifetime_seconds,
                 AccessTokenLifetimeMinutes       = access_token_lifetime_minutes,
                 RefreshTokenLifetimeDays         = refresh_token_lifetime_days,
+                AllowCredentialsInBody           = allow_credentials_in_body,
                 UserId                           = user_id.GetValueOrDefault(),
             };
     }

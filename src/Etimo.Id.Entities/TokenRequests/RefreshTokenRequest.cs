@@ -6,12 +6,9 @@ namespace Etimo.Id.Entities
         ///     Refresh Token Grant.
         ///     https://tools.ietf.org/html/rfc6749#section-6
         /// </summary>
-        public RefreshTokenRequest(
-            string grantType,
-            string refreshToken,
-            string scope)
+        public RefreshTokenRequest(string refreshToken, string scope)
         {
-            GrantType    = grantType;
+            GrantType    = "refresh_token";
             RefreshToken = refreshToken;
             Scope        = scope;
         }
