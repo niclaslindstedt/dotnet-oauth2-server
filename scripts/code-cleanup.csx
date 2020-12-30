@@ -7,7 +7,7 @@ var formatAll = Args.Any(a => a == "--all");
 var stagedFiles = RunCatchOutput("git", "diff --name-only --cached").Split("\n");
 var modifiedFiles = RunCatchOutput("git", "diff --name-only").Split("\n");
 var untrackedFiles = RunCatchOutput("git", "ls-files --others --exclude-standard").Split("\n");
-var changedFiles = stagedFiles.Concat(modifiedFiles).Concat(untrackedFiles);
+var changedFiles = stagedFiles.Concat(modifiedFiles).Concat(untrackedFiles).Where(f => !f.Contains("/Migrations/"));
 
 if (!formatAll && !changedFiles.Any(f => f.EndsWith(".cs")))
 {
