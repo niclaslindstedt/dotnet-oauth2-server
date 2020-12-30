@@ -14,4 +14,4 @@ var orderedFiles = migrationFiles.OrderByDescending(f => f);
 var lastFile = orderedFiles.First();
 
 Console.WriteLine($"Reverting migration '{lastFile}'.");
-Run("dotnet", "ef migrations remove --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api -f");
+Run("dotnet", "ef migrations remove --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api -f --msbuildprojectextensionspath artifacts/obj/Etimo.Id.Api");

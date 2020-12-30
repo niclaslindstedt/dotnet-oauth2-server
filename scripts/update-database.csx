@@ -2,4 +2,4 @@
 
 #load ".common.csx"
 
-Run("dotnet", $"ef database update --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api");
+Run("dotnet", $"ef database update --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api --msbuildprojectextensionspath artifacts/obj/Etimo.Id.Api");
