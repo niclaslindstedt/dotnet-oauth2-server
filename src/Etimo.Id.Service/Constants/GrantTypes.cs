@@ -6,5 +6,6 @@ namespace Etimo.Id.Service.Constants
         public const string RefreshToken      = "refresh_token";
         public const string Password          = "password";
         public const string ClientCredentials = "client_credentials";
+        public const string Implicit          = "implicit";
     }
 }

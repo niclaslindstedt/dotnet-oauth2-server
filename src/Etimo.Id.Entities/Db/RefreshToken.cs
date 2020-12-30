@@ -13,6 +13,7 @@ namespace Etimo.Id.Entities
         public Guid     UserId          { get; set; }
         public int      ApplicationId   { get; set; }
         public bool     Used            { get; set; }
+        public string   GrantType       { get; set; }
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual User              User              { get; set; }

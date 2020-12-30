@@ -11,23 +11,27 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ClientCredentialsTokenGenerator : IClientCredentialsTokenGenerator
     {
-        private readonly IAccessTokenRepository     _accessTokenRepository;
-        private readonly IAuthenticateClientService _authenticateClientService;
-        private readonly IJwtTokenFactory           _jwtTokenFactory;
-        private readonly IRequestContext            _requestContext;
-        private          Application                _application;
-
-        private IClientCredentialsTokenRequest _request;
+        private readonly IAccessTokenRepository         _accessTokenRepository;
+        private readonly IAuthenticateClientService     _authenticateClientService;
+        private readonly IJwtTokenFactory               _jwtTokenFactory;
+        private readonly IRefreshTokenGenerator         _refreshTokenGenerator;
+        private readonly IRequestContext                _requestContext;
+        private          Application                    _application;
+        private          JwtToken                       _jwtToken;
+        private          RefreshToken                   _refreshToken;
+        private          IClientCredentialsTokenRequest _request;
 
         public ClientCredentialsTokenGenerator(
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
             IJwtTokenFactory jwtTokenFactory,
+            IRefreshTokenGenerator refreshTokenGenerator,
             IRequestContext requestContext)
         {
             _authenticateClientService = applicationService;
             _accessTokenRepository     = accessTokenRepository;
             _jwtTokenFactory           = jwtTokenFactory;
+            _refreshTokenGenerator     = refreshTokenGenerator;
             _requestContext            = requestContext;
         }
 
@@ -37,12 +41,14 @@ namespace Etimo.Id.Service.TokenGenerators
 
             UpdateContext();
             await ValidateRequestAsync();
-            JwtToken jwtToken    = await CreateJwtTokenAsync();
-            var      accessToken = jwtToken.ToAccessToken();
+            await CreateJwtTokenAsync();
+            await GenerateRefreshTokenAsync();
+
+            var accessToken = _jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
             await _accessTokenRepository.SaveAsync();
 
-            return jwtToken;
+            return _jwtToken;
         }
 
         private void UpdateContext()
@@ -72,7 +78,7 @@ namespace Etimo.Id.Service.TokenGenerators
             }
         }
 
-        private Task<JwtToken> CreateJwtTokenAsync()
+        private async Task CreateJwtTokenAsync()
         {
             var jwtRequest = new JwtTokenRequest
             {
@@ -81,7 +87,17 @@ namespace Etimo.Id.Service.TokenGenerators
                 LifetimeMinutes = _application.AccessTokenLifetimeMinutes,
             };
 
-            return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
+            _jwtToken = await _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
+        }
+
+        private async Task GenerateRefreshTokenAsync()
+        {
+            if (!_application.GenerateRefreshTokenForClientCredentials) { return; }
+
+            _refreshToken = await _refreshTokenGenerator.GenerateRefreshTokenAsync(_application.ApplicationId, null, _application.UserId);
+            _refreshToken.GrantType = GrantTypes.ClientCredentials;
+            _refreshToken.AccessTokenId = _jwtToken.TokenId;
+            _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
         }
     }
 }

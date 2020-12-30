@@ -2,6 +2,7 @@
 
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -12,10 +13,10 @@ namespace Etimo.Id.Api.OAuth
     {
         [Required]
         [ValidValues(
-            "password",
-            "client_credentials",
-            "authorization_code",
-            "refresh_token")]
+            GrantTypes.Password,
+            GrantTypes.ClientCredentials,
+            GrantTypes.AuthorizationCode,
+            GrantTypes.RefreshToken)]
         public string grant_type { get; set; }
 
         public Guid? client_id { get; set; }
@@ -45,11 +46,11 @@ namespace Etimo.Id.Api.OAuth
         {
             TokenRequest tokenRequest = grant_type switch
             {
-                "password"           => new ResourceOwnerPasswordCredentialsTokenRequest(username, password, scope),
-                "client_credentials" => new ClientCredentialsTokenRequest(scope),
-                "authorization_code" => new AuthorizationCodeTokenRequest(code, redirect_uri, client_id ?? Guid.Empty),
-                "refresh_token"      => new RefreshTokenRequest(refresh_token, scope),
-                _                    => throw new UnsupportedGrantTypeException("Invalid grant type."),
+                GrantTypes.Password          => new ResourceOwnerPasswordCredentialsTokenRequest(username, password, scope),
+                GrantTypes.ClientCredentials => new ClientCredentialsTokenRequest(scope),
+                GrantTypes.AuthorizationCode => new AuthorizationCodeTokenRequest(code, redirect_uri, client_id ?? Guid.Empty),
+                GrantTypes.RefreshToken      => new RefreshTokenRequest(refresh_token, scope),
+                _                            => throw new UnsupportedGrantTypeException("Invalid grant type."),
             };
 
             tokenRequest.ClientSecret = client_secret;

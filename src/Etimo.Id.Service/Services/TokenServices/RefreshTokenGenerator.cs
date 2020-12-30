@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Settings;
 using System;
@@ -45,6 +46,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _settings                  = settings;
         }
 
+        // Generate an access token using a refresh token
         public async Task<JwtToken> GenerateTokenAsync(IRefreshTokenRequest request)
         {
             _request = request;
@@ -53,10 +55,10 @@ namespace Etimo.Id.Service.TokenGenerators
             await ValidateRequestAsync();
             RefreshToken refreshToken = await GenerateRefreshTokenAsync();
             JwtToken     jwtToken     = await CreateJwtTokenAsync();
-
             jwtToken.RefreshToken      = refreshToken.RefreshTokenId;
             refreshToken.AccessTokenId = jwtToken.TokenId;
             refreshToken.Code          = _refreshToken.Code;
+            refreshToken.GrantType     = _refreshToken.GrantType;
             _refreshToken.Used         = true;
             var accessToken = jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
@@ -66,6 +68,7 @@ namespace Etimo.Id.Service.TokenGenerators
             return jwtToken;
         }
 
+        // Generate a refresh token to be associated with an access token
         public async Task<RefreshToken> GenerateRefreshTokenAsync(
             int applicationId,
             string redirectUri,
@@ -124,6 +127,43 @@ namespace Etimo.Id.Service.TokenGenerators
             if (!application.AllowCredentialsInBody && _request.CredentialsInBody)
             {
                 throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
+            }
+
+            var unsupportedGrantType          = false;
+            var shouldGenerateNewRefreshToken = false;
+            switch (_refreshToken.GrantType)
+            {
+                case GrantTypes.AuthorizationCode:
+                    unsupportedGrantType          = !application.AllowAuthorizationCodeGrant;
+                    shouldGenerateNewRefreshToken = application.GenerateRefreshTokenForAuthorizationCode;
+                    break;
+
+                case GrantTypes.ClientCredentials:
+                    unsupportedGrantType          = !application.AllowClientCredentialsGrant;
+                    shouldGenerateNewRefreshToken = application.GenerateRefreshTokenForClientCredentials;
+                    break;
+
+                case GrantTypes.Password:
+                    unsupportedGrantType          = !application.AllowResourceOwnerPasswordCredentialsGrant;
+                    shouldGenerateNewRefreshToken = application.GenerateRefreshTokenForPasswordCredentials;
+                    break;
+
+                case GrantTypes.Implicit:
+                    unsupportedGrantType          = !application.AllowImplicitGrant;
+                    shouldGenerateNewRefreshToken = application.GenerateRefreshTokenForImplicitFlow;
+                    break;
+            }
+
+            if (unsupportedGrantType)
+            {
+                throw new UnsupportedGrantTypeException(
+                    "This refresh token was issued using a grant type that this application no longer supports.");
+            }
+
+            if (!shouldGenerateNewRefreshToken)
+            {
+                throw new UnsupportedGrantTypeException(
+                    "You can no longer refresh this token because this application has disabled refresh tokens for this grant type.");
             }
 
             // Make sure all requested scopes were requested in the original refresh token.

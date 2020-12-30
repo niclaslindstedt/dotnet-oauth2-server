@@ -48,6 +48,10 @@ namespace Etimo.Id.Api.Applications
         public bool allow_client_credentials_grant                  { get; set; } = true;
         public bool allow_resource_owner_password_credentials_grant { get; set; } = false;
         public bool allow_implicit_grant                            { get; set; } = false;
+        public bool generate_refresh_token_for_authorization_code   { get; set; } = true;
+        public bool generate_refresh_token_for_client_credentials   { get; set; } = false;
+        public bool generate_refresh_token_for_password_credentials { get; set; } = false;
+        public bool generate_refresh_token_for_implicit_flow        { get; set; } = true;
 
         public Guid? user_id { get; set; }
 
@@ -69,6 +73,10 @@ namespace Etimo.Id.Api.Applications
                 AllowClientCredentialsGrant                = allow_client_credentials_grant,
                 AllowResourceOwnerPasswordCredentialsGrant = allow_resource_owner_password_credentials_grant,
                 AllowImplicitGrant                         = allow_implicit_grant,
+                GenerateRefreshTokenForAuthorizationCode   = generate_refresh_token_for_authorization_code,
+                GenerateRefreshTokenForClientCredentials   = generate_refresh_token_for_client_credentials,
+                GenerateRefreshTokenForPasswordCredentials = generate_refresh_token_for_password_credentials,
+                GenerateRefreshTokenForImplicitFlow        = generate_refresh_token_for_implicit_flow,
                 UserId                                     = user_id.GetValueOrDefault(),
             };
     }

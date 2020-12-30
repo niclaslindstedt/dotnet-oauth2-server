@@ -25,6 +25,10 @@ namespace Etimo.Id.Api.Applications
         public bool                  allow_client_credentials_grant                  { get; set; }
         public bool                  allow_resource_owner_password_credentials_grant { get; set; }
         public bool                  allow_implicit_grant                            { get; set; }
+        public bool                  generate_refresh_token_for_authorization_code   { get; set; }
+        public bool                  generate_refresh_token_for_client_credentials   { get; set; }
+        public bool                  generate_refresh_token_for_password_credentials { get; set; }
+        public bool                  generate_refresh_token_for_implicit_flow        { get; set; }
         public Guid                  client_id                                       { get; set; }
         public Guid                  user_id                                         { get; set; }
         public DateTime              created_date                                    { get; set; }
@@ -53,6 +57,10 @@ namespace Etimo.Id.Api.Applications
                 allow_client_credentials_grant                  = application.AllowClientCredentialsGrant,
                 allow_resource_owner_password_credentials_grant = application.AllowResourceOwnerPasswordCredentialsGrant,
                 allow_implicit_grant                            = application.AllowImplicitGrant,
+                generate_refresh_token_for_authorization_code   = application.GenerateRefreshTokenForAuthorizationCode,
+                generate_refresh_token_for_client_credentials   = application.GenerateRefreshTokenForClientCredentials,
+                generate_refresh_token_for_password_credentials = application.GenerateRefreshTokenForPasswordCredentials,
+                generate_refresh_token_for_implicit_flow        = application.GenerateRefreshTokenForImplicitFlow,
                 client_id                                       = application.ClientId,
                 user_id                                         = application.UserId,
                 created_date                                    = application.CreatedDateTime,

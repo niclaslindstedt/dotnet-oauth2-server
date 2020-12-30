@@ -1,6 +1,7 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -10,25 +11,29 @@ namespace Etimo.Id.Service.TokenGenerators
 {
     public class ResourceOwnerCredentialsTokenGenerator : IResourceOwnerCredentialsTokenGenerator
     {
-        private readonly IAccessTokenRepository     _accessTokenRepository;
-        private readonly IAuthenticateClientService _authenticateClientService;
-        private readonly IAuthenticateUserService   _authenticateUserService;
-        private readonly IJwtTokenFactory           _jwtTokenFactory;
-        private readonly IRequestContext            _requestContext;
-        private          Application                _application;
-
-        private IResourceOwnerPasswordCredentialsTokenRequest _request;
-        private User                                          _user;
+        private readonly IAccessTokenRepository                        _accessTokenRepository;
+        private readonly IAuthenticateClientService                    _authenticateClientService;
+        private readonly IAuthenticateUserService                      _authenticateUserService;
+        private readonly IJwtTokenFactory                              _jwtTokenFactory;
+        private readonly IRefreshTokenGenerator                        _refreshTokenGenerator;
+        private readonly IRequestContext                               _requestContext;
+        private          Application                                   _application;
+        private          JwtToken                                      _jwtToken;
+        private          RefreshToken                                  _refreshToken;
+        private          IResourceOwnerPasswordCredentialsTokenRequest _request;
+        private          User                                          _user;
 
         public ResourceOwnerCredentialsTokenGenerator(
             IAuthenticateUserService authenticateUserService,
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
+            IRefreshTokenGenerator refreshTokenGenerator,
             IJwtTokenFactory jwtTokenFactory,
             IRequestContext requestContext)
         {
             _authenticateUserService   = authenticateUserService;
             _authenticateClientService = applicationService;
+            _refreshTokenGenerator     = refreshTokenGenerator;
             _accessTokenRepository     = accessTokenRepository;
             _jwtTokenFactory           = jwtTokenFactory;
             _requestContext            = requestContext;
@@ -38,14 +43,16 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             _request = request;
 
-            await ValidateRequestAsync();
             UpdateContext();
-            JwtToken jwtToken    = await CreateJwtTokenAsync();
-            var      accessToken = jwtToken.ToAccessToken();
+            await ValidateRequestAsync();
+            await CreateJwtTokenAsync();
+            await GenerateRefreshTokenAsync();
+
+            var accessToken = _jwtToken.ToAccessToken();
             _accessTokenRepository.Add(accessToken);
             await _accessTokenRepository.SaveAsync();
 
-            return jwtToken;
+            return _jwtToken;
         }
 
         private void UpdateContext()
@@ -80,7 +87,7 @@ namespace Etimo.Id.Service.TokenGenerators
             }
         }
 
-        private Task<JwtToken> CreateJwtTokenAsync()
+        private async Task CreateJwtTokenAsync()
         {
             var jwtRequest = new JwtTokenRequest
             {
@@ -89,7 +96,17 @@ namespace Etimo.Id.Service.TokenGenerators
                 LifetimeMinutes = _application.AccessTokenLifetimeMinutes,
             };
 
-            return _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
+            _jwtToken = await _jwtTokenFactory.CreateJwtTokenAsync(jwtRequest);
+        }
+
+        private async Task GenerateRefreshTokenAsync()
+        {
+            if (!_application.GenerateRefreshTokenForPasswordCredentials) { return; }
+
+            _refreshToken = await _refreshTokenGenerator.GenerateRefreshTokenAsync(_application.ApplicationId, null, _application.UserId);
+            _refreshToken.GrantType = GrantTypes.Password;
+            _refreshToken.AccessTokenId = _jwtToken.TokenId;
+            _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
         }
     }
 }

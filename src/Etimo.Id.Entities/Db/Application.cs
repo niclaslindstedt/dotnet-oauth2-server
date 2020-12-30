@@ -22,6 +22,10 @@ namespace Etimo.Id.Entities
         public bool     AllowClientCredentialsGrant                { get; set; }
         public bool     AllowResourceOwnerPasswordCredentialsGrant { get; set; }
         public bool     AllowImplicitGrant                         { get; set; }
+        public bool     GenerateRefreshTokenForAuthorizationCode   { get; set; }
+        public bool     GenerateRefreshTokenForClientCredentials   { get; set; }
+        public bool     GenerateRefreshTokenForPasswordCredentials { get; set; }
+        public bool     GenerateRefreshTokenForImplicitFlow        { get; set; }
         public Guid     UserId                                     { get; set; }
         public DateTime CreatedDateTime                            { get; set; } = DateTime.UtcNow;
         public DateTime ModifiedDateTime                           { get; set; } = DateTime.UtcNow;
@@ -46,6 +50,10 @@ namespace Etimo.Id.Entities
             AllowClientCredentialsGrant                = applicationWithUpdates.AllowClientCredentialsGrant;
             AllowResourceOwnerPasswordCredentialsGrant = applicationWithUpdates.AllowResourceOwnerPasswordCredentialsGrant;
             AllowImplicitGrant                         = applicationWithUpdates.AllowImplicitGrant;
+            GenerateRefreshTokenForAuthorizationCode   = applicationWithUpdates.GenerateRefreshTokenForAuthorizationCode;
+            GenerateRefreshTokenForClientCredentials   = applicationWithUpdates.GenerateRefreshTokenForClientCredentials;
+            GenerateRefreshTokenForPasswordCredentials = applicationWithUpdates.GenerateRefreshTokenForPasswordCredentials;
+            GenerateRefreshTokenForImplicitFlow        = applicationWithUpdates.GenerateRefreshTokenForImplicitFlow;
             ModifiedDateTime                           = DateTime.UtcNow;
         }
     }
