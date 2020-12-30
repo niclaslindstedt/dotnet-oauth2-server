@@ -66,7 +66,7 @@ namespace Etimo.Id.Service
             }
 
             // Make sure the provided scopes actually exists within this application.
-            IEnumerable<string> allScopes = InbuiltScopes.All.Concat(_application.Scopes.Select(s => s.Name));
+            IEnumerable<string> allScopes = InbuiltScopes.All.Concat(_application.Scopes.Select(s => s.Name)).Distinct().OrderBy(s => s);
             if (_request.Scope != null)
             {
                 string[] scopes = _request.Scope.Split(" ");
