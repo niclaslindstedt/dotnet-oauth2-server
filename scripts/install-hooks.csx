@@ -2,53 +2,44 @@
 
 #load ".common.csx"
 
-var preCommitHookFile = ".git/hooks/pre-commit";
+var root = GetRootPath();
+var preCommitHookFile = $"{root}/.git/hooks/pre-commit";
+var hookFileName = "code-cleanup.sh";
+var hookPath = $"{root}/.git/hooks/{hookFileName}";
+var content = $"$(dirname $0)/{hookFileName}";
 
-var shebang = "#!/bin/sh";
-var content = @"
-csharp_staged() {
-  for f in `git diff --name-only --cached`; do
-    if [[ ""$f"" =~ .cs$ ]]; then
-      echo 1
-      return
-    fi
-  done
-  echo 0
-}
-
-if [[ $(csharp_staged) = 0 ]]; then
-  echo ""Skipping linting -- no .cs files have been staged""
-  exit 0
-fi
-
-dotnet regitlint \
-    --solution-file=etimo-id.sln \
-    --files-to-format=staged \
-    --pattern=""**/*.cs"" \
-    --fail-on-diff \
-    --print-diff \
-    --skip-tool-check \
-    --jb --toolset=16.0 \
-    --jb --verbosity=WARN \
-    --jb --exclude=""**/Migrations/*"" \
-  && exit 0
-";
-
+var shebangExists = false;
+var hookInstalled = false;
 if (File.Exists(preCommitHookFile))
 {
-    var existingContent = File.ReadAllText(preCommitHookFile);
-    if (existingContent.CompareTo(shebang + content) == 0)
+    var existingContent = File.ReadAllLines(preCommitHookFile);
+    if (existingContent.Any())
     {
-        Console.WriteLine("Pre-commit hook already installed");
-        Environment.Exit(0);
+        hookInstalled = existingContent.Any(l => l == content);
+        shebangExists = existingContent.First().StartsWith(@"#!");
     }
 }
-else
+
+if (!shebangExists)
 {
-    AppendToFile(preCommitHookFile, shebang);
+    Console.WriteLine("* Writing shebang to 'pre-commit' file");
+    PrependToFile(preCommitHookFile, "#!/bin/sh\n");
 }
 
-AppendToFile(preCommitHookFile, content);
-Run("chmod", $"+x {preCommitHookFile}");
+if (!hookInstalled)
+{
+    Console.WriteLine("* Adding hook script execution to 'pre-commit' file");
+    AppendToFile(preCommitHookFile, content);
+}
 
-Console.WriteLine("Pre-commit hook successfully installed");
+if (!File.Exists(hookPath))
+{
+    Console.WriteLine("* Copying hook script to ./git/hooks/");
+    File.Copy($"{root}/scripts/{hookFileName}", hookPath);
+}
+
+Console.WriteLine("* Setting execution permissions");
+Run("chmod", $"+x {preCommitHookFile}");
+Run("chmod", $"+x {hookPath}");
+
+Console.WriteLine("\nPre-commit hook successfully installed");

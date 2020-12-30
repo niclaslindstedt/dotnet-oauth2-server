@@ -57,3 +57,25 @@ void AppendToFile(string path, string content)
     sw.Write(content);
     sw.Dispose();
 }
+
+void PrependToFile(string path, string content)
+{
+    var rootDir = GetRootPath();
+    var fullPath = Path.Combine(rootDir, path);
+
+    StreamWriter sw;
+    if (File.Exists(path))
+    {
+        var existingContent = File.ReadAllText(path);
+        sw = File.CreateText(path);
+        sw.Write(content);
+        sw.Write(existingContent);
+    }
+    else
+    {
+        sw = File.CreateText(path);
+        sw.Write(content);
+    }
+
+    sw.Dispose();
+}
