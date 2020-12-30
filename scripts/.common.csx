@@ -8,26 +8,31 @@ string GetRootPath([System.Runtime.CompilerServices.CallerFilePath] string fileN
     return Path.GetFullPath(Path.Combine(scriptDir, ".."));
 }
 
-void Run(string executable, string arguments = null)
-{
-    var startInfo = new ProcessStartInfo
-    {
-        WorkingDirectory = GetRootPath(),
-        FileName = executable,
-        Arguments = arguments ?? ""
-    };
-
-    Process.Start(startInfo).WaitForExit();
-}
-
-string RunCatchOutput(string executable, string arguments = null)
+int Run(string executable, string arguments = "")
 {
     var process = new Process {
         StartInfo = new ProcessStartInfo
         {
             WorkingDirectory = GetRootPath(),
             FileName = executable,
-            Arguments = arguments ?? "",
+            Arguments = arguments
+        }
+    };
+
+    process.Start();
+    process.WaitForExit();
+
+    return process.ExitCode;
+}
+
+string RunCatchOutput(string executable, string arguments = "")
+{
+    var process = new Process {
+        StartInfo = new ProcessStartInfo
+        {
+            WorkingDirectory = GetRootPath(),
+            FileName = executable,
+            Arguments = arguments,
             RedirectStandardOutput = true
         }
     };
