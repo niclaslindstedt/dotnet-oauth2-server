@@ -13,6 +13,7 @@ COPY src/Etimo.Id.Data/*.csproj ./src/Etimo.Id.Data/
 COPY src/Etimo.Id.Entities/*.csproj ./src/Etimo.Id.Entities/
 COPY src/Etimo.Id.Entities.Abstractions/*.csproj ./src/Etimo.Id.Entities.Abstractions/
 COPY src/Etimo.Id.Service/*.csproj ./src/Etimo.Id.Service/
+COPY src/Etimo.Id.Tests/*.csproj ./src/Etimo.Id.Tests/
 RUN dotnet restore
 COPY . .
 
@@ -26,6 +27,12 @@ RUN dotnet build \
     --configuration Release \
     --no-restore \
     --output ./out
+RUN dotnet test \
+    --configuration Release \
+    --no-restore \
+    --no-build \
+    --output ./out \
+    --results-directory ./results
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as prod
 WORKDIR /app
