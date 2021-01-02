@@ -1,27 +1,28 @@
 name: Run tests
+
 on:
   push:
-    branches: [ codecov ]
+    branches: [ develop ]
   pull_request:
     branches: [ develop ]
+
 jobs:
   build_docker_image:
     name: Build Docker image
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: checkout
         uses: actions/checkout@v2
-      - name: Setup .NET
+      - name: setup dotnet
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: Build
+      - run: dotnet restore
+      - name: dotnet build
         run: dotnet build --configuration Release --no-restore
-      - name: Test
+      - name: dotnet test
         run: dotnet test --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --results-directory ./results
-      - name: Upload code coverage
+      - name: codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
