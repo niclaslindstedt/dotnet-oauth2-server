@@ -31,8 +31,7 @@ RUN dotnet test \
     --configuration Release \
     --no-restore \
     --no-build \
-    --output ./out \
-    --results-directory ./results
+    --output ./out
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as prod
 WORKDIR /app
