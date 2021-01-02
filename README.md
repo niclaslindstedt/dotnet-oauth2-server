@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Etimo/etimo-id/branch/develop/graph/badge.svg?token=3TJPDMKNRT)](https://codecov.io/gh/Etimo/etimo-id)
+
 # Etimo ID
 
 Etimo ID is a basic implementation of [OAuth2](https://tools.ietf.org/html/rfc6749#section-5.2), without all the bloat.
