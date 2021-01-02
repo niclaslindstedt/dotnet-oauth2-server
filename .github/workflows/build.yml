@@ -1,15 +1,17 @@
-name: Build Docker image
+name: Build
+
 on:
   push:
     branches: [ master, develop ]
+
 jobs:
-  build_docker_image:
+  build_image:
     name: Build Docker image
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: checkout
         uses: actions/checkout@v2
-      - name: Build Docker image
+      - name: build image
         uses: docker/build-push-action@v1
         with:
           dockerfile: ./Dockerfile
