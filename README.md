@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/Etimo/etimo-id/branch/develop/graph/badge.svg?token=3TJPDMKNRT)](https://codecov.io/gh/Etimo/etimo-id)
+[![Build](https://github.com/Etimo/etimo-id/workflows/Build/badge.svg?branch=develop)](https://github.com/Etimo/etimo-id/actions?query=workflow%3ABuild) [![Tests](https://github.com/Etimo/etimo-id/workflows/Tests/badge.svg?branch=develop)](https://github.com/Etimo/etimo-id/actions?query=workflow%3ATests) [![codecov](https://codecov.io/gh/Etimo/etimo-id/branch/develop/graph/badge.svg?token=3TJPDMKNRT)](https://codecov.io/gh/Etimo/etimo-id)
 
 # Etimo ID
 
