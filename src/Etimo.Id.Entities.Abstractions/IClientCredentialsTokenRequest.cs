@@ -7,5 +7,6 @@ namespace Etimo.Id.Entities.Abstractions
         Guid   ClientId          { get; }
         string ClientSecret      { get; }
         bool   CredentialsInBody { get; }
+        string Scope             { get; }
     }
 }

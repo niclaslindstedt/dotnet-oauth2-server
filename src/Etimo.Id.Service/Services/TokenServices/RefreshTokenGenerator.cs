@@ -174,7 +174,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 {
                     // Only allow the refreshed token to use the scopes issued with the
                     // original token as per https://tools.ietf.org/html/rfc6749#section-6
-                    string[] originalScopes = _refreshToken.AuthorizationCode.Scope.Split(" ");
+                    string[] originalScopes = _refreshToken.Scope.Split(" ");
                     if (originalScopes.All(scopeName => scopeName != scope))
                     {
                         throw new InvalidScopeException("The provided scope is invalid.");
@@ -190,7 +190,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 _refreshToken.ApplicationId,
                 _refreshToken.RedirectUri,
                 _refreshToken.UserId,
-                _scope);
+                _refreshToken.Scope);
 
         private Task<JwtToken> CreateJwtTokenAsync()
         {

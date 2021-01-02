@@ -8,6 +8,7 @@ namespace Etimo.Id.Entities.Abstractions
         string ClientSecret      { get; }
         string Username          { get; }
         string Password          { get; }
+        string Scope             { get; }
         bool   CredentialsInBody { get; }
     }
 }

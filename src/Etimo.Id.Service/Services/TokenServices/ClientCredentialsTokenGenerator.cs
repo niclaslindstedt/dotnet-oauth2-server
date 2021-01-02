@@ -84,6 +84,7 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 Audience        = new List<string> { _request.ClientId.ToString() },
                 Subject         = _application.UserId.ToString(),
+                Scope           = _request.Scope,
                 LifetimeMinutes = _application.AccessTokenLifetimeMinutes,
             };
 
@@ -94,10 +95,14 @@ namespace Etimo.Id.Service.TokenGenerators
         {
             if (!_application.GenerateRefreshTokenForClientCredentials) { return; }
 
-            _refreshToken = await _refreshTokenGenerator.GenerateRefreshTokenAsync(_application.ApplicationId, null, _application.UserId);
-            _refreshToken.GrantType = GrantTypes.ClientCredentials;
+            _refreshToken = await _refreshTokenGenerator.GenerateRefreshTokenAsync(
+                _application.ApplicationId,
+                null,
+                _application.UserId,
+                _request.Scope);
+            _refreshToken.GrantType     = GrantTypes.ClientCredentials;
             _refreshToken.AccessTokenId = _jwtToken.TokenId;
-            _jwtToken.RefreshToken = _refreshToken.RefreshTokenId;
+            _jwtToken.RefreshToken      = _refreshToken.RefreshTokenId;
         }
     }
 }
