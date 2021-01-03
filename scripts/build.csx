@@ -10,4 +10,4 @@
   script to ensure it actually runs.
 */
 
-Run("docker", $"build -t etimo-id-api .");
+Run("docker-compose", $"build etimo-id");
