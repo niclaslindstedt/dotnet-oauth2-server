@@ -105,3 +105,25 @@ repo | Updates to e.g. git hooks
 scripts | Updates to scripts in repository
 test | Write and refactor tests; no code change
 wip | Work in progress -- use in feature branches where you squash merge
+
+## Helper scripts
+
+Etimo-id comes with a bunch of helper scripts that make development easier.
+
+Script | Description
+--- | ---
+`add-migration.csx` | Adds a migration file (for pending entity updates).
+`bash.csx` | Bash into a running `etimo-id` container.
+`build.csx` | Build a `prod` Docker image.
+`code-cleanup.csx` | Format the code of modified files.
+`delete-database.csx` | Delete the database (and recreate it).
+`dev.csx` | Run the application in Docker with hot reload on code changes.
+`install-hooks.csx` | Install pre-commit git hooks (code cleanup).
+`logs.csx` | Follow the logs of the `etimo-id` container.
+`revert-migration.csx` | Revert the latest database migration.
+`run.csx` | Start the application (on the host).
+`setup-secrets.csx` | Setup secrets (on the host).
+`start.csx` | Start the application in `prod` mode in Docker.
+`stop.csx` | Stop the `etimo-id` container.
+`support.csx` | Start the supportive services (db + db admin tool).
+`update-database.csx` | Update the database to the latest migration.

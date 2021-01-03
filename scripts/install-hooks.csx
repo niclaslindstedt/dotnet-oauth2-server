@@ -1,6 +1,12 @@
 #!/usr/bin/env dotnet-script
-
 #load ".common.csx"
+
+/*
+  This script will install the 'code-cleanup.sh' git
+  hook in the .git/hooks/ folder. If the 'pre-commit'
+  script has already been created, it will append a
+  line that executes the 'code-cleanup.sh' script.
+*/
 
 var root = GetRootPath();
 var preCommitHookFile = $"{root}/.git/hooks/pre-commit";

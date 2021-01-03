@@ -1,6 +1,13 @@
 #!/usr/bin/env dotnet-script
-
 #load ".common.csx"
+
+/*
+  This script will cleanup the code and format it
+  according to the rules laid out in .editorconfig.
+  It will by default only format modified files.
+  If you wish to format all files, run it with the
+  --all argument.
+*/
 
 var formatAll = Args.Any(a => a == "--all");
 

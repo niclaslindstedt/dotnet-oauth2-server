@@ -1,6 +1,10 @@
 #!/bin/sh
 
-# This is a pre-commit hook that is meant to be installed in .git/hooks/
+#
+# This is a pre-commit hook script that should
+# be installed in the .git/hooks/ folder. It will
+# run code cleanup on all staged files.
+#
 
 csharp_staged() {
   for f in `git diff --name-only --cached`; do

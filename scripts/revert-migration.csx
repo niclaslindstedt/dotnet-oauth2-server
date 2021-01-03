@@ -1,6 +1,14 @@
 #!/usr/bin/env dotnet-script
-
 #load ".common.csx"
+
+/*
+  This script will revert a migration. If the migration
+  has been applied to the database, it will revert the
+  database to the previous migration. This is useful
+  if you've already added a migration, but need to make
+  further updates before committing the code, and you
+  don't want several migrations for your changes.
+*/
 
 using System.Text.RegularExpressions;
 
