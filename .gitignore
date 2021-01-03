@@ -6,6 +6,7 @@
 **/nupkg/
 **/out/
 **/packages/
+**/testresults/
 *.DotSettings.user
 appsettings.json
 package-lock.json

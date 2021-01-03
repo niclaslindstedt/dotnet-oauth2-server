@@ -126,4 +126,5 @@ Script | Description
 `start.csx` | Start the application in `prod` mode in Docker.
 `stop.csx` | Stop the `etimo-id` container.
 `support.csx` | Start the supportive services (db + db admin tool).
+`test.csx` | Run unit tests just like the test workflow.
 `update-database.csx` | Update the database to the latest migration.
