@@ -9,4 +9,3 @@
 **/testresults/
 *.DotSettings.user
 appsettings.json
-package-lock.json
