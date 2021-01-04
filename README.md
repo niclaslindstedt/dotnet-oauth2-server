@@ -110,6 +110,8 @@ wip | Work in progress -- use in feature branches where you squash merge
 
 Etimo-id comes with a bunch of helper scripts that make development easier.
 
+Run the scripts by issuing e.g. `dotnet script ./scripts/dev.csx`
+
 Script | Description
 --- | ---
 `add-migration.csx` | Adds a migration file (for pending entity updates).
@@ -128,3 +130,6 @@ Script | Description
 `support.csx` | Start the supportive services (db + db admin tool).
 `test.csx` | Run unit tests just like the test workflow.
 `update-database.csx` | Update the database to the latest migration.
+
+💡 Pro tip: create an alias for `dotnet script`, e.g. `ds` to make it easier to start scripts.
+💡 Pro tip #2: use tab-completion, e.g. `ds sc<tab>a<tab>` for `scripts/add-migration.csx`
