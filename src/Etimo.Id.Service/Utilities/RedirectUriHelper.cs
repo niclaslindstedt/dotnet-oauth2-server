@@ -15,8 +15,7 @@ namespace Etimo.Id.Service.Utilities
 
             foreach (string validRedirectUri in validRedirectUris)
             {
-                string uriWithoutQueryParams = uriToCompare.Split("?").First();
-                if (allowCustomQueryParameters && IsMatchWithoutQueryParameters(uriWithoutQueryParams, validRedirectUri)) { return true; }
+                if (allowCustomQueryParameters && IsMatchWithoutQueryParameters(uriToCompare, validRedirectUri)) { return true; }
 
                 if (uriToCompare == validRedirectUri) { return true; }
             }
@@ -25,8 +24,12 @@ namespace Etimo.Id.Service.Utilities
         }
 
         private static bool IsMatchWithoutQueryParameters(string uriToCompare, string validRedirectUri)
+        {
+            if (validRedirectUri.EndsWith("?")) { return uriToCompare.Split("?").First() == validRedirectUri.TrimEnd('?'); }
 
-            // The registered redirect uri needs to end with ? to allow custom query parameters.
-            => validRedirectUri.EndsWith("?") && uriToCompare == validRedirectUri.TrimEnd('?');
+            if (validRedirectUri.EndsWith("&")) { return uriToCompare.StartsWith(validRedirectUri); }
+
+            return false;
+        }
     }
 }
