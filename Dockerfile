@@ -6,7 +6,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && curl -sSL https://aka.ms/getvsdbgsh \
         | bash /dev/stdin -v latest -l /vsdbg
-COPY etimo-id.sln Directory.Build.props nuget.config ./
+COPY etimo-id.sln Directory.Build.props ./
 COPY src/Etimo.Id.Abstractions/*.csproj ./src/Etimo.Id.Abstractions/
 COPY src/Etimo.Id.Api/*.csproj ./src/Etimo.Id.Api/
 COPY src/Etimo.Id.Data/*.csproj ./src/Etimo.Id.Data/
