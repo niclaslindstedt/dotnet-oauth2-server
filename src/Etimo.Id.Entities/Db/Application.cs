@@ -18,6 +18,7 @@ namespace Etimo.Id.Entities
         public int      AccessTokenLifetimeMinutes                 { get; set; }
         public int      RefreshTokenLifetimeDays                   { get; set; }
         public bool     AllowCredentialsInBody                     { get; set; }
+        public bool     AllowCustomQueryParametersInRedirectUri    { get; set; }
         public bool     AllowAuthorizationCodeGrant                { get; set; }
         public bool     AllowClientCredentialsGrant                { get; set; }
         public bool     AllowResourceOwnerPasswordCredentialsGrant { get; set; }
@@ -46,6 +47,7 @@ namespace Etimo.Id.Entities
             AccessTokenLifetimeMinutes                 = applicationWithUpdates.AccessTokenLifetimeMinutes;
             RefreshTokenLifetimeDays                   = applicationWithUpdates.RefreshTokenLifetimeDays;
             AllowCredentialsInBody                     = applicationWithUpdates.AllowCredentialsInBody;
+            AllowCustomQueryParametersInRedirectUri    = applicationWithUpdates.AllowCustomQueryParametersInRedirectUri;
             AllowAuthorizationCodeGrant                = applicationWithUpdates.AllowAuthorizationCodeGrant;
             AllowClientCredentialsGrant                = applicationWithUpdates.AllowClientCredentialsGrant;
             AllowResourceOwnerPasswordCredentialsGrant = applicationWithUpdates.AllowResourceOwnerPasswordCredentialsGrant;

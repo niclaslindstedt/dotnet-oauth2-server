@@ -42,6 +42,7 @@ namespace Etimo.Id.Data
                     AccessTokenLifetimeMinutes                 = 15,
                     RefreshTokenLifetimeDays                   = 30,
                     AllowCredentialsInBody                     = false,
+                    AllowCustomQueryParametersInRedirectUri    = false,
                     AllowAuthorizationCodeGrant                = true,
                     AllowClientCredentialsGrant                = true,
                     AllowResourceOwnerPasswordCredentialsGrant = true,

@@ -3,7 +3,9 @@
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Entities;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Etimo.Id.Api.Applications
 {
@@ -31,8 +33,9 @@ namespace Etimo.Id.Api.Applications
         public string homepage_uri { get; set; }
 
         [Required]
-        [ValidUri]
-        public string redirect_uri { get; set; }
+        [MinCount(1)]
+        [ValidUris]
+        public List<string> redirect_uris { get; set; }
 
         [Range(5, 600)]
         public int authorization_code_lifetime_seconds { get; set; } = 180;
@@ -44,6 +47,7 @@ namespace Etimo.Id.Api.Applications
         public int refresh_token_lifetime_days { get; set; } = 30;
 
         public bool allow_credentials_in_body                       { get; set; } = false;
+        public bool allow_custom_query_parameters_in_redirect_uri   { get; set; } = false;
         public bool allow_authorization_code_grant                  { get; set; } = true;
         public bool allow_client_credentials_grant                  { get; set; } = true;
         public bool allow_resource_owner_password_credentials_grant { get; set; } = false;
@@ -64,11 +68,12 @@ namespace Etimo.Id.Api.Applications
                 Type                                       = type,
                 LogoBase64                                 = logo_base64,
                 HomepageUri                                = homepage_uri,
-                RedirectUri                                = redirect_uri,
+                RedirectUri                                = string.Join(" ", redirect_uris.Select(u => u.Trim())),
                 AuthorizationCodeLifetimeSeconds           = authorization_code_lifetime_seconds,
                 AccessTokenLifetimeMinutes                 = access_token_lifetime_minutes,
                 RefreshTokenLifetimeDays                   = refresh_token_lifetime_days,
                 AllowCredentialsInBody                     = allow_credentials_in_body,
+                AllowCustomQueryParametersInRedirectUri    = allow_custom_query_parameters_in_redirect_uri,
                 AllowAuthorizationCodeGrant                = allow_authorization_code_grant,
                 AllowClientCredentialsGrant                = allow_client_credentials_grant,
                 AllowResourceOwnerPasswordCredentialsGrant = allow_resource_owner_password_credentials_grant,

@@ -76,6 +76,8 @@ namespace Etimo.Id.Api.OAuth
             }
             catch (ErrorCodeException ex)
             {
+                if (query.redirect_uri == null) { throw new InvalidRequestException("The redirect_uri field is required."); }
+
                 redirectUri =  query.redirect_uri;
                 redirectUri += query.redirect_uri.Contains("?") ? "&" : "?";
                 redirectUri += $"error={Uri.EscapeDataString(ex.ErrorCode)}";

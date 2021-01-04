@@ -3,8 +3,10 @@ using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Constants;
 using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Service.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Etimo.Id.Service.TokenGenerators
@@ -108,10 +110,24 @@ namespace Etimo.Id.Service.TokenGenerators
                 throw new InvalidGrantException("This application does not allow passing credentials in the request body.");
             }
 
-            _redirectUri = _request.RedirectUri ?? _application.RedirectUri;
-            if (_redirectUri != _application.RedirectUri)
+            var redirectUris = _application.RedirectUri.Split(" ").ToList();
+            if (_request.RedirectUri == null)
             {
-                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+                if (redirectUris.Count() > 1)
+                {
+                    throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+                }
+
+                _redirectUri = redirectUris.First();
+            }
+            else
+            {
+                if (!RedirectUriHelper.UriMatches(_request.RedirectUri, redirectUris, _application.AllowCustomQueryParametersInRedirectUri))
+                {
+                    throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+                }
+
+                _redirectUri = _request.RedirectUri;
             }
         }
 

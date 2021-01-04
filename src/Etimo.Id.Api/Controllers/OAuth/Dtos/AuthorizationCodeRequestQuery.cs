@@ -20,6 +20,7 @@ namespace Etimo.Id.Api.OAuth
         [Required]
         public Guid? client_id { get; set; }
 
+        [Required]
         [ValidUri]
         public string redirect_uri { get; set; }
 

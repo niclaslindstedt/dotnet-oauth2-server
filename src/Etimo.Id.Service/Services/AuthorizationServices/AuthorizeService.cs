@@ -4,6 +4,7 @@ using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using Etimo.Id.Service.Scopes;
 using Etimo.Id.Service.Settings;
+using Etimo.Id.Service.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,11 +79,15 @@ namespace Etimo.Id.Service
 
             _allScopes = string.Join(" ", allScopes);
 
-            // Make sure the provided redirect uri is identical to the registered redirect uri.
-            string redirectUri = _request.RedirectUri ?? _application.RedirectUri;
-            if (redirectUri != _application.RedirectUri)
+            var redirectUris = _application.RedirectUri.Split(" ").ToList();
+            if (_request.RedirectUri == null && redirectUris.Count() > 1)
             {
-                throw new InvalidGrantException("The provided redirect URI does not match the one on record.", _request.State);
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
+            }
+
+            if (!RedirectUriHelper.UriMatches(_request.RedirectUri, redirectUris, _application.AllowCustomQueryParametersInRedirectUri))
+            {
+                throw new InvalidGrantException("The provided redirect URI does not match the one on record.");
             }
         }
 
