@@ -44,8 +44,11 @@ if (!File.Exists(hookPath))
     File.Copy($"{root}/scripts/{hookFileName}", hookPath);
 }
 
-Console.WriteLine("* Setting execution permissions");
-Run("chmod", $"+x {preCommitHookFile}");
-Run("chmod", $"+x {hookPath}");
+if (File.Exists("/bin/chmod"))
+{
+    Console.WriteLine("* Setting execution permissions");
+    Run("chmod", $"+x {preCommitHookFile}");
+    Run("chmod", $"+x {hookPath}");
+}
 
 Console.WriteLine("\nPre-commit hook successfully installed");

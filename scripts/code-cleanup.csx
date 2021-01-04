@@ -36,4 +36,4 @@ else
     include = "";
 }
 
-Run("jb", $"cleanupcode etimo-id.sln -p=\"Built-in: Full Cleanup\" --toolset=16.0 {include} --exclude=**/Migrations/*");
+Run("dotnet", $"jb cleanupcode etimo-id.sln -p=\"Built-in: Full Cleanup\" --toolset=16.0 {include} --exclude=**/Migrations/*");

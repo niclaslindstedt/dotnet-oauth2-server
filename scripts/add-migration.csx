@@ -8,6 +8,12 @@
   database is up to date, otherwise the app will fail.
 */
 
+if (Args.Count == 0)
+{
+    Console.WriteLine("You need to specify a migration name");
+    Environment.Exit(1);
+}
+
 var exitCode = Run("dotnet", $"ef migrations add {Args[0]} --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api --msbuildprojectextensionspath artifacts/obj/Etimo.Id.Api");
 
 if (exitCode == 0)
