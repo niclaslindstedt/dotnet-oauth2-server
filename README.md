@@ -128,8 +128,10 @@ Script | Description
 `start.csx` | Start the application in `prod` mode in Docker.
 `stop.csx` | Stop the `etimo-id` container.
 `support.csx` | Start the supportive services (db + db admin tool).
-`test.csx` | Run unit tests just like the test workflow.
+`test.csx` | Run unit tests (on the host) just like the test workflow.
 `update-database.csx` | Update the database to the latest migration.
+`watch-run.csx` | Start the application (on the host) with hot reload.
+`watch-test.csx` | Run the tests (on the host) with hot reload.
 
-💡 Pro tip: create an alias for `dotnet script`, e.g. `ds` to make it easier to start scripts.
+💡 Pro tip: create an alias for `dotnet script`, e.g. `ds` to make it easier to start scripts.<br />
 💡 Pro tip #2: use tab-completion, e.g. `ds sc<tab>a<tab>` for `scripts/add-migration.csx`
