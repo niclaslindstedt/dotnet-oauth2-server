@@ -19,4 +19,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Service\Etimo.Id.Service.csproj" />
+  </ItemGroup>
+
 </Project>

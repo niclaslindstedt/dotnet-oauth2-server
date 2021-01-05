@@ -27,7 +27,7 @@ namespace Etimo.Id.Service.Utilities
         {
             if (validRedirectUri.EndsWith("?")) { return uriToCompare.Split("?").First() == validRedirectUri.TrimEnd('?'); }
 
-            if (validRedirectUri.EndsWith("&")) { return uriToCompare.StartsWith(validRedirectUri); }
+            if (validRedirectUri.EndsWith("&")) { return uriToCompare.StartsWith(validRedirectUri.TrimEnd('&')); }
 
             return false;
         }
