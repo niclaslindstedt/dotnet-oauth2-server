@@ -1,6 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service;
 using Moq;
 using System;
@@ -85,20 +84,13 @@ namespace Etimo.Id.Tests
                 new Mock<IUserRepository>().Object,
                 CreateApplicationRepository(application),
                 new Mock<ICreateAuditLogService>().Object,
-                CreateRequestContext(application.ClientId));
+                new RequestContext { ClientId = application.ClientId });
         }
 
         private IApplicationRepository CreateApplicationRepository(Application applicationToReturn)
         {
             var mock = new Mock<IApplicationRepository>();
             mock.Setup(m => m.FindByClientIdAsync(applicationToReturn.ClientId)).ReturnsAsync(applicationToReturn);
-            return mock.Object;
-        }
-
-        private IRequestContext CreateRequestContext(Guid clientIdToReturn)
-        {
-            var mock = new Mock<IRequestContext>();
-            mock.Setup(m => m.ClientId).Returns(clientIdToReturn);
             return mock.Object;
         }
     }

@@ -11,6 +11,7 @@ namespace Etimo.Id.Entities
         public List<string> Scopes      { get; set; } = new();
         public Guid?        UserId      { get; set; }
         public string       Username    { get; set; }
+        public string       IpAddress   { get; set; }
 
         public Guid GetClientId()
             => ClientId.GetValueOrDefault();

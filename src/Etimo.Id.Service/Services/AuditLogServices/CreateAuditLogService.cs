@@ -31,13 +31,47 @@ namespace Etimo.Id.Service
             AuditLog auditLog = new()
             {
                 Type = AuditLogTypes.FailedLogin,
-                Message =
-                    $"Too many login attempts ({application.FailedLoginsBeforeLocked}). The account has been locked for {application.FailedLoginsLockLifetimeMinutes} minutes.",
+                Message = $"Too many login attempts ({application.FailedLoginsBeforeLocked})."
+                  + $"The account has been locked for {application.FailedLoginsLockLifetimeMinutes} minutes.",
                 UserId        = user.UserId,
                 ApplicationId = application.ApplicationId,
             };
 
             _auditLogRepository.Add(auditLog);
+            await _auditLogRepository.SaveAsync();
+        }
+
+        public async Task CreateAuthorizationCodeAbuseAuditLogAsync(AuthorizationCode code)
+        {
+            Application application = await _applicationRepository.FindByClientIdAsync(_requestContext.ClientId.Value);
+
+            AuditLog auditLog = new()
+            {
+                Type          = AuditLogTypes.CodeReuse,
+                Message       = $"Authorization code reuse detected from IP address {_requestContext.IpAddress}.",
+                UserId        = code.UserId.Value,
+                ApplicationId = application.ApplicationId,
+            };
+
+            _auditLogRepository.Add(auditLog);
+
+            await _auditLogRepository.SaveAsync();
+        }
+
+        public async Task CreateRefreshTokenAbuseAuditLogAsync(RefreshToken refreshToken)
+        {
+            Application application = await _applicationRepository.FindByClientIdAsync(_requestContext.ClientId.Value);
+
+            AuditLog auditLog = new()
+            {
+                Type          = AuditLogTypes.RefreshTokenAbuse,
+                Message       = $"Refresh token abuse detected from IP address {_requestContext.IpAddress}.",
+                UserId        = refreshToken.UserId,
+                ApplicationId = application.ApplicationId,
+            };
+
+            _auditLogRepository.Add(auditLog);
+
             await _auditLogRepository.SaveAsync();
         }
     }

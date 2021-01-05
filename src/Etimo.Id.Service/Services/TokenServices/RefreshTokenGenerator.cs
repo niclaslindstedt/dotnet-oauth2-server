@@ -16,6 +16,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokenRepository     _accessTokenRepository;
         private readonly IApplicationRepository     _applicationRepository;
         private readonly IAuthenticateClientService _authenticateClientService;
+        private readonly ICreateAuditLogService     _createAuditLogService;
         private readonly IJwtTokenFactory           _jwtTokenFactory;
         private readonly IPasswordGenerator         _passwordGenerator;
         private readonly IRefreshTokenRepository    _refreshTokenRepository;
@@ -28,6 +29,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public RefreshTokenGenerator(
             IAuthenticateClientService applicationService,
+            ICreateAuditLogService createAuditLogService,
             IRefreshTokenRepository refreshTokenRepository,
             IAccessTokenRepository accessTokenRepository,
             IApplicationRepository applicationRepository,
@@ -37,6 +39,7 @@ namespace Etimo.Id.Service.TokenGenerators
             OAuth2Settings settings)
         {
             _authenticateClientService = applicationService;
+            _createAuditLogService     = createAuditLogService;
             _refreshTokenRepository    = refreshTokenRepository;
             _accessTokenRepository     = accessTokenRepository;
             _applicationRepository     = applicationRepository;
@@ -114,6 +117,8 @@ namespace Etimo.Id.Service.TokenGenerators
             // If someone tries to use the same refresh token twice, disable the access token.
             if (_refreshToken.Used)
             {
+                await _createAuditLogService.CreateRefreshTokenAbuseAuditLogAsync(_refreshToken);
+
                 if (_refreshToken.AccessToken != null && !_refreshToken.AccessToken.IsExpired)
                 {
                     _refreshToken.AccessToken.Disabled = true;

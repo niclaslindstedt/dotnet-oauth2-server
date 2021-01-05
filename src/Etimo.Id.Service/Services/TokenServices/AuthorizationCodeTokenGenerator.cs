@@ -16,6 +16,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IAccessTokenRepository         _accessTokenRepository;
         private readonly IAuthenticateClientService     _authenticateClientService;
         private readonly IAuthorizationCodeRepository   _authorizationCodeRepository;
+        private readonly ICreateAuditLogService         _createAuditLogService;
         private readonly IFindApplicationService        _findApplicationService;
         private readonly IJwtTokenFactory               _jwtTokenFactory;
         private readonly IRefreshTokenGenerator         _refreshTokenGenerator;
@@ -30,7 +31,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public AuthorizationCodeTokenGenerator(
             IAuthenticateClientService authenticateClientService,
-            IFindApplicationService applicationService,
+            ICreateAuditLogService createAuditLogService,
+            IFindApplicationService findApplicationService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokenRepository accessTokenRepository,
@@ -39,7 +41,8 @@ namespace Etimo.Id.Service.TokenGenerators
             IRequestContext requestContext)
         {
             _authenticateClientService   = authenticateClientService;
-            _findApplicationService      = applicationService;
+            _createAuditLogService       = createAuditLogService;
+            _findApplicationService      = findApplicationService;
             _refreshTokenGenerator       = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokenRepository       = accessTokenRepository;
@@ -85,6 +88,8 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 if (_code.AccessToken != null)
                 {
+                    await _createAuditLogService.CreateAuthorizationCodeAbuseAuditLogAsync(_code);
+
                     _code.AccessToken.Disabled = true;
                     await _accessTokenRepository.SaveAsync();
                 }

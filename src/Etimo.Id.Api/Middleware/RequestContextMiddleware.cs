@@ -36,6 +36,8 @@ namespace Etimo.Id.Api.Middleware
                 if (clientId != null) { requestContext.ClientId = new Guid(clientId); }
             }
 
+            requestContext.IpAddress = context.Connection.RemoteIpAddress.ToString();
+
             await _next(context);
         }
     }
