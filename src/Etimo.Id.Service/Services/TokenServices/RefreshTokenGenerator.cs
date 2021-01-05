@@ -197,6 +197,7 @@ namespace Etimo.Id.Service.TokenGenerators
             var jwtRequest = new JwtTokenRequest
             {
                 Audience        = new List<string> { _refreshToken.Application.ClientId.ToString() },
+                ClientId        = _refreshToken.Application.ClientId,
                 Subject         = _refreshToken.UserId.ToString(),
                 Scope           = _scope,
                 LifetimeMinutes = _refreshToken.Application.AccessTokenLifetimeMinutes,

@@ -42,6 +42,7 @@ namespace Etimo.Id.Service.TokenGenerators
                 new(JwtRegisteredClaimNames.Nbf, GetUnixTime(DateTime.UtcNow.AddMinutes(-5)).ToString(), ClaimValueTypes.Integer32),
                 new(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
+                new(JwtRegisteredClaimNames.Azp, request.ClientId.ToString()),
             };
 
             // https://tools.ietf.org/html/rfc7519#section-4.2

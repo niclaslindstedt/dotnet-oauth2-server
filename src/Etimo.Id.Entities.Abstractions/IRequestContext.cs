@@ -9,5 +9,8 @@ namespace Etimo.Id.Entities.Abstractions
         List<string> Scopes   { get; set; }
         Guid?        UserId   { get; set; }
         string       Username { get; set; }
+
+        Guid GetClientId();
+        Guid GetUserId();
     }
 }

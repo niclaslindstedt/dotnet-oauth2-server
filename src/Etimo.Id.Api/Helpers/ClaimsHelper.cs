@@ -11,18 +11,21 @@ namespace Etimo.Id.Api.Helpers
 {
     public static class ClaimsHelper
     {
-        public static string GetUserClaim(this Controller controller, string claim)
+        public static string GetUserClaimValue(this Controller controller, string claim)
             => controller.Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == claim)?.Value;
 
-        public static string GetUserClaim(this HttpRequest request, string claim)
+        public static string GetUserClaimValue(this HttpRequest request, string claim)
             => request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == claim)?.Value;
+
+        public static List<Claim> GetUserClaims(this HttpRequest request, string claim)
+            => request.HttpContext.User.Claims.Where(c => c.Type == claim)?.ToList();
 
         /// <summary>
         ///     Gets the UserId from the list of claims that the requester has.
         /// </summary>
         public static Guid GetUserId(this Controller controller)
         {
-            string userId = controller.GetUserClaim(ClaimTypes.NameIdentifier);
+            string userId = controller.GetUserClaimValue(ClaimTypes.NameIdentifier);
 
             return userId != null ? new Guid(userId) : Guid.Empty;
         }
@@ -43,7 +46,7 @@ namespace Etimo.Id.Api.Helpers
         /// </summary>
         public static Guid GetClientId(this Controller controller)
         {
-            string audClaim = controller.GetUserClaim(JwtRegisteredClaimNames.Aud);
+            string audClaim = controller.GetUserClaimValue(JwtRegisteredClaimNames.Aud);
             if (audClaim == null || !Guid.TryParse(audClaim, out Guid clientId))
             {
                 throw new UnauthorizedAccessException("The access token lacks the 'aud' claim.");
@@ -57,7 +60,7 @@ namespace Etimo.Id.Api.Helpers
         /// </summary>
         public static Guid GetAccessTokenId(this Controller controller)
         {
-            string jitClaim = controller.GetUserClaim(JwtRegisteredClaimNames.Jti);
+            string jitClaim = controller.GetUserClaimValue(JwtRegisteredClaimNames.Jti);
             if (jitClaim == null || !Guid.TryParse(jitClaim, out Guid accessTokenId))
             {
                 throw new UnauthorizedAccessException("The access token lacks the 'jit' claim.");

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Etimo.Id.Entities.Abstractions
@@ -6,6 +7,7 @@ namespace Etimo.Id.Entities.Abstractions
     {
         string       Subject         { get; }
         List<string> Audience        { get; }
+        Guid         ClientId        { get; }
         string       Scope           { get; }
         int          LifetimeMinutes { get; }
     }
