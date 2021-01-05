@@ -21,6 +21,20 @@ namespace Etimo.Id.Tests
         }
 
         [Fact]
+        public void UriMatches_NoUri_ShouldReturnTrue()
+        {
+            // Arrange
+            string       uri            = null;
+            List<string> registeredUris = new() { "http://localhost/callback" };
+
+            // Act
+            bool result = RedirectUriHelper.UriMatches(uri, registeredUris, true);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public void UriMatches_MatchingInList_ShouldReturnTrue()
         {
             // Arrange
