@@ -42,6 +42,9 @@ namespace Etimo.Id.Service
                 throw new InvalidGrantException("Invalid user credentials.", state);
             }
 
+            user.FailedLogins = 0;
+            await _userRepository.SaveAsync();
+
             return user;
         }
     }
