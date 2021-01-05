@@ -9,16 +9,19 @@ namespace Etimo.Id.Service
     public class LockUserService : ILockUserService
     {
         private readonly IApplicationRepository _applicationRepository;
+        private readonly ICreateAuditLogService _createAuditLogService;
         private readonly IRequestContext        _requestContext;
         private readonly IUserRepository        _userRepository;
 
         public LockUserService(
             IUserRepository userRepository,
             IApplicationRepository applicationRepository,
+            ICreateAuditLogService createAuditLogService,
             IRequestContext requestContext)
         {
             _userRepository        = userRepository;
             _applicationRepository = applicationRepository;
+            _createAuditLogService = createAuditLogService;
             _requestContext        = requestContext;
         }
 
@@ -30,6 +33,8 @@ namespace Etimo.Id.Service
             {
                 user.LockedUntilDateTime = DateTime.UtcNow.AddMinutes(application.FailedLoginsLockLifetimeMinutes);
                 user.FailedLogins        = 0;
+
+                await _createAuditLogService.CreateFailedLoginAuditLogAsync(user);
             }
 
             await _userRepository.SaveAsync();

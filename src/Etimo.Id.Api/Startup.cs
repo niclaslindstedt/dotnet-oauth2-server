@@ -127,6 +127,7 @@ namespace Etimo.Id.Api
             services.AddTransient<IUpdateApplicationService, UpdateApplicationService>();
 
             // AuditLogServices
+            services.AddTransient<ICreateAuditLogService, CreateAuditLogService>();
             services.AddTransient<IFindAuditLogService, FindAuditLogService>();
             services.AddTransient<IGetAuditLogsService, GetAuditLogsService>();
 

@@ -21,12 +21,15 @@ namespace Etimo.Id.Api.Applications
 
         public static AuditLogResponseDto FromAuditLog(AuditLog auditLog, bool includeChildren)
         {
+            object body = null;
+            if (!string.IsNullOrWhiteSpace(auditLog.Body)) { body = JsonSerializer.Deserialize<object>(auditLog.Body); }
+
             var dto = new AuditLogResponseDto
             {
                 audit_log_id   = auditLog.AuditLogId,
                 type           = auditLog.Type,
                 message        = auditLog.Message,
-                body           = JsonSerializer.Deserialize<object>(auditLog.Body),
+                body           = body,
                 user_id        = auditLog.UserId,
                 application_id = auditLog.ApplicationId,
                 created_date   = auditLog.CreatedDateTime,

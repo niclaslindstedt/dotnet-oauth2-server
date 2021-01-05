@@ -84,6 +84,7 @@ namespace Etimo.Id.Tests
             return new LockUserService(
                 CreateUserRepository(),
                 CreateApplicationRepository(application),
+                CreateAuditLogService(),
                 CreateRequestContext(application.ClientId));
         }
 
@@ -98,6 +99,13 @@ namespace Etimo.Id.Tests
         {
             var mock = new Mock<IApplicationRepository>();
             mock.Setup(m => m.FindByClientIdAsync(applicationToReturn.ClientId)).Returns(Task.FromResult(applicationToReturn));
+            return mock.Object;
+        }
+
+        private ICreateAuditLogService CreateAuditLogService()
+        {
+            var mock = new Mock<ICreateAuditLogService>();
+            mock.Setup(m => m.CreateFailedLoginAuditLogAsync(It.IsAny<User>())).Returns(Task.FromResult(new object()));
             return mock.Object;
         }
 
