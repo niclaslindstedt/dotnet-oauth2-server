@@ -38,6 +38,8 @@ namespace Etimo.Id.Data
                     LogoBase64                                 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgID",
                     HomepageUri                                = "https://localhost:5010",
                     RedirectUri                                = "https://localhost:5010/oauth2/callback",
+                    FailedLoginsBeforeLocked                   = 3,
+                    FailedLoginsLockLifetimeMinutes            = 30,
                     AuthorizationCodeLifetimeSeconds           = 15,
                     AccessTokenLifetimeMinutes                 = 15,
                     RefreshTokenLifetimeDays                   = 30,

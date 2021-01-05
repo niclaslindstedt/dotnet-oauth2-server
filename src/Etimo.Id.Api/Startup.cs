@@ -159,6 +159,7 @@ namespace Etimo.Id.Api
             services.AddTransient<IDeleteUserService, DeleteUserService>();
             services.AddTransient<IFindUserService, FindUserService>();
             services.AddTransient<IGetUsersService, GetUsersService>();
+            services.AddTransient<ILockUserService, LockUserService>();
             services.AddTransient<IUpdateUserService, UpdateUserService>();
 
             // Token Generators

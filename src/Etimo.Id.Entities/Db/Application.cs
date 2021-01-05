@@ -14,6 +14,8 @@ namespace Etimo.Id.Entities
         public string   LogoBase64                                 { get; set; }
         public string   HomepageUri                                { get; set; }
         public string   RedirectUri                                { get; set; }
+        public int      FailedLoginsBeforeLocked                   { get; set; }
+        public int      FailedLoginsLockLifetimeMinutes            { get; set; }
         public int      AuthorizationCodeLifetimeSeconds           { get; set; }
         public int      AccessTokenLifetimeMinutes                 { get; set; }
         public int      RefreshTokenLifetimeDays                   { get; set; }
@@ -43,6 +45,8 @@ namespace Etimo.Id.Entities
             LogoBase64                                 = applicationWithUpdates.LogoBase64;
             HomepageUri                                = applicationWithUpdates.HomepageUri;
             RedirectUri                                = applicationWithUpdates.RedirectUri;
+            FailedLoginsBeforeLocked                   = applicationWithUpdates.FailedLoginsBeforeLocked;
+            FailedLoginsLockLifetimeMinutes            = applicationWithUpdates.FailedLoginsLockLifetimeMinutes;
             AuthorizationCodeLifetimeSeconds           = applicationWithUpdates.AuthorizationCodeLifetimeSeconds;
             AccessTokenLifetimeMinutes                 = applicationWithUpdates.AccessTokenLifetimeMinutes;
             RefreshTokenLifetimeDays                   = applicationWithUpdates.RefreshTokenLifetimeDays;

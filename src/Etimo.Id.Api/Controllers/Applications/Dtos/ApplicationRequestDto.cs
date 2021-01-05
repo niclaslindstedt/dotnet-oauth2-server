@@ -37,6 +37,12 @@ namespace Etimo.Id.Api.Applications
         [ValidUris]
         public List<string> redirect_uris { get; set; }
 
+        [Range(1, 1440)]
+        public int failed_logins_before_locked { get; set; } = 3;
+
+        [Range(1, 1440)]
+        public int failed_logins_lock_lifetime_minutes { get; set; } = 30;
+
         [Range(5, 600)]
         public int authorization_code_lifetime_seconds { get; set; } = 180;
 
@@ -46,18 +52,17 @@ namespace Etimo.Id.Api.Applications
         [Range(1, 90)]
         public int refresh_token_lifetime_days { get; set; } = 30;
 
-        public bool allow_credentials_in_body                       { get; set; } = false;
-        public bool allow_custom_query_parameters_in_redirect_uri   { get; set; } = false;
-        public bool allow_authorization_code_grant                  { get; set; } = true;
-        public bool allow_client_credentials_grant                  { get; set; } = true;
-        public bool allow_resource_owner_password_credentials_grant { get; set; } = false;
-        public bool allow_implicit_grant                            { get; set; } = false;
-        public bool generate_refresh_token_for_authorization_code   { get; set; } = true;
-        public bool generate_refresh_token_for_client_credentials   { get; set; } = false;
-        public bool generate_refresh_token_for_password_credentials { get; set; } = false;
-        public bool generate_refresh_token_for_implicit_flow        { get; set; } = true;
-
-        public Guid? user_id { get; set; }
+        public bool  allow_credentials_in_body                       { get; set; } = false;
+        public bool  allow_custom_query_parameters_in_redirect_uri   { get; set; } = false;
+        public bool  allow_authorization_code_grant                  { get; set; } = true;
+        public bool  allow_client_credentials_grant                  { get; set; } = true;
+        public bool  allow_resource_owner_password_credentials_grant { get; set; } = false;
+        public bool  allow_implicit_grant                            { get; set; } = false;
+        public bool  generate_refresh_token_for_authorization_code   { get; set; } = true;
+        public bool  generate_refresh_token_for_client_credentials   { get; set; } = false;
+        public bool  generate_refresh_token_for_password_credentials { get; set; } = false;
+        public bool  generate_refresh_token_for_implicit_flow        { get; set; } = true;
+        public Guid? user_id                                         { get; set; }
 
         public Application ToApplication(int? applicationId = null)
             => new()
@@ -69,6 +74,8 @@ namespace Etimo.Id.Api.Applications
                 LogoBase64                                 = logo_base64,
                 HomepageUri                                = homepage_uri,
                 RedirectUri                                = string.Join(" ", redirect_uris.Select(u => u.Trim())),
+                FailedLoginsBeforeLocked                   = failed_logins_before_locked,
+                FailedLoginsLockLifetimeMinutes            = failed_logins_lock_lifetime_minutes,
                 AuthorizationCodeLifetimeSeconds           = authorization_code_lifetime_seconds,
                 AccessTokenLifetimeMinutes                 = access_token_lifetime_minutes,
                 RefreshTokenLifetimeDays                   = refresh_token_lifetime_days,

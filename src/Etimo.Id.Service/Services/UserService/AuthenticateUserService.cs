@@ -8,13 +8,18 @@ namespace Etimo.Id.Service
 {
     public class AuthenticateUserService : IAuthenticateUserService
     {
-        private readonly IPasswordHasher _passwordHasher;
-        private readonly IUserRepository _userRepository;
+        private readonly ILockUserService _lockUserService;
+        private readonly IPasswordHasher  _passwordHasher;
+        private readonly IUserRepository  _userRepository;
 
-        public AuthenticateUserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        public AuthenticateUserService(
+            IUserRepository userRepository,
+            ILockUserService lockUserService,
+            IPasswordHasher passwordHasher)
         {
-            _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
+            _userRepository  = userRepository;
+            _lockUserService = lockUserService;
+            _passwordHasher  = passwordHasher;
         }
 
         public Task<User> AuthenticateAsync(IAuthenticationRequest request)
@@ -28,7 +33,14 @@ namespace Etimo.Id.Service
             User user = await _userRepository.FindByUsernameAsync(username);
             if (user == null) { throw new InvalidGrantException("Invalid user credentials.", state); }
 
-            if (!_passwordHasher.Verify(password, user.Password)) { throw new InvalidGrantException("Invalid user credentials.", state); }
+            if (user.IsLocked) { throw new InvalidGrantException("This user has been locked because of too many failed login attempts."); }
+
+            if (!_passwordHasher.Verify(password, user.Password))
+            {
+                await _lockUserService.LockAsync(user);
+
+                throw new InvalidGrantException("Invalid user credentials.", state);
+            }
 
             return user;
         }

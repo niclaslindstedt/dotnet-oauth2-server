@@ -32,6 +32,9 @@ namespace Etimo.Id.Data.Repositories
         public Task<Application> FindByClientIdAsync(Guid clientId)
             => _dbContext.Applications.FirstOrDefaultAsync(a => a.ClientId == clientId);
 
+        public Task<bool> ExistsByClientIdAsync(Guid clientId)
+            => _dbContext.Applications.AnyAsync(a => a.ClientId == clientId);
+
         public void Add(Application application)
             => _dbContext.Applications.Add(application);
 

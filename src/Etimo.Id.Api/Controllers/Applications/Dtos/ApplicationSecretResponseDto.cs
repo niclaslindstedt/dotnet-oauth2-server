@@ -19,6 +19,8 @@ namespace Etimo.Id.Api.Applications
                 logo_base64                                     = application.LogoBase64,
                 homepage_uri                                    = application.HomepageUri,
                 redirect_uris                                   = application.RedirectUri.Split(" ").ToList(),
+                failed_logins_before_locked                     = application.FailedLoginsBeforeLocked,
+                failed_logins_lock_lifetime_minutes             = application.FailedLoginsLockLifetimeMinutes,
                 authorization_code_lifetime_seconds             = application.AuthorizationCodeLifetimeSeconds,
                 access_token_lifetime_minutes                   = application.AccessTokenLifetimeMinutes,
                 refresh_token_lifetime_days                     = application.RefreshTokenLifetimeDays,

@@ -4,6 +4,7 @@ using Etimo.Id.Api.Constants;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Entities;
+using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +21,19 @@ namespace Etimo.Id.Api.OAuth
     {
         private readonly IAuthorizeService     _authorizeService;
         private readonly IGenerateTokenService _generateTokenService;
+        private readonly IRequestContext       _requestContext;
         private readonly IValidateTokenService _validateTokenService;
 
         public OAuthController(
             IAuthorizeService authorizeService,
             IValidateTokenService validateTokenService,
-            IGenerateTokenService generateTokenService)
+            IGenerateTokenService generateTokenService,
+            IRequestContext requestContext)
         {
             _authorizeService     = authorizeService;
             _validateTokenService = validateTokenService;
             _generateTokenService = generateTokenService;
+            _requestContext       = requestContext;
         }
 
         [HttpGet]
@@ -70,6 +74,9 @@ namespace Etimo.Id.Api.OAuth
                 }
 
                 if (Request.IsBasicAuthentication()) { (form.username, form.password) = Request.GetCredentialsFromAuthorizationHeader(); }
+
+                _requestContext.ClientId = query.client_id;
+                _requestContext.Username = form.username;
 
                 AuthorizationRequest request = query.ToAuthorizeRequest(form.username, form.password);
                 redirectUri = await _authorizeService.AuthorizeAsync(request);
@@ -125,6 +132,8 @@ namespace Etimo.Id.Api.OAuth
                 request.ClientId     = ParseClientId(clientId);
                 request.ClientSecret = clientSecret;
             }
+
+            _requestContext.ClientId = form.client_id;
 
             JwtToken token = await _generateTokenService.GenerateTokenAsync(request);
 

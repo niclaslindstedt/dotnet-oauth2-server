@@ -12,6 +12,7 @@ namespace Etimo.Id.Service.TokenGenerators
     public class ResourceOwnerCredentialsTokenGenerator : IResourceOwnerCredentialsTokenGenerator
     {
         private readonly IAccessTokenRepository                        _accessTokenRepository;
+        private readonly IApplicationRepository                        _applicationRepository;
         private readonly IAuthenticateClientService                    _authenticateClientService;
         private readonly IAuthenticateUserService                      _authenticateUserService;
         private readonly IJwtTokenFactory                              _jwtTokenFactory;
@@ -25,14 +26,16 @@ namespace Etimo.Id.Service.TokenGenerators
 
         public ResourceOwnerCredentialsTokenGenerator(
             IAuthenticateUserService authenticateUserService,
-            IAuthenticateClientService applicationService,
+            IAuthenticateClientService authenticateClientService,
             IAccessTokenRepository accessTokenRepository,
+            IApplicationRepository applicationRepository,
             IRefreshTokenGenerator refreshTokenGenerator,
             IJwtTokenFactory jwtTokenFactory,
             IRequestContext requestContext)
         {
             _authenticateUserService   = authenticateUserService;
-            _authenticateClientService = applicationService;
+            _authenticateClientService = authenticateClientService;
+            _applicationRepository     = applicationRepository;
             _refreshTokenGenerator     = refreshTokenGenerator;
             _accessTokenRepository     = accessTokenRepository;
             _jwtTokenFactory           = jwtTokenFactory;
@@ -63,14 +66,16 @@ namespace Etimo.Id.Service.TokenGenerators
 
         private async Task ValidateRequestAsync()
         {
-            if (_request.ClientId == Guid.Empty || _request.ClientSecret == null)
-            {
-                throw new InvalidClientException("Invalid client credentials.");
-            }
-
             if (_request.Username == null || _request.Password == null)
             {
                 throw new InvalidGrantException("Invalid resource owner credentials.");
+            }
+
+            if (_request.ClientId == Guid.Empty
+             || _request.ClientSecret == null
+             || !await _applicationRepository.ExistsByClientIdAsync(_request.ClientId))
+            {
+                throw new InvalidClientException("Invalid client credentials.");
             }
 
             _user        = await _authenticateUserService.AuthenticateAsync(_request.Username, _request.Password);
