@@ -15,6 +15,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IApplicationRepository                        _applicationRepository;
         private readonly IAuthenticateClientService                    _authenticateClientService;
         private readonly IAuthenticateUserService                      _authenticateUserService;
+        private readonly ICreateAuditLogService                        _createAuditLogService;
         private readonly IJwtTokenFactory                              _jwtTokenFactory;
         private readonly IRefreshTokenGenerator                        _refreshTokenGenerator;
         private readonly IRequestContext                               _requestContext;
@@ -29,6 +30,7 @@ namespace Etimo.Id.Service.TokenGenerators
             IAuthenticateClientService authenticateClientService,
             IAccessTokenRepository accessTokenRepository,
             IApplicationRepository applicationRepository,
+            ICreateAuditLogService createAuditLogService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IJwtTokenFactory jwtTokenFactory,
             IRequestContext requestContext)
@@ -36,6 +38,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _authenticateUserService   = authenticateUserService;
             _authenticateClientService = authenticateClientService;
             _applicationRepository     = applicationRepository;
+            _createAuditLogService     = createAuditLogService;
             _refreshTokenGenerator     = refreshTokenGenerator;
             _accessTokenRepository     = accessTokenRepository;
             _jwtTokenFactory           = jwtTokenFactory;
@@ -83,6 +86,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
             if (!_application.AllowResourceOwnerPasswordCredentialsGrant)
             {
+                await _createAuditLogService.CreateForbiddenGrantTypeAuditLogAsync(GrantTypes.AuthorizationCode);
+
                 throw new UnsupportedGrantTypeException("This authorization grant is not allowed for this application.");
             }
 

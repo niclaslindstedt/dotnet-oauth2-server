@@ -20,19 +20,16 @@ namespace Etimo.Id.Tests
             User user = new();
             Application application = new()
             {
+                ApplicationId                   = 57,
                 ClientId                        = Guid.NewGuid(),
-                FailedLoginsBeforeLocked        = 5,
-                FailedLoginsLockLifetimeMinutes = 50,
+                FailedLoginsBeforeLocked        = 7,
+                FailedLoginsLockLifetimeMinutes = 55,
             };
-            RequestContext requestContext = new()
-            {
-                ClientId  = application.ClientId,
-                IpAddress = "127.1.1.2",
-            };
-            CreateAuditLogService service = CreateAuditLogService(application, requestContext);
+            RequestContext        requestContext = new() { ClientId = application.ClientId };
+            CreateAuditLogService service        = CreateAuditLogService(application, requestContext);
 
             // Act
-            await service.CreateFailedLoginAuditLogAsync(user);
+            await service.CreateFailedLoginAuditLogAsync(user, application);
 
             // Assert
             _auditLogRepository.Verify(
@@ -48,22 +45,14 @@ namespace Etimo.Id.Tests
         public async Task CreateAuthorizationCodeAbuseAuditLogAsync_ShouldAddAuditLogToRepository()
         {
             // Arrange
-            AuthorizationCode code = new()
-            {
-                UserId = Guid.NewGuid(),
-            };
+            AuthorizationCode code = new() { UserId = Guid.NewGuid() };
             Application application = new()
             {
-                ClientId                        = Guid.NewGuid(),
-                FailedLoginsBeforeLocked        = 5,
-                FailedLoginsLockLifetimeMinutes = 50,
+                ApplicationId = 57,
+                ClientId      = Guid.NewGuid(),
             };
-            RequestContext requestContext = new()
-            {
-                ClientId  = application.ClientId,
-                IpAddress = "127.1.1.2",
-            };
-            CreateAuditLogService service = CreateAuditLogService(application, requestContext);
+            RequestContext        requestContext = new() { ClientId = application.ClientId };
+            CreateAuditLogService service        = CreateAuditLogService(application, requestContext);
 
             // Act
             await service.CreateAuthorizationCodeAbuseAuditLogAsync(code);
@@ -80,22 +69,14 @@ namespace Etimo.Id.Tests
         public async Task CreateRefreshTokenAbuseAuditLogAsync_ShouldAddAuditLogToRepository()
         {
             // Arrange
-            RefreshToken refreshToken = new()
-            {
-                UserId = Guid.NewGuid(),
-            };
+            RefreshToken refreshToken = new() { UserId = Guid.NewGuid() };
             Application application = new()
             {
-                ClientId                        = Guid.NewGuid(),
-                FailedLoginsBeforeLocked        = 5,
-                FailedLoginsLockLifetimeMinutes = 50,
+                ApplicationId = 57,
+                ClientId      = Guid.NewGuid(),
             };
-            RequestContext requestContext = new()
-            {
-                ClientId  = application.ClientId,
-                IpAddress = "127.1.1.2",
-            };
-            CreateAuditLogService service = CreateAuditLogService(application, requestContext);
+            RequestContext        requestContext = new() { ClientId = application.ClientId };
+            CreateAuditLogService service        = CreateAuditLogService(application, requestContext);
 
             // Act
             await service.CreateRefreshTokenAbuseAuditLogAsync(refreshToken);
@@ -108,6 +89,52 @@ namespace Etimo.Id.Tests
                          && a.UserId == refreshToken.UserId
                          && a.ApplicationId == application.ApplicationId)),
                 Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateForbiddenGrantTypeAuditLogAsync_ShouldAddAuditLogToRepository()
+        {
+            // Arrange
+            string grantType = GrantTypes.AuthorizationCode;
+            Application application = new()
+            {
+                ApplicationId = 57,
+                ClientId      = Guid.NewGuid(),
+            };
+            RequestContext        requestContext = new() { ClientId = application.ClientId };
+            CreateAuditLogService service        = CreateAuditLogService(application, requestContext);
+
+            // Act
+            await service.CreateForbiddenGrantTypeAuditLogAsync(grantType);
+
+            // Assert
+            _auditLogRepository.Verify(
+                r => r.Add(
+                    It.Is<AuditLog>(
+                        a => a.Type == AuditLogTypes.ForbiddenGrantType
+                         && a.UserId == null
+                         && a.ApplicationId == application.ApplicationId)),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateFailedLoginAuditLogAsync_ShouldStoreIpAddressFromContext()
+        {
+            // Arrange
+            User        user        = new();
+            Application application = new() { ClientId = Guid.NewGuid() };
+            RequestContext requestContext = new()
+            {
+                ClientId  = application.ClientId,
+                IpAddress = "127.1.1.12",
+            };
+            CreateAuditLogService service = CreateAuditLogService(application, requestContext);
+
+            // Act
+            await service.CreateFailedLoginAuditLogAsync(user, application);
+
+            // Assert
+            _auditLogRepository.Verify(r => r.Add(It.Is<AuditLog>(a => a.IpAddress == requestContext.IpAddress)), Times.Once);
         }
 
         private CreateAuditLogService CreateAuditLogService(Application application, RequestContext requestContext)

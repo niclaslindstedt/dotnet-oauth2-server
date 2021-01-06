@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Service.Constants;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -24,50 +25,38 @@ namespace Etimo.Id.Service
             _requestContext        = requestContext;
         }
 
-        public async Task CreateFailedLoginAuditLogAsync(User user)
+        public Task CreateFailedLoginAuditLogAsync(User user, Application application)
+            => CreateAuditLogAsync(
+                user.UserId,
+                AuditLogTypes.FailedLogin,
+                $"Too many login attempts ({application.FailedLoginsBeforeLocked})."
+              + $"The account has been locked for {application.FailedLoginsLockLifetimeMinutes} minutes.");
+
+        public Task CreateAuthorizationCodeAbuseAuditLogAsync(AuthorizationCode code)
+            => CreateAuditLogAsync(code.UserId, AuditLogTypes.CodeReuse, "Authorization code reuse detected.");
+
+        public Task CreateRefreshTokenAbuseAuditLogAsync(RefreshToken refreshToken)
+            => CreateAuditLogAsync(refreshToken.UserId, AuditLogTypes.RefreshTokenAbuse, "Refresh token abuse detected.");
+
+        public Task CreateForbiddenGrantTypeAuditLogAsync(string grantType)
+            => CreateAuditLogAsync(null, AuditLogTypes.ForbiddenGrantType, $"Attempted use of forbidden grant type ({grantType}).");
+
+        private async Task CreateAuditLogAsync(
+            Guid? userId,
+            string auditLogType,
+            string message,
+            string body = null)
         {
             Application application = await _applicationRepository.FindByClientIdAsync(_requestContext.ClientId.Value);
 
             AuditLog auditLog = new()
             {
-                Type = AuditLogTypes.FailedLogin,
-                Message = $"Too many login attempts ({application.FailedLoginsBeforeLocked})."
-                  + $"The account has been locked for {application.FailedLoginsLockLifetimeMinutes} minutes.",
-                UserId        = user.UserId,
+                Type          = auditLogType,
+                Message       = message,
+                Body          = body,
+                UserId        = userId,
                 ApplicationId = application.ApplicationId,
-            };
-
-            _auditLogRepository.Add(auditLog);
-            await _auditLogRepository.SaveAsync();
-        }
-
-        public async Task CreateAuthorizationCodeAbuseAuditLogAsync(AuthorizationCode code)
-        {
-            Application application = await _applicationRepository.FindByClientIdAsync(_requestContext.ClientId.Value);
-
-            AuditLog auditLog = new()
-            {
-                Type          = AuditLogTypes.CodeReuse,
-                Message       = $"Authorization code reuse detected from IP address {_requestContext.IpAddress}.",
-                UserId        = code.UserId.Value,
-                ApplicationId = application.ApplicationId,
-            };
-
-            _auditLogRepository.Add(auditLog);
-
-            await _auditLogRepository.SaveAsync();
-        }
-
-        public async Task CreateRefreshTokenAbuseAuditLogAsync(RefreshToken refreshToken)
-        {
-            Application application = await _applicationRepository.FindByClientIdAsync(_requestContext.ClientId.Value);
-
-            AuditLog auditLog = new()
-            {
-                Type          = AuditLogTypes.RefreshTokenAbuse,
-                Message       = $"Refresh token abuse detected from IP address {_requestContext.IpAddress}.",
-                UserId        = refreshToken.UserId,
-                ApplicationId = application.ApplicationId,
+                IpAddress     = _requestContext.IpAddress,
             };
 
             _auditLogRepository.Add(auditLog);

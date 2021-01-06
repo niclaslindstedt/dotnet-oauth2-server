@@ -12,7 +12,7 @@ namespace Etimo.Id.Api.Applications
         public string   type           { get; set; }
         public string   message        { get; set; }
         public object   body           { get; set; }
-        public Guid     user_id        { get; set; }
+        public Guid?    user_id        { get; set; }
         public int      application_id { get; set; }
         public DateTime created_date   { get; set; }
 

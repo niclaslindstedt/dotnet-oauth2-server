@@ -34,7 +34,7 @@ namespace Etimo.Id.Service
                 user.LockedUntilDateTime = DateTime.UtcNow.AddMinutes(application.FailedLoginsLockLifetimeMinutes);
                 user.FailedLogins        = 0;
 
-                await _createAuditLogService.CreateFailedLoginAuditLogAsync(user);
+                await _createAuditLogService.CreateFailedLoginAuditLogAsync(user, application);
             }
 
             await _userRepository.SaveAsync();

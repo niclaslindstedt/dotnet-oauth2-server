@@ -107,6 +107,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
             if (!_application.AllowAuthorizationCodeGrant)
             {
+                await _createAuditLogService.CreateForbiddenGrantTypeAuditLogAsync(GrantTypes.AuthorizationCode);
+
                 throw new UnsupportedGrantTypeException("This authorization grant is not allowed for this application.");
             }
 

@@ -13,6 +13,7 @@ namespace Etimo.Id.Service.TokenGenerators
     {
         private readonly IAccessTokenRepository         _accessTokenRepository;
         private readonly IAuthenticateClientService     _authenticateClientService;
+        private readonly ICreateAuditLogService         _createAuditLogService;
         private readonly IJwtTokenFactory               _jwtTokenFactory;
         private readonly IRefreshTokenGenerator         _refreshTokenGenerator;
         private readonly IRequestContext                _requestContext;
@@ -24,12 +25,14 @@ namespace Etimo.Id.Service.TokenGenerators
         public ClientCredentialsTokenGenerator(
             IAuthenticateClientService applicationService,
             IAccessTokenRepository accessTokenRepository,
+            ICreateAuditLogService createAuditLogService,
             IJwtTokenFactory jwtTokenFactory,
             IRefreshTokenGenerator refreshTokenGenerator,
             IRequestContext requestContext)
         {
             _authenticateClientService = applicationService;
             _accessTokenRepository     = accessTokenRepository;
+            _createAuditLogService     = createAuditLogService;
             _jwtTokenFactory           = jwtTokenFactory;
             _refreshTokenGenerator     = refreshTokenGenerator;
             _requestContext            = requestContext;
@@ -69,6 +72,8 @@ namespace Etimo.Id.Service.TokenGenerators
 
             if (!_application.AllowClientCredentialsGrant)
             {
+                await _createAuditLogService.CreateForbiddenGrantTypeAuditLogAsync(GrantTypes.AuthorizationCode);
+
                 throw new UnsupportedGrantTypeException("This authorization grant is not allowed for this application.");
             }
 
