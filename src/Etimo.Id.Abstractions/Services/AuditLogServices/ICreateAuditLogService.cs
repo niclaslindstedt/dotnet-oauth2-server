@@ -9,5 +9,6 @@ namespace Etimo.Id.Abstractions
         Task CreateAuthorizationCodeAbuseAuditLogAsync(AuthorizationCode code);
         Task CreateRefreshTokenAbuseAuditLogAsync(RefreshToken refreshToken);
         Task CreateForbiddenGrantTypeAuditLogAsync(string grantType);
+        Task CreateUnlockedAuditLogAsync(User user);
     }
 }

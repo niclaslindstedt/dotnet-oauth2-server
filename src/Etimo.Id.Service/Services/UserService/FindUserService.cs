@@ -15,7 +15,7 @@ namespace Etimo.Id.Service
             _userRepository = userRepository;
         }
 
-        public async ValueTask<User> FindAsync(Guid userId)
+        public async Task<User> FindAsync(Guid userId)
         {
             User user = await _userRepository.FindAsync(userId);
             if (user == null) { throw new NotFoundException(); }

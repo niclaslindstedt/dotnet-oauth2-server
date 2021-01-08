@@ -28,6 +28,7 @@ namespace Etimo.Id.Api.Users
         private readonly IGetRolesService               _getRolesService;
         private readonly IGetUsersService               _getUsersService;
         private readonly SiteSettings                   _siteSettings;
+        private readonly IUnlockUserService             _unlockUserService;
         private readonly IUpdateUserService             _updateUserService;
 
         public UserController(
@@ -40,6 +41,7 @@ namespace Etimo.Id.Api.Users
             IGetApplicationsService getApplicationsService,
             IGetRolesService getRolesService,
             IGetUsersService getUsersService,
+            IUnlockUserService unlockUserService,
             IUpdateUserService updateUserService)
         {
             _siteSettings                  = siteSettings;
@@ -51,6 +53,7 @@ namespace Etimo.Id.Api.Users
             _getApplicationsService        = getApplicationsService;
             _getRolesService               = getRolesService;
             _getUsersService               = getUsersService;
+            _unlockUserService             = unlockUserService;
             _updateUserService             = updateUserService;
         }
 
@@ -165,6 +168,17 @@ namespace Etimo.Id.Api.Users
             IEnumerable<RoleResponseDto> added = roles.Select(r => RoleResponseDto.FromRole(r, false));
 
             return Ok(added);
+        }
+
+        [HttpPut]
+        [Route("/users/{userId:guid}/unlock")]
+        [Authorize(Policy = UserScopes.Write)]
+        public async Task<IActionResult> UnlockAsync([FromRoute] Guid userId)
+        {
+            if (this.UserHasScope(UserScopes.Admin) || userId == this.GetUserId()) { await _unlockUserService.UnlockAsync(userId); }
+            else { throw new ForbiddenException(); }
+
+            return Ok();
         }
 
         [HttpDelete]

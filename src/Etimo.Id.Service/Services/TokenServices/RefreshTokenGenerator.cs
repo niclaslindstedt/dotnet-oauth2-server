@@ -203,6 +203,7 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 Audience        = new List<string> { _refreshToken.Application.ClientId.ToString() },
                 ClientId        = _refreshToken.Application.ClientId,
+                Username        = _refreshToken.User.Username,
                 Subject         = _refreshToken.UserId.ToString(),
                 Scope           = _scope,
                 LifetimeMinutes = _refreshToken.Application.AccessTokenLifetimeMinutes,

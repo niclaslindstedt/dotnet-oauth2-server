@@ -6,6 +6,6 @@ namespace Etimo.Id.Abstractions
 {
     public interface IFindUserService
     {
-        ValueTask<User> FindAsync(Guid userId);
+        Task<User> FindAsync(Guid userId);
     }
 }

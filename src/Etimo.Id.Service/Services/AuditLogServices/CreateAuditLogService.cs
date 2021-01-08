@@ -41,6 +41,9 @@ namespace Etimo.Id.Service
         public Task CreateForbiddenGrantTypeAuditLogAsync(string grantType)
             => CreateAuditLogAsync(null, AuditLogTypes.ForbiddenGrantType, $"Attempted use of forbidden grant type ({grantType}).");
 
+        public Task CreateUnlockedAuditLogAsync(User user)
+            => CreateAuditLogAsync(user.UserId, AuditLogTypes.UnlockedUser, $"User has been unlocked by {_requestContext.Username}.");
+
         private async Task CreateAuditLogAsync(
             Guid? userId,
             string auditLogType,

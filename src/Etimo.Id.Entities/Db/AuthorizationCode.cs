@@ -15,6 +15,7 @@ namespace Etimo.Id.Entities
         public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public virtual AccessToken AccessToken { get; set; }
+        public virtual User        User        { get; set; }
 
         public bool IsExpired { get => ExpirationDate < DateTime.UtcNow; }
     }

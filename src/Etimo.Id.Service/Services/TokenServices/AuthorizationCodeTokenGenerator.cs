@@ -144,6 +144,7 @@ namespace Etimo.Id.Service.TokenGenerators
             {
                 Audience        = new List<string> { _code.ClientId.ToString() },
                 ClientId        = _code.ClientId,
+                Username        = _code.User?.Username,
                 Subject         = _code.UserId?.ToString(),
                 Scope           = _code.Scope,
                 LifetimeMinutes = _application.AccessTokenLifetimeMinutes,

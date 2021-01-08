@@ -68,7 +68,7 @@ namespace Etimo.Id.Tests
             await service.LockAsync(user);
 
             // Assert
-            var timeUntilUnlocked = (int)Math.Ceiling((user.LockedUntilDateTime - DateTime.UtcNow).TotalMinutes);
+            var timeUntilUnlocked = (int)Math.Ceiling((user.LockedUntilDateTime.GetValueOrDefault() - DateTime.UtcNow).TotalMinutes);
             Assert.Equal(30, timeUntilUnlocked);
         }
 

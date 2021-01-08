@@ -43,6 +43,9 @@ namespace Etimo.Id.Service.TokenGenerators
                 new(JwtRegisteredClaimNames.Iat, GetUnixTime(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer32),
                 new(JwtRegisteredClaimNames.Jti, tokenId.ToString()),
                 new(JwtRegisteredClaimNames.Azp, request.ClientId.ToString()),
+
+                // https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+                new(OpenIdConnectClaimTypes.PreferredUsername, request.Username),
             };
 
             // https://tools.ietf.org/html/rfc7519#section-4.2

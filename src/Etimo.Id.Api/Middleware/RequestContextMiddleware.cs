@@ -34,6 +34,9 @@ namespace Etimo.Id.Api.Middleware
 
                 string clientId = context.Request.GetUserClaimValue(JwtRegisteredClaimNames.Azp);
                 if (clientId != null) { requestContext.ClientId = new Guid(clientId); }
+
+                string username = context.Request.GetUserClaimValue(OpenIdConnectClaimTypes.PreferredUsername);
+                if (username != null) { requestContext.Username = username; }
             }
 
             requestContext.IpAddress = context.Connection.RemoteIpAddress.ToString();
