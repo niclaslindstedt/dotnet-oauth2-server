@@ -9,9 +9,13 @@ RUN apt-get update \
 COPY etimo-id.sln Directory.Build.props ./
 COPY src/Etimo.Id.Abstractions/*.csproj ./src/Etimo.Id.Abstractions/
 COPY src/Etimo.Id.Api/*.csproj ./src/Etimo.Id.Api/
+COPY src/Etimo.Id.Attributes/*.csproj ./src/Etimo.Id.Attributes/
+COPY src/Etimo.Id.Constants/*.csproj ./src/Etimo.Id.Constants/
 COPY src/Etimo.Id.Data/*.csproj ./src/Etimo.Id.Data/
+COPY src/Etimo.Id.Dtos/*.csproj ./src/Etimo.Id.Dtos/
 COPY src/Etimo.Id.Entities/*.csproj ./src/Etimo.Id.Entities/
 COPY src/Etimo.Id.Entities.Abstractions/*.csproj ./src/Etimo.Id.Entities.Abstractions/
+COPY src/Etimo.Id.Exceptions/*.csproj ./src/Etimo.Id.Exceptions/
 COPY src/Etimo.Id.Service/*.csproj ./src/Etimo.Id.Service/
 COPY src/Etimo.Id.Tests/*.csproj ./src/Etimo.Id.Tests/
 RUN dotnet restore
