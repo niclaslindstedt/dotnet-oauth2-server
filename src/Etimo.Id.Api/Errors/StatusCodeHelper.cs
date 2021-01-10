@@ -1,4 +1,4 @@
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using System;
 
 namespace Etimo.Id.Api.Errors

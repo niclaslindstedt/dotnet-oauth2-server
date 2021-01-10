@@ -1,4 +1,4 @@
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;

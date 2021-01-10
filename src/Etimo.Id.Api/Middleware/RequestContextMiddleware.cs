@@ -1,7 +1,7 @@
 using Etimo.Id.Api.Helpers;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
-using Etimo.Id.Service.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

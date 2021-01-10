@@ -1,8 +1,8 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
-using Etimo.Id.Service.Constants;
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

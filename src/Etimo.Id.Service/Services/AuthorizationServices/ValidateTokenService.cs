@@ -1,6 +1,6 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using System;
 using System.Threading.Tasks;
 

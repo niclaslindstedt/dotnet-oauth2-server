@@ -1,8 +1,8 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
+using Etimo.Id.Exceptions;
 using Etimo.Id.Service;
-using Etimo.Id.Service.Exceptions;
 using Moq;
 using System;
 using System.Threading.Tasks;

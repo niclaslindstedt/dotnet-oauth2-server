@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Dtos</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Attributes\Etimo.Id.Attributes.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
+  </ItemGroup>
+
+</Project>

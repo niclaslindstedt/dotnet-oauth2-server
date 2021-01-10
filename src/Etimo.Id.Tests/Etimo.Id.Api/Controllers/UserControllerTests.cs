@@ -1,9 +1,9 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Api.Users;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Constants;
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

@@ -1,5 +1,5 @@
 using Etimo.Id.Api.Bootstrapping;
-using Etimo.Id.Service.Exceptions;
+using Etimo.Id.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

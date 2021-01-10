@@ -20,8 +20,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
     <ProjectReference Include="..\Etimo.Id.Data\Etimo.Id.Data.csproj" />
     <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Service;
-using Etimo.Id.Service.Constants;
 using Moq;
 using System;
 using System.Threading.Tasks;
