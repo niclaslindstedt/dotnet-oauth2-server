@@ -42,6 +42,23 @@
                 "quoteArgs": false,
                 "debuggerPath": "/vsdbg/vsdbg"
             }
+        },
+        {
+            "name": ".NET Core WSL Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/artifacts/bin/Etimo.Id.Api/Debug/net5.0/Etimo.Id.Api",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Etimo.Id.Api",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "bash",
+                "pipeArgs": [ "-c" ],
+                "debuggerPath": "~/vsdbg/vsdbg"
+            }
         }
     ]
 }
