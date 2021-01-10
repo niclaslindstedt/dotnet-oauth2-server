@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # This is a pre-commit hook script that should
@@ -8,7 +8,7 @@
 
 csharp_staged() {
   for f in `git diff --name-only --cached`; do
-    if [[ ""$f"" =~ .cs$ ]]; then
+    if [[ "$f" =~ .cs$ ]]; then
       echo 1
       return
     fi
@@ -17,7 +17,7 @@ csharp_staged() {
 }
 
 if [[ $(csharp_staged) = 0 ]]; then
-  echo ""Skipping linting -- no .cs files have been staged""
+  echo "Skipping linting -- no .cs files have been staged"
   exit 0
 fi
 
