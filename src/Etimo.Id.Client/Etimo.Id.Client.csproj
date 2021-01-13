@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.*" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.*" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Attributes\Etimo.Id.Attributes.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Security\Etimo.Id.Security.csproj" />
+  </ItemGroup>
+
+</Project>

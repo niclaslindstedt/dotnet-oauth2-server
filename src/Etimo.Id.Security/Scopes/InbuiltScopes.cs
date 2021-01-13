@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Etimo.Id.Service.Scopes
+namespace Etimo.Id.Security
 {
     public class InbuiltScopes
     {

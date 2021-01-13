@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{17C08999-C79
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Constants", "src\Etimo.Id.Constants\Etimo.Id.Constants.csproj", "{267A37D4-7C61-42A7-AA36-0D9E50E848F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Client", "src\Etimo.Id.Client\Etimo.Id.Client.csproj", "{CE91A790-5D01-413C-9F4F-1B702AEF1512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Security", "src\Etimo.Id.Security\Etimo.Id.Security.csproj", "{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,11 +81,22 @@ Global
 		{267A37D4-7C61-42A7-AA36-0D9E50E848F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{267A37D4-7C61-42A7-AA36-0D9E50E848F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{267A37D4-7C61-42A7-AA36-0D9E50E848F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE91A790-5D01-413C-9F4F-1B702AEF1512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE91A790-5D01-413C-9F4F-1B702AEF1512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE91A790-5D01-413C-9F4F-1B702AEF1512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE91A790-5D01-413C-9F4F-1B702AEF1512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81289A64-DB21-4E84-833C-74EFE2B8F10B}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A} = {17C08999-C791-4201-82D6-A200E30896E8}
 	EndGlobalSection
 EndGlobal

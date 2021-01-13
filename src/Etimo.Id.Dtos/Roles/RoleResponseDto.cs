@@ -1,12 +1,11 @@
 // ReSharper disable InconsistentNaming
 
-using Etimo.Id.Api.Scopes;
 using Etimo.Id.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Etimo.Id.Api.Roles
+namespace Etimo.Id.Dtos
 {
     public class RoleResponseDto
     {

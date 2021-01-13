@@ -2,7 +2,7 @@
 
 using Etimo.Id.Entities;
 
-namespace Etimo.Id.Api.OAuth
+namespace Etimo.Id.Dtos
 {
     public class AccessTokenResponseDto
     {

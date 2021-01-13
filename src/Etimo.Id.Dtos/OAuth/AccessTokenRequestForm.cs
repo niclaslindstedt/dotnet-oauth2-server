@@ -7,7 +7,7 @@ using Etimo.Id.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etimo.Id.Api.OAuth
+namespace Etimo.Id.Dtos
 {
     public class AccessTokenRequestForm
     {

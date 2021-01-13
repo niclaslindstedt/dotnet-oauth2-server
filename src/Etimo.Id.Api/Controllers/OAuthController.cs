@@ -3,6 +3,7 @@ using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Constants;
+using Etimo.Id.Dtos;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Exceptions;

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace Etimo.Id.Api.Applications
+namespace Etimo.Id.Dtos
 {
     public class ApplicationRequestDto
     {

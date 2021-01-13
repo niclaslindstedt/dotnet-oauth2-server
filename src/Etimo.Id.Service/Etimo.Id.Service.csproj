@@ -24,6 +24,7 @@
     <ProjectReference Include="..\Etimo.Id.Data\Etimo.Id.Data.csproj" />
     <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />
     <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Security\Etimo.Id.Security.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Settings;
 using Etimo.Id.Api.Users;
 using Etimo.Id.Constants;
+using Etimo.Id.Dtos;
 using Etimo.Id.Entities;
 using Etimo.Id.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -17,34 +18,51 @@ namespace Etimo.Id.Tests
 {
     public class UserControllerTests
     {
+        private readonly ClaimsPrincipal   _adminIdentity;
+        private readonly List<Application> _applicationList;
+        private readonly ClaimsPrincipal   _callerIdentity;
+        private readonly User              _callerUser;
+        private readonly Guid              _callerUserId;
+        private readonly User              _otherUser;
+        private readonly Guid              _otherUserId;
+        private readonly List<Role>        _rolesList;
+        private readonly List<User>        _userList;
+
+        public UserControllerTests()
+        {
+            _callerUserId    = Guid.NewGuid();
+            _otherUserId     = Guid.NewGuid();
+            _callerIdentity  = CreateUser(_callerUserId);
+            _adminIdentity   = CreateUser(_callerUserId, "admin:user");
+            _callerUser      = new User { UserId = _callerUserId };
+            _otherUser       = new User { UserId = _otherUserId };
+            _userList        = new List<User> { new(), new() };
+            _applicationList = new List<Application> { new(), new() };
+            _rolesList       = new List<Role> { new(), new() };
+        }
+
         [Fact]
-        public async Task GetAsync_NotAdmin_ShouldFindOwnUser()
+        public async Task GetAsync_When_Non_Admin_Calls_Then_Return_Callers_User()
         {
             // Arrange
-            var             userId         = Guid.NewGuid();
-            ClaimsPrincipal claimsIdentity = CreateUser(userId);
-            var             user           = new User { UserId = userId };
-            var             mock           = new Mock<IFindUserService>();
-            UserController  controller     = CreateUserController(user: claimsIdentity, findUserService: mock);
-            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == userId))).ReturnsAsync(user);
+            var            mock       = new Mock<IFindUserService>();
+            UserController controller = CreateUserController(user: _callerIdentity, findUserService: mock);
+            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == _callerUserId))).ReturnsAsync(_callerUser);
 
             // Act
             await controller.GetAsync();
 
             // Assert
-            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == userId)), Times.Once);
+            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == _callerUserId)), Times.Once);
         }
 
         [Fact]
-        public async Task GetAsync_WithAdminScope_ShouldGetAllUsers()
+        public async Task GetAsync_When_Admin_Calls_Then_Return_All_Users()
         {
             // Arrange
-            var             userId         = Guid.NewGuid();
-            ClaimsPrincipal claimsIdentity = CreateUser(userId, "admin:user");
-            var             users          = new List<User> { new(), new() };
-            var             mock           = new Mock<IGetUsersService>();
-            UserController  controller     = CreateUserController(user: claimsIdentity, getUsersService: mock);
-            mock.Setup(m => m.GetAllAsync()).ReturnsAsync(users);
+            var            mock       = new Mock<IGetUsersService>();
+            UserController controller = CreateUserController(user: _adminIdentity, getUsersService: mock);
+            mock.Setup(m => m.GetAllAsync()).ReturnsAsync(_userList);
 
             // Act
             await controller.GetAsync();
@@ -54,104 +72,158 @@ namespace Etimo.Id.Tests
         }
 
         [Fact]
-        public async Task FindAsync_OwnUserId_ShouldFindUser()
+        public async Task FindAsync_When_Caller_Requests_Own_UserId_Then_Return_That_User()
         {
             // Arrange
-            var             userId         = Guid.NewGuid();
-            ClaimsPrincipal claimsIdentity = CreateUser(userId);
-            var             user           = new User { UserId = userId };
-            var             mock           = new Mock<IFindUserService>();
-            UserController  controller     = CreateUserController(user: claimsIdentity, findUserService: mock);
-            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == userId))).ReturnsAsync(user);
+            var            mock       = new Mock<IFindUserService>();
+            UserController controller = CreateUserController(user: _callerIdentity, findUserService: mock);
+            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == _callerUserId))).ReturnsAsync(_callerUser);
 
             // Act
-            await controller.FindAsync(userId);
+            await controller.FindAsync(_callerUserId);
 
             // Assert
-            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == userId)), Times.Once);
+            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == _callerUserId)), Times.Once);
         }
 
         [Fact]
-        public async Task FindAsync_OtherUserId_ShouldThrowForbiddenException()
+        public async Task FindAsync_When_Caller_Requests_Other_UserId_Then_Throw_ForbiddenException()
         {
             // Arrange
-            var             userId         = Guid.NewGuid();
-            ClaimsPrincipal claimsIdentity = CreateUser(userId);
-            var             user           = new User { UserId = userId };
-            UserController  controller     = CreateUserController(user: claimsIdentity);
+            UserController controller = CreateUserController(user: _callerIdentity);
 
             // Act + Assert
-            await Assert.ThrowsAsync<ForbiddenException>(async () => await controller.FindAsync(Guid.NewGuid()));
+            await Assert.ThrowsAsync<ForbiddenException>(async () => await controller.FindAsync(_otherUserId));
         }
 
         [Fact]
-        public async Task FindAsync_OtherUserIdAsAdmin_ShouldFindUser()
+        public async Task FindAsync_When_Admin_Requests_Other_UserId_Then_Return_That_User()
         {
             // Arrange
-            var             userId         = Guid.NewGuid();
-            var             otherUserId    = Guid.NewGuid();
-            ClaimsPrincipal claimsIdentity = CreateUser(userId, "admin:user");
-            var             otherUser      = new User { UserId = userId };
-            var             mock           = new Mock<IFindUserService>();
-            UserController  controller     = CreateUserController(user: claimsIdentity, findUserService: mock);
-            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == otherUserId))).ReturnsAsync(otherUser);
+            var            mock       = new Mock<IFindUserService>();
+            UserController controller = CreateUserController(user: _adminIdentity, findUserService: mock);
+            mock.Setup(m => m.FindAsync(It.Is<Guid>(g => g == _otherUserId))).ReturnsAsync(_otherUser);
 
             // Act
-            await controller.FindAsync(otherUserId);
+            await controller.FindAsync(_otherUserId);
 
             // Assert
-            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == otherUserId)), Times.Once);
+            mock.Verify(s => s.FindAsync(It.Is<Guid>(g => g == _otherUserId)), Times.Once);
         }
 
         [Fact]
-        public async Task GetApplicationsAsync_OwnUserId_ShouldGetApplications()
+        public async Task GetApplicationsAsync_When_Caller_Requests_Own_UserId_Then_Return_Owned_Applications()
         {
             // Arrange
-            var               userId         = Guid.NewGuid();
-            ClaimsPrincipal   claimsIdentity = CreateUser(userId);
-            List<Application> applications   = new() { new Application(), new Application() };
-            var               mock           = new Mock<IGetApplicationsService>();
-            UserController    controller     = CreateUserController(user: claimsIdentity, getApplicationsService: mock);
-            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == userId))).ReturnsAsync(applications);
+            var            mock       = new Mock<IGetApplicationsService>();
+            UserController controller = CreateUserController(user: _callerIdentity, getApplicationsService: mock);
+            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == _callerUserId))).ReturnsAsync(_applicationList);
 
             // Act
-            await controller.GetApplicationsAsync(userId);
+            await controller.GetApplicationsAsync(_callerUserId);
 
             // Assert
-            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == userId)), Times.Once);
+            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == _callerUserId)), Times.Once);
         }
 
         [Fact]
-        public async Task GetApplicationsAsync_OtherUserId_ShouldThrowForbiddenException()
+        public async Task GetApplicationsAsync_When_Caller_Requests_Other_UserId_Then_Throw_ForbiddenException()
         {
             // Arrange
-            var               userId         = Guid.NewGuid();
-            var               otherUserId    = Guid.NewGuid();
-            ClaimsPrincipal   claimsIdentity = CreateUser(userId);
-            List<Application> applications   = new() { new Application(), new Application() };
-            UserController    controller     = CreateUserController(user: claimsIdentity);
+            UserController controller = CreateUserController(user: _callerIdentity);
 
             // Act + Assert
-            await Assert.ThrowsAsync<ForbiddenException>(async () => await controller.GetApplicationsAsync(Guid.NewGuid()));
+            await Assert.ThrowsAsync<ForbiddenException>(async () => await controller.GetApplicationsAsync(_otherUserId));
         }
 
         [Fact]
-        public async Task GetApplicationsAsync_OtherUserId_ShouldGetApplications()
+        public async Task GetApplicationsAsync_When_Admin_Requests_Other_UserId_Then_Return_That_Users_Owned_Applications()
         {
             // Arrange
-            var               userId         = Guid.NewGuid();
-            var               otherUserId    = Guid.NewGuid();
-            ClaimsPrincipal   claimsIdentity = CreateUser(userId, "admin:user");
-            List<Application> applications   = new() { new Application(), new Application() };
-            var               mock           = new Mock<IGetApplicationsService>();
-            UserController    controller     = CreateUserController(user: claimsIdentity, getApplicationsService: mock);
-            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == otherUserId))).ReturnsAsync(applications);
+            var            mock       = new Mock<IGetApplicationsService>();
+            UserController controller = CreateUserController(user: _adminIdentity, getApplicationsService: mock);
+            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == _otherUserId))).ReturnsAsync(_applicationList);
 
             // Act
-            await controller.GetApplicationsAsync(otherUserId);
+            await controller.GetApplicationsAsync(_otherUserId);
 
             // Assert
-            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == otherUserId)), Times.Once);
+            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == _otherUserId)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetRolesAsync_When_Caller_Requests_Own_UserId_Then_Return_Owned_Roles()
+        {
+            // Arrange
+            var            mock       = new Mock<IGetRolesService>();
+            UserController controller = CreateUserController(user: _callerIdentity, getRolesService: mock);
+            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == _callerUserId))).ReturnsAsync(_rolesList);
+
+            // Act
+            await controller.GetRolesAsync(_callerUserId);
+
+            // Assert
+            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == _callerUserId)), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetRolesAsync_When_Caller_Requests_Other_UserId_Then_Throw_ForbiddenException()
+        {
+            // Arrange
+            UserController controller = CreateUserController(user: _callerIdentity);
+
+            // Act + Assert
+            await Assert.ThrowsAsync<ForbiddenException>(async () => await controller.GetRolesAsync(_otherUserId));
+        }
+
+        [Fact]
+        public async Task GetRolesAsync_When_Admin_Requests_Other_UserId_Then_Return_That_Users_Owned_Roles()
+        {
+            // Arrange
+            var            mock       = new Mock<IGetRolesService>();
+            UserController controller = CreateUserController(user: _adminIdentity, getRolesService: mock);
+            mock.Setup(m => m.GetByUserIdAsync(It.Is<Guid>(g => g == _otherUserId))).ReturnsAsync(_rolesList);
+
+            // Act
+            await controller.GetRolesAsync(_otherUserId);
+
+            // Assert
+            mock.Verify(s => s.GetByUserIdAsync(It.Is<Guid>(g => g == _otherUserId)), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_Should_Use_RequestDto_To_Add_User()
+        {
+            // Arrange
+            var            dto        = new UserRequestDto { username = "test123" };
+            var            mock       = new Mock<IAddUserService>();
+            UserController controller = CreateUserController(user: _callerIdentity, addUserService: mock);
+            mock.Setup(m => m.AddAsync(It.Is<User>(u => u.Username == dto.username))).ReturnsAsync(dto.ToUser());
+
+            // Act
+            await controller.CreateAsync(dto);
+
+            // Assert
+            mock.Verify(s => s.AddAsync(It.Is<User>(u => u.Username == dto.username)), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAsync_Should_Return_201_Created()
+        {
+            // Arrange
+            var            settings   = new SiteSettings { ListenUri  = "http://localhost" };
+            var            dto        = new UserRequestDto { username = "test123" };
+            var            mock       = new Mock<IAddUserService>();
+            UserController controller = CreateUserController(user: _callerIdentity, addUserService: mock, siteSettings: settings);
+            mock.Setup(m => m.AddAsync(It.Is<User>(u => u.Username == dto.username))).ReturnsAsync(dto.ToUser());
+
+            // Act
+            var result = await controller.CreateAsync(dto) as CreatedResult;
+
+            // Assert
+            Assert.Equal(201, result.StatusCode);
+            Assert.StartsWith($"{settings.ListenUri}/users/", result.Location);
+            Assert.Equal(dto.username, (result.Value as UserResponseDto).username);
         }
 
         private UserController CreateUserController(

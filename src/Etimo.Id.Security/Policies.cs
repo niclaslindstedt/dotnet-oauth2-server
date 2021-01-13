@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Security.Claims;
 
-namespace Etimo.Id.Api.Security
+namespace Etimo.Id.Client
 {
     public class Policies
     {

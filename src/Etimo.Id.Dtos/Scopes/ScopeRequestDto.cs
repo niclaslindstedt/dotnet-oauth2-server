@@ -5,7 +5,7 @@ using Etimo.Id.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etimo.Id.Api.Scopes
+namespace Etimo.Id.Dtos
 {
     public class ScopeRequestDto
     {

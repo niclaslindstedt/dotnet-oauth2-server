@@ -5,7 +5,7 @@ using Etimo.Id.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etimo.Id.Api.Roles
+namespace Etimo.Id.Dtos
 {
     public class RoleRequestDto
     {

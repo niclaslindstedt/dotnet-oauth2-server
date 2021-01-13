@@ -4,7 +4,7 @@ using Etimo.Id.Entities;
 using System;
 using System.Text.Json;
 
-namespace Etimo.Id.Api.Applications
+namespace Etimo.Id.Dtos
 {
     public class AuditLogResponseDto
     {

@@ -3,7 +3,7 @@
 using Etimo.Id.Entities;
 using System.Linq;
 
-namespace Etimo.Id.Api.Applications
+namespace Etimo.Id.Dtos
 {
     public class ApplicationSecretResponseDto : ApplicationResponseDto
     {

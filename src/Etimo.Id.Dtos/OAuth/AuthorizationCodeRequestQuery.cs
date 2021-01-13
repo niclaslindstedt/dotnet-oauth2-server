@@ -5,7 +5,7 @@ using Etimo.Id.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etimo.Id.Api.OAuth
+namespace Etimo.Id.Dtos
 {
     /// <summary>
     ///     This is the request object used when retrieving the authorization code in the authorization code flow.

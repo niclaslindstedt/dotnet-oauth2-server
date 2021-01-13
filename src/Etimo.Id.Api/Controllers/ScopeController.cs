@@ -1,10 +1,10 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
 using Etimo.Id.Api.Helpers;
-using Etimo.Id.Api.Roles;
 using Etimo.Id.Api.Settings;
+using Etimo.Id.Dtos;
 using Etimo.Id.Entities;
-using Etimo.Id.Service.Scopes;
+using Etimo.Id.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

@@ -2,30 +2,22 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Middleware;
-using Etimo.Id.Api.Security;
 using Etimo.Id.Api.Settings;
-using Etimo.Id.Constants;
+using Etimo.Id.Client;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
-using Etimo.Id.Service.Scopes;
 using Etimo.Id.Service.Settings;
 using Etimo.Id.Service.TokenGenerators;
 using Etimo.Id.Service.Utilities;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Etimo.Id.Api
 {
@@ -60,56 +52,11 @@ namespace Etimo.Id.Api
             Configuration.GetSection("OAuth2Settings").Bind(oauth2Settings);
             services.AddSingleton(oauth2Settings);
 
-            var jwtSettings = new JwtSettings();
-            Configuration.GetSection("JwtSettings").Bind(jwtSettings);
-            services.AddSingleton(jwtSettings);
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-                    options =>
-                    {
-                        options.RequireHttpsMetadata = false;
-                        options.SaveToken            = true;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateActor            = true,
-                            ValidateIssuer           = true,
-                            ValidateAudience         = true,
-                            ValidateLifetime         = true,
-                            ValidateIssuerSigningKey = true,
-                            ValidIssuer              = jwtSettings.Issuer,
-                            ValidAudience            = jwtSettings.Issuer,
-                            IssuerSigningKey =
-                                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
-                            ClockSkew                                 = TimeSpan.Zero,
-                            NameClaimType                             = CustomClaimTypes.Name,
-                            RoleClaimType                             = CustomClaimTypes.Role,
-                            RequireAudience                           = true,
-                            RequireExpirationTime                     = true,
-                            RequireSignedTokens                       = true,
-                            IgnoreTrailingSlashWhenValidatingAudience = true,
-                        };
-                    });
-
-            services.AddAuthorization(
-                config =>
-                {
-                    AddScopePolicies(config, InbuiltScopes.All);
-                    AddCombinedScopePolicies(
-                        config,
-                        new Dictionary<string, string[]>
-                        {
-                            { CombinedScopes.ReadApplicationRole, new[] { ApplicationScopes.Read, RoleScopes.Read } },
-                            { CombinedScopes.ReadRoleScope, new[] { RoleScopes.Read, ScopeScopes.Read } },
-                            { CombinedScopes.ReadUserApplication, new[] { UserScopes.Read, ApplicationScopes.Read } },
-                            { CombinedScopes.ReadUserRole, new[] { UserScopes.Read, RoleScopes.Read } },
-                        });
-                });
+            services.UseEtimoId();
 
             services.Configure<ApiBehaviorOptions>(opt => { opt.SuppressModelStateInvalidFilter = true; });
 
             Log.Logger = new LoggerConfiguration().Enrich.FromLogContext().WriteTo.Console().CreateLogger();
-
             services.AddSingleton(Log.Logger);
 
             var passwordHasher = new BCryptPasswordHasher(cryptologySettings);
@@ -222,19 +169,6 @@ namespace Etimo.Id.Api
             app.UseAuthorization();
             app.UseRequestContext();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-        }
-
-        private static void AddScopePolicies(AuthorizationOptions config, List<string> policies)
-        {
-            foreach (string policy in policies) { config.AddPolicy(policy, Policies.ScopePolicy(policy)); }
-        }
-
-        private static void AddCombinedScopePolicies(AuthorizationOptions config, Dictionary<string, string[]> policies)
-        {
-            foreach (KeyValuePair<string, string[]> policy in policies)
-            {
-                config.AddPolicy(policy.Key, Policies.ScopePolicy(policy.Value));
-            }
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Etimo.Id.Service.Scopes
+namespace Etimo.Id.Security
 {
     public class ScopeScopes
     {

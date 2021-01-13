@@ -3,7 +3,7 @@
 using Etimo.Id.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Etimo.Id.Api.OAuth
+namespace Etimo.Id.Dtos
 {
     public class AuthorizationCodeRequestForm
     {

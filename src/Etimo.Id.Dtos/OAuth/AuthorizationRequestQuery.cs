@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Etimo.Id.Api.OAuth
+namespace Etimo.Id.Dtos
 {
     /// <summary>
     ///     These are the query parameters used when starting an authorization code flow (by authenticating the user).

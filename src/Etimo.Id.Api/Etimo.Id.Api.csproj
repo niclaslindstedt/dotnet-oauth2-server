@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" NoWarn="NU1605" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.*" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.*" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.*">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -24,9 +24,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj" />
     <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Client\Etimo.Id.Client.csproj" />
     <ProjectReference Include="..\Etimo.Id.Data\Etimo.Id.Data.csproj" />
     <ProjectReference Include="..\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj" />
     <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Security\Etimo.Id.Security.csproj" />
     <ProjectReference Include="..\Etimo.Id.Service\Etimo.Id.Service.csproj" />
   </ItemGroup>
 
