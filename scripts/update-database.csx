@@ -11,4 +11,5 @@
   'delete-database.csx' script, and run this script again.
 */
 
+Run("dotnet", $"ef database update --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api --msbuildprojectextensionspath artifacts/obj/Etimo.Id.Data");
 Run("dotnet", $"ef database update --project src/Etimo.Id.Data --startup-project src/Etimo.Id.Api --msbuildprojectextensionspath artifacts/obj/Etimo.Id.Api");
