@@ -2,8 +2,8 @@ namespace Etimo.Id.Security
 {
     public class ScopeScopes
     {
-        public const string Read  = "read:scopes";
-        public const string Write = "write:scopes";
-        public const string Admin = "admin:scopes";
+        public const string Read  = "etimoid:read:scopes";
+        public const string Write = "etimoid:write:scopes";
+        public const string Admin = "etimoid:admin:scopes";
     }
 }

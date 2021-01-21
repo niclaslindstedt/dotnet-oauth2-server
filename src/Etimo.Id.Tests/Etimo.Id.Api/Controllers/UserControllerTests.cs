@@ -33,7 +33,7 @@ namespace Etimo.Id.Tests
             _callerUserId    = Guid.NewGuid();
             _otherUserId     = Guid.NewGuid();
             _callerIdentity  = CreateUser(_callerUserId);
-            _adminIdentity   = CreateUser(_callerUserId, "admin:user");
+            _adminIdentity   = CreateUser(_callerUserId, "etimoid:admin:user");
             _callerUser      = new User { UserId = _callerUserId };
             _otherUser       = new User { UserId = _otherUserId };
             _userList        = new List<User> { new(), new() };
