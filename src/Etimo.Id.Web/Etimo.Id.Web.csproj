@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Etimo.Id.Web</RootNamespace>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Watch Include="**\*.js;**\*.json;**\*.razor;**\*.html;**\*.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Etimo.Id.Web.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="5.0.2" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Client\Etimo.Id.Client.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Settings\Etimo.Id.Settings.csproj" />
+  </ItemGroup>
+
+</Project>

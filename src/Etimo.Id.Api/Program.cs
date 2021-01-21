@@ -1,5 +1,5 @@
-using Etimo.Id.Api.Settings;
 using Etimo.Id.Data;
+using Etimo.Id.Settings;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

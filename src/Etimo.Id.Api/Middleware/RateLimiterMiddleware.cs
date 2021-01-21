@@ -1,6 +1,6 @@
 using Etimo.Id.Api.Security;
-using Etimo.Id.Api.Settings;
 using Etimo.Id.Exceptions;
+using Etimo.Id.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;

@@ -23,10 +23,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Etimo.Id.Api\Etimo.Id.Api.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Authentication\Etimo.Id.Authentication.csproj" />
     <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
     <ProjectReference Include="..\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj" />
     <ProjectReference Include="..\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj" />
     <ProjectReference Include="..\Etimo.Id.Service\Etimo.Id.Service.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Settings\Etimo.Id.Settings.csproj" />
   </ItemGroup>
 
 </Project>

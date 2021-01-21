@@ -1,5 +1,5 @@
 using Etimo.Id.Abstractions;
-using Etimo.Id.Service.Settings;
+using Etimo.Id.Settings;
 using System;
 using System.Diagnostics;
 using System.Text;

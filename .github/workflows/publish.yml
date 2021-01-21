@@ -5,7 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  publish_image:
+  publish_api_image:
     name: Publish Docker image
     runs-on: ubuntu-latest
     steps:
@@ -14,7 +14,24 @@ jobs:
       - name: build & push image
         uses: docker/build-push-action@v1
         with:
-          dockerfile: ./Dockerfile
+          dockerfile: ./Dockerfile-api
+          target: prod
+          tag_with_ref: true
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: etimo/etimo-id/etimo-id
+
+  publish_web_image:
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build & push image
+        uses: docker/build-push-action@v1
+        with:
+          dockerfile: ./Dockerfile-web
           target: prod
           tag_with_ref: true
           username: ${{ github.actor }}

@@ -10,4 +10,4 @@
 */
 
 Run("docker-compose", $"-f docker-compose.yml -f docker-compose.dev.yml up -d");
-Run("docker-compose", $"-f docker-compose.yml -f docker-compose.dev.yml logs -f --tail 100 etimo-id");
+Run("docker-compose", $"-f docker-compose.yml -f docker-compose.dev.yml logs -f --tail 100 etimo-id etimo-web");

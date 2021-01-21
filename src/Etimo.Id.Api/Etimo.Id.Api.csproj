@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Etimo.Id.Abstractions\Etimo.Id.Abstractions.csproj" />
+    <ProjectReference Include="..\Etimo.Id.Authentication\Etimo.Id.Authentication.csproj" />
     <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
     <ProjectReference Include="..\Etimo.Id.Client\Etimo.Id.Client.csproj" />
     <ProjectReference Include="..\Etimo.Id.Data\Etimo.Id.Data.csproj" />

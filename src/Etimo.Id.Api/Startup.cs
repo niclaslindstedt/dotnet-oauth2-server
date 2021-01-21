@@ -2,14 +2,13 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Middleware;
-using Etimo.Id.Api.Settings;
 using Etimo.Id.Client;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
-using Etimo.Id.Service.Settings;
 using Etimo.Id.Service.TokenGenerators;
 using Etimo.Id.Service.Utilities;
+using Etimo.Id.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +22,8 @@ namespace Etimo.Id.Api
 {
     public class Startup
     {
+        private const string CorsPolicyAllowAll = "cors-allow-all";
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
@@ -36,6 +37,7 @@ namespace Etimo.Id.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "etimo-id", Version = "v1" }); });
+            services.AddCors(options => { options.AddPolicy(CorsPolicyAllowAll, builder => { builder.WithOrigins("*"); }); });
 
             services.UseEtimoIdData();
 
@@ -51,6 +53,10 @@ namespace Etimo.Id.Api
             var oauth2Settings = new OAuth2Settings();
             Configuration.GetSection("OAuth2Settings").Bind(oauth2Settings);
             services.AddSingleton(oauth2Settings);
+
+            var jwtSettings = new JwtSettings();
+            Configuration.GetSection("EtimoIdSettings").Bind(jwtSettings);
+            services.AddSingleton(jwtSettings);
 
             services.UseEtimoId();
 
@@ -142,6 +148,7 @@ namespace Etimo.Id.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors(CorsPolicyAllowAll);
             app.UseErrorMiddleware();
             app.UseRateLimiter();
 

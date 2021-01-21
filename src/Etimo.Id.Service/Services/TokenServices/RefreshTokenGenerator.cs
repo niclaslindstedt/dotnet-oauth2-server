@@ -3,7 +3,7 @@ using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Exceptions;
-using Etimo.Id.Service.Settings;
+using Etimo.Id.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;

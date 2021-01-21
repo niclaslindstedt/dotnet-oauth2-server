@@ -1,6 +1,6 @@
 using Etimo.Id.Abstractions;
 using PasswordGenerator;
-using PasswordSettings = Etimo.Id.Service.Settings.PasswordSettings;
+using PasswordSettings = Etimo.Id.Settings.PasswordSettings;
 
 namespace Etimo.Id.Service.Utilities
 {

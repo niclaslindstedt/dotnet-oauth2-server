@@ -1,6 +1,5 @@
 using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Attributes;
-using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Helpers;
 using Etimo.Id.Constants;
 using Etimo.Id.Dtos;
@@ -92,7 +91,7 @@ namespace Etimo.Id.Api.OAuth
 
                 if (!string.IsNullOrEmpty(ex.Message)) { redirectUri += $"&error_description={Uri.EscapeDataString(ex.Message)}"; }
 
-                var errorUri = ex.GetStatusCode().GetStatusCodeUri().ToString();
+                var errorUri = ex.GetStatusCodeUri().ToString();
                 redirectUri += $"&error_uri={Uri.EscapeDataString(errorUri)}";
 
                 if (query.state != null) { redirectUri += $"&state={Uri.EscapeDataString(query.state)}"; }

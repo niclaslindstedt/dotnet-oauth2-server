@@ -11,4 +11,7 @@
   to debug it.
 */
 
-Run("dotnet", $"run --project src/Etimo.Id.Api");
+var project = "Etimo.Id.Api";
+if (Args.Any() && Args[0] == "web") { project = "Etimo.Id.Web"; }
+
+Run("dotnet", $"run --project src/{project}");

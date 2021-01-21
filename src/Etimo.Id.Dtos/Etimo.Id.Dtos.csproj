@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Etimo.Id.Dtos.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Etimo.Id.Attributes\Etimo.Id.Attributes.csproj" />
     <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
     <ProjectReference Include="..\Etimo.Id.Entities\Etimo.Id.Entities.csproj" />

@@ -1,0 +1,33 @@
+@page "/applications"
+@attribute [Authorize]
+
+<h1>Applications</h1>
+
+<p>A list of applications</p>
+
+@if (Applications == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var application in Applications)
+        {
+            <tr>
+                <td>@application.application_id</td>
+                <td>@application.name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

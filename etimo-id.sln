@@ -13,23 +13,43 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Abstractions", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Entities", "src\Etimo.Id.Entities\Etimo.Id.Entities.csproj", "{83739A42-6818-4AE7-80C8-1E1106016A9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Entities.Abstractions", "src\Etimo.Id.Entities.Abstractions\Etimo.Id.Entities.Abstractions.csproj", "{E1CEE648-D0F7-4FF0-B9E9-ED38C9101D5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Entities.Abstractions", "src\Etimo.Id.Entities.Abstractions\Etimo.Id.Entities.Abstractions.csproj", "{E1CEE648-D0F7-4FF0-B9E9-ED38C9101D5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Tests", "src\Etimo.Id.Tests\Etimo.Id.Tests.csproj", "{E168EE8A-5CCC-4B82-9B0C-E3B0A37671D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Tests", "src\Etimo.Id.Tests\Etimo.Id.Tests.csproj", "{E168EE8A-5CCC-4B82-9B0C-E3B0A37671D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Dtos", "src\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj", "{ACD98E49-3C64-48EF-B639-C4108673DB8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Dtos", "src\Etimo.Id.Dtos\Etimo.Id.Dtos.csproj", "{ACD98E49-3C64-48EF-B639-C4108673DB8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Attributes", "src\Etimo.Id.Attributes\Etimo.Id.Attributes.csproj", "{5DB92F20-5481-498C-ADDC-03CDBD6092BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Attributes", "src\Etimo.Id.Attributes\Etimo.Id.Attributes.csproj", "{5DB92F20-5481-498C-ADDC-03CDBD6092BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Exceptions", "src\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj", "{BD4B9D5E-2CDD-4D46-A263-4D22EC3854FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Exceptions", "src\Etimo.Id.Exceptions\Etimo.Id.Exceptions.csproj", "{BD4B9D5E-2CDD-4D46-A263-4D22EC3854FE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{17C08999-C791-4201-82D6-A200E30896E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Constants", "src\Etimo.Id.Constants\Etimo.Id.Constants.csproj", "{267A37D4-7C61-42A7-AA36-0D9E50E848F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Constants", "src\Etimo.Id.Constants\Etimo.Id.Constants.csproj", "{267A37D4-7C61-42A7-AA36-0D9E50E848F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Client", "src\Etimo.Id.Client\Etimo.Id.Client.csproj", "{CE91A790-5D01-413C-9F4F-1B702AEF1512}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Client", "src\Etimo.Id.Client\Etimo.Id.Client.csproj", "{CE91A790-5D01-413C-9F4F-1B702AEF1512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Security", "src\Etimo.Id.Security\Etimo.Id.Security.csproj", "{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Security", "src\Etimo.Id.Security\Etimo.Id.Security.csproj", "{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Web", "src\Etimo.Id.Web\Etimo.Id.Web.csproj", "{F1F36406-3B01-4136-B1E7-CE5F97417A3B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Etimo.Id.Settings", "src\Etimo.Id.Settings\Etimo.Id.Settings.csproj", "{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27F65EE2-BAAC-426D-9103-3A4E4AC65813}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		docker-compose.dev.yml = docker-compose.dev.yml
+		docker-compose.local.yml = docker-compose.local.yml
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{862BECD8-DC8E-41B2-8BFE-177763D356BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{32C51BBA-C99F-4AE7-AAA8-F0BC4D3978B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Authentication", "src\Etimo.Id.Authentication\Etimo.Id.Authentication.csproj", "{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,14 +109,23 @@ Global
 		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1F36406-3B01-4136-B1E7-CE5F97417A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1F36406-3B01-4136-B1E7-CE5F97417A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1F36406-3B01-4136-B1E7-CE5F97417A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1F36406-3B01-4136-B1E7-CE5F97417A3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81289A64-DB21-4E84-833C-74EFE2B8F10B}
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{7F12A6D9-5AC5-4DE2-B4D1-351D97626D9A} = {17C08999-C791-4201-82D6-A200E30896E8}
 	EndGlobalSection
 EndGlobal

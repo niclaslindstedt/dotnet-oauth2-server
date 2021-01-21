@@ -1,10 +1,20 @@
 version: '3.7'
 
 services:
-  etimo-id:
+  etimo-id-api:
     build:
       target: dev
+    command: dotnet watch --project ./src/Etimo.Id.Api run --no-restore
     volumes:
       - ./src:/app/src
     ports:
       - 5011:5011
+
+  etimo-id-web:
+    build:
+      target: dev
+    command: dotnet watch --project ./src/Etimo.Id.Web run --no-restore
+    volumes:
+      - ./src:/app/src
+    ports:
+      - 5012:5012

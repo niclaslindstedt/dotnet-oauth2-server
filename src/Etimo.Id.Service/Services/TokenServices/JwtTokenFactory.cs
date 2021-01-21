@@ -2,7 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
-using Etimo.Id.Service.Settings;
+using Etimo.Id.Settings;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

@@ -7,5 +7,5 @@
 **/uml/
 .dockerignore
 .git*
-Dockerfile
+Dockerfile*
 docker-compose*.yml

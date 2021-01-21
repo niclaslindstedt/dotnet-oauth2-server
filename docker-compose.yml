@@ -5,15 +5,26 @@ volumes:
     driver: local
 
 services:
-  etimo-id:
+  etimo-id-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-api
     container_name: etimo-id-api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      JwtSettings__Secret: 6f2fb51a-9374-493b-be16-4439ed3212eb
+      EtimoIdSettings__Secret: 6f2fb51a-9374-493b-be16-4439ed3212eb
       ConnectionStrings__EtimoId: Server=postgres;Port=5432;Database=root;User Id=root;Password=root;
+
+  etimo-id-web:
+    build:
+      context: .
+      dockerfile: Dockerfile-web
+    container_name: etimo-id-web
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      EtimoIdSettings__Secret: 6f2fb51a-9374-493b-be16-4439ed3212eb
+      EtimoIdSettings__ClientId: 11111111-1111-1111-1111-111111111111
+      EtimoIdSettings__ClientSecret: etimo
 
   postgres:
     image: postgres

@@ -1,4 +1,4 @@
-using Etimo.Id.Api.Settings;
+using Etimo.Id.Settings;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;

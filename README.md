@@ -23,7 +23,7 @@ dotnet tool restore
 This project uses `dotnet user-secrets`, which means you need to setup the following secrets in the `Etimo.Id.Api` project:
 
 ```
-dotnet user-secrets set JwtSettings:Secret STRONGSECRET
+dotnet user-secrets set EtimoIdSettings:Secret STRONGSECRET
 dotnet user-secrets set ConnectionStrings:EtimoId CONNECTIONSTRING
 ```
 

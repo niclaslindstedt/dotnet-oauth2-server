@@ -10,6 +10,8 @@ jobs:
   run_tests:
     name: Run tests
     runs-on: ubuntu-latest
+    env:
+      SOLUTION_FILE: etimo-id.sln
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -17,11 +19,11 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.x
-      - run: dotnet restore
+      - run: dotnet restore $SOLUTION_FILE
       - name: dotnet build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build $SOLUTION_FILE --configuration Release --no-restore
       - name: dotnet test
-        run: dotnet test --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --results-directory ./results
+        run: dotnet test $SOLUTION_FILE --configuration Release --no-restore --no-build --collect:"XPlat Code Coverage" --results-directory ./results
       - name: codecov
         uses: codecov/codecov-action@v1
         with:

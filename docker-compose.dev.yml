@@ -5,9 +5,11 @@ volumes:
     driver: local
 
 services:
-  etimo-id:
+  etimo-id-api:
     build:
+      dockerfile: Dockerfile-api
       target: prod
+    command: Etimo.Id.Api.dll
     environment:
       ASPNETCORE_URLS: https://+:443
       ASPNETCORE_Kestrel__Certificates__Default__Password: etimo
@@ -17,3 +19,18 @@ services:
       - ./dev-cert.pfx:/etc/ssl/certs/localhost.pfx
     ports:
       - 5011:443
+
+  etimo-id-web:
+    build:
+      dockerfile: Dockerfile-web
+      target: prod
+    command: Etimo.Id.Web.dll
+    environment:
+      ASPNETCORE_URLS: https://+:443
+      ASPNETCORE_Kestrel__Certificates__Default__Password: etimo
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /etc/ssl/certs/localhost.pfx
+    volumes:
+      - ./src/Etimo.Id.Web/appsettings.json:/app/appsettings.json
+      - ./dev-cert.pfx:/etc/ssl/certs/localhost.pfx
+    ports:
+      - 5012:443
