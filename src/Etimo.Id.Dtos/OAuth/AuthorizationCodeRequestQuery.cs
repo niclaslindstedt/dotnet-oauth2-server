@@ -1,6 +1,7 @@
 // ReSharper disable InconsistentNaming
 
 using Etimo.Id.Attributes;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,7 @@ namespace Etimo.Id.Dtos
     public class AuthorizationCodeRequestQuery
     {
         [Required]
-        [ValidValues("code")]
+        [ValidValues(ResponseTypes.Code, ResponseTypes.Token)]
         public string response_type { get; set; }
 
         [Required]

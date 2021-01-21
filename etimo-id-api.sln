@@ -47,6 +47,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{32C51BBA-C99F-4AE7-AAA8-F0BC4D3978B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Authentication", "src\Etimo.Id.Authentication\Etimo.Id.Authentication.csproj", "{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Etimo.Id.Callback", "src\Etimo.Id.Callback\Etimo.Id.Callback.csproj", "{0F09A0A5-C50E-4F2F-AA09-351A0CFBBE7D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +113,14 @@ Global
 		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66F1D22D-47D6-4F68-B2C5-9F79608F7D6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D9D0AE-FF3B-4836-A48A-59D5C89CB0DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F09A0A5-C50E-4F2F-AA09-351A0CFBBE7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F09A0A5-C50E-4F2F-AA09-351A0CFBBE7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F09A0A5-C50E-4F2F-AA09-351A0CFBBE7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F09A0A5-C50E-4F2F-AA09-351A0CFBBE7D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

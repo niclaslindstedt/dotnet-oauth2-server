@@ -1,4 +1,5 @@
 using Etimo.Id.Client;
+using Etimo.Id.Constants;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,7 @@ namespace Etimo.Id.Web
                 options =>
                 {
                     builder.Configuration.Bind("OidcProviderOptions", options.ProviderOptions);
-                    options.ProviderOptions.ResponseType = "code";
+                    options.ProviderOptions.ResponseType = ResponseTypes.Code;
                 });
 
             await builder.Build().RunAsync();

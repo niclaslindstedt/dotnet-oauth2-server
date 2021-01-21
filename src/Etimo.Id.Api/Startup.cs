@@ -2,7 +2,7 @@ using Etimo.Id.Abstractions;
 using Etimo.Id.Api.Bootstrapping;
 using Etimo.Id.Api.Errors;
 using Etimo.Id.Api.Middleware;
-using Etimo.Id.Client;
+using Etimo.Id.Authentication;
 using Etimo.Id.Data;
 using Etimo.Id.Data.Repositories;
 using Etimo.Id.Service;
@@ -120,6 +120,7 @@ namespace Etimo.Id.Api
             // Token Generators
             services.AddTransient<IAuthorizationCodeTokenGenerator, AuthorizationCodeTokenGenerator>();
             services.AddTransient<IClientCredentialsTokenGenerator, ClientCredentialsTokenGenerator>();
+            services.AddTransient<IImplicitTokenGenerator, ImplicitTokenGenerator>();
             services.AddTransient<IResourceOwnerCredentialsTokenGenerator, ResourceOwnerCredentialsTokenGenerator>();
             services.AddTransient<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();

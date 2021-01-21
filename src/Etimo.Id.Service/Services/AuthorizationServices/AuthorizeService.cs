@@ -1,4 +1,5 @@
 using Etimo.Id.Abstractions;
+using Etimo.Id.Constants;
 using Etimo.Id.Entities;
 using Etimo.Id.Entities.Abstractions;
 using Etimo.Id.Exceptions;
@@ -18,6 +19,7 @@ namespace Etimo.Id.Service
         private readonly IAuthenticateUserService     _authenticateUserService;
         private readonly IAuthorizationCodeRepository _authorizationCodeRepository;
         private readonly IFindApplicationService      _findApplicationService;
+        private readonly IImplicitTokenGenerator      _implicitTokenGenerator;
         private readonly IPasswordGenerator           _passwordGenerator;
         private readonly OAuth2Settings               _settings;
         private          string                       _allScopes;
@@ -31,12 +33,14 @@ namespace Etimo.Id.Service
             IFindApplicationService findApplicationService,
             IAuthenticateUserService authenticateUserService,
             IAuthorizationCodeRepository authorizationCodeRepository,
+            IImplicitTokenGenerator implicitTokenGenerator,
             IPasswordGenerator passwordGenerator,
             OAuth2Settings settings)
         {
             _findApplicationService      = findApplicationService;
             _authenticateUserService     = authenticateUserService;
             _authorizationCodeRepository = authorizationCodeRepository;
+            _implicitTokenGenerator      = implicitTokenGenerator;
             _passwordGenerator           = passwordGenerator;
             _settings                    = settings;
         }
@@ -48,18 +52,21 @@ namespace Etimo.Id.Service
             await ValidateRequestAsync();
             await AuthenticateUserAsync();
             VerifyScopesAreValid();
-            await GenerateAuthorizationCodeAsync();
 
-            return GenerateAuthorizationUrl();
+            switch (request.ResponseType)
+            {
+                case ResponseTypes.Code:
+                    await GenerateAuthorizationCodeAsync();
+                    return GenerateAuthorizationCodeUrl();
+
+                case ResponseTypes.Token: return await GenerateImplicitUrl();
+
+                default: throw new UnsupportedResponseTypeException("Unsupported response type.");
+            }
         }
 
         private async Task ValidateRequestAsync()
         {
-            if (_request.ResponseType != "code")
-            {
-                throw new UnsupportedResponseTypeException("The only supported response type is 'code'.");
-            }
-
             _application = await _findApplicationService.FindByClientIdAsync(_request.ClientId);
             if (_application == null)
             {
@@ -122,7 +129,7 @@ namespace Etimo.Id.Service
             await _authorizationCodeRepository.SaveAsync();
         }
 
-        private string GenerateAuthorizationUrl()
+        private string GenerateAuthorizationCodeUrl()
         {
             string delimiter = _code.RedirectUri.Contains("?") ? "&" : "?";
             string code      = Uri.EscapeDataString(_code.Code);
@@ -132,6 +139,23 @@ namespace Etimo.Id.Service
                 string state = Uri.EscapeDataString(_request.State);
                 sb.Append($"&state={state}");
             }
+
+            return sb.ToString();
+        }
+
+        private async Task<string> GenerateImplicitUrl()
+        {
+            JwtToken jwtToken = await _implicitTokenGenerator.GenerateTokenAsync(_request);
+            var      sb       = new StringBuilder($"{_request.RedirectUri}#");
+            sb.Append($"access_token={jwtToken.AccessToken}");
+            if (_request.State != null)
+            {
+                string state = Uri.EscapeDataString(_request.State);
+                sb.Append($"&state={state}");
+            }
+
+            sb.Append($"&token_type={jwtToken.TokenType}");
+            sb.Append($"&expires_in={jwtToken.ExpiresIn}");
 
             return sb.ToString();
         }

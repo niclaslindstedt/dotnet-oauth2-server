@@ -1,3 +1,4 @@
+using Etimo.Id.Callback;
 using Etimo.Id.Client;
 using Etimo.Id.Dtos;
 using Microsoft.AspNetCore.Mvc;

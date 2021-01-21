@@ -6,6 +6,7 @@ namespace Etimo.Id.Entities.Abstractions
         : IUserCredentials,
             IAuthorizationCodeTokenRequest,
             IClientCredentialsTokenRequest,
+            IImplicitTokenRequest,
             IResourceOwnerPasswordCredentialsTokenRequest,
             IRefreshTokenRequest
     {

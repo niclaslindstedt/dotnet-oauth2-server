@@ -1,3 +1,4 @@
+using Etimo.Id.Constants;
 using Etimo.Id.Dtos;
 using Etimo.Id.Security;
 using Etimo.Id.Settings;
@@ -32,7 +33,7 @@ namespace Etimo.Id.Api.OAuth
 
                 // registration_endpoint
                 scopes_supported         = InbuiltScopes.All,
-                response_types_supported = new List<string> { "code" },
+                response_types_supported = new List<string> { ResponseTypes.Code, ResponseTypes.Token },
 
                 // response_modes_supported
                 grant_types_supported = new List<string> { "authorization_code" },

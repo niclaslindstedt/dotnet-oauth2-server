@@ -1,7 +1,8 @@
+using Etimo.Id.Client;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace Etimo.Id.Client
+namespace Etimo.Id.Callback
 {
     [ApiController]
     [Route("oauth2")]

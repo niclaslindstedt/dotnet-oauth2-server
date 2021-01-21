@@ -7,5 +7,6 @@
 **/out/
 **/packages/
 **/testresults/
+*mono_crash*.json
 *.DotSettings.user
 appsettings.json

@@ -9,10 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Text;
 
-namespace Etimo.Id.Client
+namespace Etimo.Id.Authentication
 {
     [ExcludeFromCodeCoverage]
     public static class EtimoIdAuthentication
@@ -24,9 +23,6 @@ namespace Etimo.Id.Client
             var etimoIdSettings = new EtimoIdSettings();
             configuration.GetSection("EtimoIdSettings").Bind(etimoIdSettings);
             services.AddSingleton(etimoIdSettings);
-
-            var assembly = Assembly.GetAssembly(typeof(OAuthController));
-            services.AddControllers().AddApplicationPart(assembly).AddControllersAsServices();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(

@@ -6,12 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.*" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.*" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Etimo.Id.Client\Etimo.Id.Client.csproj" />
     <ProjectReference Include="..\Etimo.Id.Constants\Etimo.Id.Constants.csproj" />
     <ProjectReference Include="..\Etimo.Id.Security\Etimo.Id.Security.csproj" />
     <ProjectReference Include="..\Etimo.Id.Settings\Etimo.Id.Settings.csproj" />
