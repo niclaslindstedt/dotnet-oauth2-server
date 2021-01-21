@@ -92,7 +92,7 @@ namespace Etimo.Id.Data
                 var scope = new Scope
                 {
                     ApplicationId = 1,
-                    Name          = $"{type}:{resource}",
+                    Name          = $"etimoid:{type}:{resource}",
                     Description   = "Built-in scope.",
                 };
                 scopes.Add(scope);
