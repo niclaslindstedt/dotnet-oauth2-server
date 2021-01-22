@@ -25,6 +25,15 @@ namespace Etimo.Id.Authentication
             configuration.GetSection("EtimoIdSettings").Bind(etimoIdSettings);
             services.AddSingleton(etimoIdSettings);
 
+            services.AddSingleton(RSA.Create(2048));
+            services.AddSingleton(
+                provider =>
+                {
+                    RSA rsa = services.BuildServiceProvider().GetRequiredService<RSA>();
+                    rsa.ImportRSAPublicKey(Convert.FromBase64String(etimoIdSettings.PublicKey), out int _);
+
+                    return new RsaSecurityKey(rsa);
+                });
             services.AddSingleton<SecurityKey>(
                 provider =>
                 {
@@ -32,10 +41,7 @@ namespace Etimo.Id.Authentication
                     {
                         // Asymmetric key -- use this when more than one apis will be communicating
                         // with your instance of etimo id.
-                        var rsa = RSA.Create(2048);
-                        rsa.ImportRSAPublicKey(Convert.FromBase64String(etimoIdSettings.PublicKey), out int _);
-
-                        return new RsaSecurityKey(rsa);
+                        return services.BuildServiceProvider().GetRequiredService<RsaSecurityKey>();
                     }
 
                     if (etimoIdSettings.Secret != null)
