@@ -18,21 +18,23 @@ To install the required dotnet tools, type:
 dotnet tool restore
 ```
 
-## Secrets
+## Generate private & public key pairs
 
-This project uses `dotnet user-secrets`, which means you need to setup the following secrets in the `Etimo.Id.Api` project:
+To generate private & public key pairs, use the `generate-keys.csx` script:
 
 ```
-dotnet user-secrets set EtimoIdSettings:Secret STRONGSECRET
-dotnet user-secrets set ConnectionStrings:EtimoId CONNECTIONSTRING
+dotnet script scripts/generate-keys.csx --output user-secrets
 ```
 
-* The STRONGSECRET should be at least 32 characters long.
-* The CONNECTIONSTRING should be the connection string to your database.
+This will add private and public keys to your user-secrets.
 
-To setup some default values you can use while developing, use the `setup-secrets.csx` script.
+## Database connection string
 
-You should **REALLY** change the Secret value in your production environment.
+Setup your connection string by using `dotnet user-secrets`:
+
+```
+dotnet user-secrets --project src/Etimo.Id.Api set ConnectionStrings:EtimoId <CONNECTIONSTRING>
+```
 
 ## Setting up database
 

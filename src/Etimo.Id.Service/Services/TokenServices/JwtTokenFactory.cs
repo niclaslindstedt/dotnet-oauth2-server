@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -64,11 +65,23 @@ namespace Etimo.Id.Service.TokenGenerators
 
             claims.Add(new Claim(CustomClaimTypes.Scope, scopes));
 
-            byte[] secretBytes        = Encoding.UTF8.GetBytes(_settings.Secret);
-            var    key                = new SymmetricSecurityKey(secretBytes);
-            var    signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var    token              = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
+            SigningCredentials signingCredentials;
+            if (_settings.PrivateKey != null && _settings.PublicKey != null)
+            {
+                var rsa = RSA.Create(2048);
+                rsa.ImportRSAPrivateKey(Convert.FromBase64String(_settings.PrivateKey), out int _);
+                signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+            }
+            else if (_settings.Secret != null)
+            {
+                byte[] secretBytes = Encoding.UTF8.GetBytes(_settings.Secret);
+                var    key         = new SymmetricSecurityKey(secretBytes);
+                signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            }
+            else { throw new Exception("Could not sign token because both symmetric secret and asymmetric keys are missing."); }
 
+
+            var    token     = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);
             string tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
 
             return new JwtToken
