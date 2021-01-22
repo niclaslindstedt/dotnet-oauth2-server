@@ -38,7 +38,7 @@ dotnet user-secrets --project src/Etimo.Id.Api set ConnectionStrings:EtimoId <CO
 
 ## Setting up database
 
-Start the database server by typing `docker-compose up -d`
+Start the database server by typing `docker-compose -f docker-compose.db.yml up -d`
 
 You can access the database GUI from https://localhost:8011
 

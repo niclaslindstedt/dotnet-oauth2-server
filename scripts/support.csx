@@ -8,5 +8,4 @@
   etimo-id outside Docker, e.g. for debugging purposes.
 */
 
-Run("docker-compose", $"-f docker-compose.yml up -d postgres");
-Run("docker-compose", $"-f docker-compose.yml up -d pgadmin");
+Run("docker-compose", $"-f docker-compose.db.yml up -d");

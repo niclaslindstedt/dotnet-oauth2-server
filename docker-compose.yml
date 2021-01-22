@@ -25,27 +25,3 @@ services:
       EtimoIdSettings__Secret: 6f2fb51a-9374-493b-be16-4439ed3212eb
       EtimoIdSettings__ClientId: 11111111-1111-1111-1111-111111111111
       EtimoIdSettings__ClientSecret: etimo
-
-  postgres:
-    image: postgres
-    container_name: etimo-id-db
-    environment:
-      DATABASE_HOST: 127.0.0.1
-      POSTGRES_DB: root
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-    volumes:
-      - db-data:/var/lib/postgresql/data
-    ports:
-      - 5433:5432
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: etimo-id-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@etimo.se
-      PGADMIN_DEFAULT_PASSWORD: test123!
-    ports:
-      - "8011:80"
-    depends_on:
-      - postgres
