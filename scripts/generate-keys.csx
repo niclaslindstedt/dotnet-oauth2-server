@@ -8,7 +8,7 @@
 
 using System.Security.Cryptography;
 
-var rsa = RSA.Create();
+var rsa = RSA.Create(2048);
 
 string GetPrivateKey() { return Convert.ToBase64String(rsa.ExportRSAPrivateKey()); }
 string GetPublicKey() { return Convert.ToBase64String(rsa.ExportRSAPublicKey()); }

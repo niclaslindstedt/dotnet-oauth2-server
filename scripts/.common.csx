@@ -85,8 +85,16 @@ void PrependToFile(string path, string content)
     sw.Dispose();
 }
 
-IEnumerable<string> Split(string str, int chunkSize)
+List<string> Split(string str, int chunkSize)
 {
-    return Enumerable.Range(0, str.Length / chunkSize)
-        .Select(i => str.Substring(i * chunkSize, chunkSize));
+    var result = new List<string>();
+    var strCopy = new string(str);
+    while (strCopy.Length > chunkSize)
+    {
+        result.Add(strCopy.Substring(0, chunkSize));
+        strCopy = strCopy.Substring(chunkSize, strCopy.Length - chunkSize);
+    }
+    result.Add(strCopy);
+
+    return result;
 }
