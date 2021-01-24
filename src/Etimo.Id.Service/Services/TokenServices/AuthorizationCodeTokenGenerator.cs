@@ -22,6 +22,7 @@ namespace Etimo.Id.Service.TokenGenerators
         private readonly IRefreshTokenGenerator         _refreshTokenGenerator;
         private readonly IRefreshTokenRepository        _refreshTokenRepository;
         private readonly IRequestContext                _requestContext;
+        private readonly IVerifyScopeService            _verifyScopeService;
         private          Application                    _application;
         private          AuthorizationCode              _code;
         private          JwtToken                       _jwtToken;
@@ -33,6 +34,7 @@ namespace Etimo.Id.Service.TokenGenerators
             IAuthenticateClientService authenticateClientService,
             ICreateAuditLogService createAuditLogService,
             IFindApplicationService findApplicationService,
+            IVerifyScopeService verifyScopeService,
             IRefreshTokenGenerator refreshTokenGenerator,
             IAuthorizationCodeRepository authorizationCodeRepository,
             IAccessTokenRepository accessTokenRepository,
@@ -43,6 +45,7 @@ namespace Etimo.Id.Service.TokenGenerators
             _authenticateClientService   = authenticateClientService;
             _createAuditLogService       = createAuditLogService;
             _findApplicationService      = findApplicationService;
+            _verifyScopeService          = verifyScopeService;
             _refreshTokenGenerator       = refreshTokenGenerator;
             _authorizationCodeRepository = authorizationCodeRepository;
             _accessTokenRepository       = accessTokenRepository;
@@ -57,6 +60,7 @@ namespace Etimo.Id.Service.TokenGenerators
 
             UpdateContext();
             await ValidateRequestAsync();
+            _verifyScopeService.Verify(request.Scope, _code.User);
             await CreateJwtTokenAsync();
             await GenerateRefreshTokenAsync();
 

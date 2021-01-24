@@ -22,6 +22,7 @@ namespace Etimo.Id.Service
         private readonly IImplicitTokenGenerator      _implicitTokenGenerator;
         private readonly IPasswordGenerator           _passwordGenerator;
         private readonly OAuth2Settings               _settings;
+        private readonly IVerifyScopeService          _verifyScopeService;
         private          string                       _allScopes;
         private          Application                  _application;
         private          AuthorizationCode            _code;
@@ -35,6 +36,7 @@ namespace Etimo.Id.Service
             IAuthorizationCodeRepository authorizationCodeRepository,
             IImplicitTokenGenerator implicitTokenGenerator,
             IPasswordGenerator passwordGenerator,
+            IVerifyScopeService verifyScopeService,
             OAuth2Settings settings)
         {
             _findApplicationService      = findApplicationService;
@@ -42,6 +44,7 @@ namespace Etimo.Id.Service
             _authorizationCodeRepository = authorizationCodeRepository;
             _implicitTokenGenerator      = implicitTokenGenerator;
             _passwordGenerator           = passwordGenerator;
+            _verifyScopeService          = verifyScopeService;
             _settings                    = settings;
         }
 
@@ -51,7 +54,7 @@ namespace Etimo.Id.Service
 
             await ValidateRequestAsync();
             await AuthenticateUserAsync();
-            VerifyScopesAreValid();
+            _verifyScopeService.Verify(request.Scope, _user);
 
             switch (request.ResponseType)
             {
@@ -100,19 +103,6 @@ namespace Etimo.Id.Service
 
         private async Task AuthenticateUserAsync()
             => _user = await _authenticateUserService.AuthenticateAsync(_request);
-
-        private void VerifyScopesAreValid()
-        {
-            if (_request.Scope == null) { return; }
-
-            string[] requestedScopes = _request.Scope.Split(" ");
-            var      availableScopes = _user.Roles.SelectMany(r => r.Scopes).Select(s => s.Name).ToList();
-
-            if (!requestedScopes.All(s => availableScopes.Contains(s)))
-            {
-                throw new ForbiddenException("You do not have access to that scope.");
-            }
-        }
 
         private async Task GenerateAuthorizationCodeAsync()
         {

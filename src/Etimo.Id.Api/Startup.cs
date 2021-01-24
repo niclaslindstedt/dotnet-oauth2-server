@@ -104,6 +104,7 @@ namespace Etimo.Id.Api
             services.AddTransient<IFindScopeService, FindScopeService>();
             services.AddTransient<IGetScopesService, GetScopesService>();
             services.AddTransient<IUpdateScopeService, UpdateScopeService>();
+            services.AddTransient<IVerifyScopeService, VerifyScopeService>();
 
             // UserServices
             services.AddTransient<IAddUserRoleRelationService, AddUserRoleRelationService>();
