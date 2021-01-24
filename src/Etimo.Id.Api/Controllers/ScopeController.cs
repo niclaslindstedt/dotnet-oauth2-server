@@ -52,7 +52,7 @@ namespace Etimo.Id.Api.Scopes
             if (this.UserHasScope(ScopeScopes.Admin)) { scopes = await _getScopesService.GetAllAsync(); }
             else { scopes                                      = await _getScopesService.GetByClientIdAsync(this.GetClientId()); }
 
-            IEnumerable<ScopeResponseDto> found = scopes.Select(ScopeResponseDto.FromScope);
+            IEnumerable<ScopeResponseDto> found = scopes.Select(scope => ScopeResponseDto.FromScope(scope, false));
 
             return Ok(found);
         }

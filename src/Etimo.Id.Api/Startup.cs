@@ -34,7 +34,7 @@ namespace Etimo.Id.Api
         public IWebHostEnvironment Environment   { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "etimo-id", Version = "v1" }); });
             services.AddCors(options => { options.AddPolicy(CorsPolicyAllowAll, builder => { builder.WithOrigins("*"); }); });
@@ -147,7 +147,7 @@ namespace Etimo.Id.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public virtual void Configure(IApplicationBuilder app)
         {
             app.UseCors(CorsPolicyAllowAll);
             app.UseErrorMiddleware();

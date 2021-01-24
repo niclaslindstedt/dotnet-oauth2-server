@@ -32,7 +32,7 @@ namespace Etimo.Id.Api.Applications
             if (this.UserHasScope(AuditLogScopes.Admin)) { auditLogs = await _getAuditLogsService.GetAllAsync(); }
             else { auditLogs                                         = await _getAuditLogsService.GetByUserIdAsync(this.GetUserId()); }
 
-            IEnumerable<AuditLogResponseDto> found = auditLogs.Select(AuditLogResponseDto.FromAuditLog);
+            IEnumerable<AuditLogResponseDto> found = auditLogs.Select(log => AuditLogResponseDto.FromAuditLog(log, false));
 
             return Ok(found);
         }

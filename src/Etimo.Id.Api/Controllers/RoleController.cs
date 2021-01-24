@@ -58,7 +58,7 @@ namespace Etimo.Id.Api.Roles
             if (this.UserHasScope(RoleScopes.Admin)) { roles = await _getRolesService.GetAllAsync(); }
             else { roles                                     = await _getRolesService.GetByUserIdAsync(this.GetUserId()); }
 
-            IEnumerable<RoleResponseDto> found = roles.Select(RoleResponseDto.FromRole);
+            IEnumerable<RoleResponseDto> found = roles.Select(role => RoleResponseDto.FromRole(role, false));
 
             return Ok(found);
         }

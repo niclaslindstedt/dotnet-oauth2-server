@@ -57,7 +57,7 @@ namespace Etimo.Id.Api.Applications
             if (this.UserHasScope(ApplicationScopes.Admin)) { applications = await _getApplicationsService.GetAllAsync(); }
             else { applications = await _getApplicationsService.GetByUserIdAsync(this.GetUserId()); }
 
-            IEnumerable<ApplicationResponseDto> found = applications.Select(ApplicationResponseDto.FromApplication);
+            IEnumerable<ApplicationResponseDto> found = applications.Select(app => ApplicationResponseDto.FromApplication(app, false));
 
             return Ok(found);
         }

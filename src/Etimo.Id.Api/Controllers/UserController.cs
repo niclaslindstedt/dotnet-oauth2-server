@@ -69,7 +69,7 @@ namespace Etimo.Id.Api.Users
                 users = new List<User> { user };
             }
 
-            IEnumerable<UserResponseDto> found = users.Select(UserResponseDto.FromUser);
+            IEnumerable<UserResponseDto> found = users.Select(user => UserResponseDto.FromUser(user, false));
 
             return Ok(found);
         }
