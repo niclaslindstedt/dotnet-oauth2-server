@@ -28,6 +28,7 @@ namespace Etimo.Id.Tests.Etimo.Id.Service.Services.TokenServices
         private readonly Mock<IRefreshTokenGenerator>     _refreshTokenGeneratorMock;
         private readonly Mock<IRequestContext>            _requestContextMock;
         private readonly ClientCredentialsTokenGenerator  _tokenGenerator;
+        private readonly Mock<IVerifyScopeService>        _verifyScopeServiceMock;
         private readonly Guid                             DummyClientId = Guid.NewGuid();
         private readonly Guid                             DummyUserId   = Guid.NewGuid();
 
@@ -35,6 +36,7 @@ namespace Etimo.Id.Tests.Etimo.Id.Service.Services.TokenServices
         {
             _authenticateClientServiceMock = new Mock<IAuthenticateClientService>();
             _createAuditLogServiceMock     = new Mock<ICreateAuditLogService>();
+            _verifyScopeServiceMock        = new Mock<IVerifyScopeService>();
             _accessTokenRepositoryMock     = new Mock<IAccessTokenRepository>();
             _jwtTokenFactoryMock           = new Mock<IJwtTokenFactory>();
             _refreshTokenGeneratorMock     = new Mock<IRefreshTokenGenerator>();
@@ -44,6 +46,7 @@ namespace Etimo.Id.Tests.Etimo.Id.Service.Services.TokenServices
                 _authenticateClientServiceMock.Object,
                 _accessTokenRepositoryMock.Object,
                 _createAuditLogServiceMock.Object,
+                _verifyScopeServiceMock.Object,
                 _jwtTokenFactoryMock.Object,
                 _refreshTokenGeneratorMock.Object,
                 _requestContextMock.Object);

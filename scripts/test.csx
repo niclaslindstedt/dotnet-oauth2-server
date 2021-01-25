@@ -9,5 +9,5 @@
 */
 
 Run("dotnet", $"restore");
-Run("dotnet", $"build --configuration Release --no-restore");
-Run("dotnet", $"test --configuration Release --no-restore --no-build --collect:\"XPlat Code Coverage\" --results-directory ./testresults");
+Run("dotnet", $"build etimo-id.sln --configuration Release --no-restore");
+Run("dotnet", $"test etimo-id.sln --configuration Release --no-restore --no-build --collect:\"XPlat Code Coverage\" --results-directory ./testresults");
