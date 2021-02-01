@@ -16,7 +16,8 @@ jobs:
         with:
           dockerfile: ./Dockerfile-api
           target: prod
-          push: false
+          push: true
+          tags: etimo/etimo-id/etimo-id-api:latest
 
   build_web_image:
     name: Build Web Docker image
@@ -29,4 +30,5 @@ jobs:
         with:
           dockerfile: ./Dockerfile-web
           target: prod
-          push: false
+          push: true
+          tags: etimo/etimo-id/etimo-id-web:latest
